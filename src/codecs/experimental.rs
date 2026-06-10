@@ -399,6 +399,231 @@ pub fn scan_dma_sources(data: &[u8]) -> Vec<DmaCandidate> {
     out
 }
 
+/// One store into a DMA channel register ($43xx), with the addressing mode of
+/// the store and a classification of where the *value* came from.
+#[derive(Debug, Clone, Serialize)]
+pub struct DmaRegWrite {
+    /// PC offset of the `STA` instruction.
+    pub offset: usize,
+    /// `$43xx` low byte written. With absolute addressing this encodes
+    /// channel = `(reg_low >> 4) & 7` and register = `reg_low & 0x0F`
+    /// (2=A1TL, 3=A1TH, 4=A1B, 5=DASL...). With indexed addressing it is the
+    /// base (usually `$4300`,X) and the channel is selected by X at run time.
+    pub reg_low: u8,
+    /// Channel when statically known (absolute store); `None` when the store is
+    /// indexed (`STA $43xx,X/Y`) so the channel depends on a runtime index.
+    pub channel: Option<u8>,
+    /// How the register address was formed: `abs`, `abs,x`, `abs,y`, `long`.
+    pub store_mode: &'static str,
+    /// Where the stored value came from, decoded from the preceding load:
+    /// `imm` (constant), `mem` (absolute/direct variable), `indexed`
+    /// (table,X / table,Y — a parameter table), `indirect` ((dp),Y etc. — a
+    /// pointer), `reg` (TXA/TYA/PLA), or `?` (undecoded).
+    pub value_source: &'static str,
+    /// Operand of a `mem`/`indexed`/`indirect` load — a candidate parameter
+    /// table or variable address (raw 16- or 24-bit value as encoded).
+    pub source_operand: Option<u32>,
+}
+
+/// A cluster of DMA-register stores: one DMA *setup site*. The fixed
+/// init/HUD uploads are `immediate`; the shared parameterized helper that
+/// uploads the bulk of the game's graphics is `parameterized` (its register
+/// values come from memory/tables, which is why `scan_dma` cannot follow it).
+#[derive(Debug, Clone, Serialize)]
+pub struct DmaSetupSite {
+    pub start_offset: usize,
+    pub start_snes: Option<u32>,
+    pub writes: Vec<DmaRegWrite>,
+    /// `immediate` (all values constant) or `parameterized` (≥1 value from
+    /// memory/table/pointer/register).
+    pub kind: &'static str,
+    /// True if any store used `,X`/`,Y` on the register address — the textbook
+    /// shape of a generic "DMA channel N" helper.
+    pub uses_index: bool,
+    /// True if a `STA $420B` (MDMAEN trigger) follows the cluster within a
+    /// short window — i.e. this site actually fires a transfer here.
+    pub triggers_dma: bool,
+    /// Distinct operands of the non-immediate loads feeding the registers:
+    /// the strongest leads for the parameter table(s) the helper reads.
+    pub param_operands: Vec<u32>,
+}
+
+/// Decode the load that produced the value a `STA` at `sta` stores, using the
+/// same bounded backward heuristic as [`scan_dma_sources`]. Returns the source
+/// classification and, for memory/indexed/indirect loads, the operand. Longer
+/// encodings are tried first so a 3/4-byte load is not mistaken for a shorter
+/// opcode sitting in its operand bytes. Heuristic and SPECULATIVE: it does not
+/// track M/X widths or real instruction boundaries.
+fn classify_value_source(data: &[u8], sta: usize) -> (&'static str, Option<u32>) {
+    // 4-byte loads: long / long,X.
+    if sta >= 4 {
+        let op = data[sta - 4];
+        let operand =
+            Some(u32::from_le_bytes([data[sta - 3], data[sta - 2], data[sta - 1], 0]));
+        match op {
+            0xAF => return ("mem", operand),     // LDA addr (long)
+            0xBF => return ("indexed", operand), // LDA addr,X (long)
+            _ => {}
+        }
+    }
+    // 3-byte loads: immediate(16), absolute, absolute,X/Y.
+    if sta >= 3 {
+        let op = data[sta - 3];
+        let operand = Some(u16::from_le_bytes([data[sta - 2], data[sta - 1]]) as u32);
+        match op {
+            0xA9 => return ("imm", None),         // LDA #imm16
+            0xAD => return ("mem", operand),      // LDA abs
+            0xBD | 0xB9 => return ("indexed", operand), // LDA abs,X / abs,Y
+            _ => {}
+        }
+    }
+    // 2-byte loads: immediate(8), direct page and its indexed/indirect forms.
+    if sta >= 2 {
+        let op = data[sta - 2];
+        let operand = Some(data[sta - 1] as u32);
+        match op {
+            0xA9 => return ("imm", None),                   // LDA #imm8
+            0xA5 => return ("mem", operand),                // LDA dp
+            0xB5 => return ("indexed", operand),            // LDA dp,X
+            0xA1 | 0xB1 | 0xB2 | 0xA7 | 0xB7 => return ("indirect", operand), // (dp,X)/(dp),Y/(dp)/[dp]/[dp],Y
+            _ => {}
+        }
+    }
+    // 1-byte: value moved into A from a register or the stack.
+    if sta >= 1 {
+        match data[sta - 1] {
+            0x8A | 0x98 | 0x68 => return ("reg", None), // TXA / TYA / PLA
+            _ => {}
+        }
+    }
+    ("?", None)
+}
+
+/// Decode a store to a DMA register at `i`, if any. Returns the write plus the
+/// instruction length so the caller can advance. Accepts absolute (`8D`),
+/// absolute,X (`9D`), absolute,Y (`99`) into `$4300-$437B` and the long form
+/// (`8F .. 43 00`). Only register low-nibbles 0x0-0xB (the real DMA registers)
+/// are accepted, which keeps random `?? .. 43` bytes from matching.
+fn decode_dma_reg_store(data: &[u8], i: usize) -> Option<(DmaRegWrite, usize)> {
+    let valid = |low: u8| (low >> 4) <= 0x07 && (low & 0x0F) <= 0x0B;
+    // Long: 8F low 43 00  (STA $0043xx)
+    if i + 4 <= data.len() && data[i] == 0x8F && data[i + 2] == 0x43 && data[i + 3] == 0x00 {
+        let low = data[i + 1];
+        if valid(low) {
+            let (vs, op) = classify_value_source(data, i);
+            return Some((
+                DmaRegWrite {
+                    offset: i,
+                    reg_low: low,
+                    channel: Some((low >> 4) & 7),
+                    store_mode: "long",
+                    value_source: vs,
+                    source_operand: op,
+                },
+                4,
+            ));
+        }
+    }
+    if i + 3 > data.len() || data[i + 2] != 0x43 {
+        return None;
+    }
+    let low = data[i + 1];
+    if !valid(low) {
+        return None;
+    }
+    let (mode, channel) = match data[i] {
+        0x8D => ("abs", Some((low >> 4) & 7)),
+        0x9D => ("abs,x", None),
+        0x99 => ("abs,y", None),
+        _ => return None,
+    };
+    let (vs, op) = classify_value_source(data, i);
+    Some((
+        DmaRegWrite {
+            offset: i,
+            reg_low: low,
+            channel,
+            store_mode: mode,
+            value_source: vs,
+            source_operand: op,
+        },
+        3,
+    ))
+}
+
+/// Find DMA *setup sites* — clusters of stores to the channel registers — and
+/// classify each as `immediate` or `parameterized`. The parameterized sites
+/// are the shared DMA helper(s) that move the bulk of the game's graphics and
+/// whose register values come from tables in ROM; their `param_operands` are
+/// the leads for those tables. This complements [`scan_dma_sources`], which
+/// only reconstructs the immediate-fed transfers.
+///
+/// Heuristic / SPECULATIVE: clustering and the backward value decode do not
+/// disassemble precisely; confirm any lead before writing code against it.
+pub fn scan_dma_setup_sites(data: &[u8]) -> Vec<DmaSetupSite> {
+    /// Max byte gap between consecutive register stores in one cluster.
+    const CLUSTER_GAP: usize = 24;
+    /// How far past the last store to look for the MDMAEN trigger.
+    const TRIGGER_WINDOW: usize = 48;
+
+    // Pass 1: every DMA-register store, in order.
+    let mut writes: Vec<DmaRegWrite> = Vec::new();
+    let mut i = 0;
+    while i + 3 <= data.len() {
+        if let Some((w, len)) = decode_dma_reg_store(data, i) {
+            writes.push(w);
+            i += len;
+        } else {
+            i += 1;
+        }
+    }
+
+    // Pass 2: cluster consecutive stores; the end of a store is offset+3 (or +4
+    // for the long form, but +3 is a safe lower bound for gap purposes).
+    let mut sites = Vec::new();
+    let mut start = 0;
+    while start < writes.len() {
+        let mut end = start;
+        while end + 1 < writes.len()
+            && writes[end + 1].offset.saturating_sub(writes[end].offset + 3) <= CLUSTER_GAP
+        {
+            end += 1;
+        }
+        let group = &writes[start..=end];
+        // A real setup writes several registers; require ≥2 to suppress the
+        // stray `8D xx 43` that lands in data.
+        if group.len() >= 2 {
+            let uses_index = group.iter().any(|w| w.store_mode != "abs" && w.store_mode != "long");
+            let parameterized = group
+                .iter()
+                .any(|w| matches!(w.value_source, "mem" | "indexed" | "indirect" | "reg"));
+            let last = group.last().unwrap();
+            let scan_from = last.offset + 3;
+            let scan_to = (scan_from + TRIGGER_WINDOW).min(data.len().saturating_sub(2));
+            let triggers_dma = (scan_from..scan_to)
+                .any(|k| data[k] == 0x8D && data[k + 1] == 0x0B && data[k + 2] == 0x42);
+            let mut param_operands: Vec<u32> = group
+                .iter()
+                .filter(|w| w.value_source != "imm")
+                .filter_map(|w| w.source_operand)
+                .collect();
+            param_operands.sort_unstable();
+            param_operands.dedup();
+            sites.push(DmaSetupSite {
+                start_offset: group[0].offset,
+                start_snes: pc_to_snes(group[0].offset).ok(),
+                writes: group.to_vec(),
+                kind: if parameterized { "parameterized" } else { "immediate" },
+                uses_index,
+                triggers_dma,
+                param_operands,
+            });
+        }
+        start = end + 1;
+    }
+    sites
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -509,5 +734,65 @@ mod tests {
         assert!(scan_repeated_blocks(&[], 16, 2).is_empty());
         assert!(scan_tile_regions(&[], 4).is_empty());
         assert!(scan_dma_sources(&[]).is_empty());
+        assert!(scan_dma_setup_sites(&[]).is_empty());
+    }
+
+    #[test]
+    fn finds_parameterized_indexed_dma_helper() {
+        // A generic "DMA channel X" helper: source registers loaded from a
+        // table ($9000,X) and stored to $43xx,X, then the transfer triggered.
+        let mut data = vec![0u8; 0x200];
+        let prog = [
+            0xBD, 0x00, 0x90, 0x9D, 0x02, 0x43, // LDA $9000,X : STA $4302,X (A1TL)
+            0xBD, 0x01, 0x90, 0x9D, 0x03, 0x43, // LDA $9001,X : STA $4303,X (A1TH)
+            0xBD, 0x02, 0x90, 0x9D, 0x04, 0x43, // LDA $9002,X : STA $4304,X (A1B)
+            0xA9, 0x01, 0x8D, 0x0B, 0x42, //       LDA #$01    : STA $420B (trigger)
+        ];
+        data[0x40..0x40 + prog.len()].copy_from_slice(&prog);
+
+        let sites = scan_dma_setup_sites(&data);
+        // start_offset is the first *store* (0x43), not the first load (0x40).
+        let site = sites
+            .iter()
+            .find(|s| s.start_offset == 0x43)
+            .unwrap_or_else(|| panic!("no site at 0x43: {sites:?}"));
+        assert_eq!(site.kind, "parameterized");
+        assert!(site.uses_index, "should detect ,X store: {site:?}");
+        assert!(site.triggers_dma, "trigger should be in window: {site:?}");
+        assert_eq!(site.writes.len(), 3);
+        assert!(
+            site.param_operands.contains(&0x9000),
+            "table operand missing: {:?}",
+            site.param_operands
+        );
+        assert!(site.writes.iter().all(|w| w.value_source == "indexed"));
+    }
+
+    #[test]
+    fn classifies_immediate_fed_site() {
+        // Three absolute register stores fed by immediates: the fixed-upload
+        // shape that scan_dma already reconstructs.
+        let mut data = vec![0u8; 0x100];
+        let prog = [
+            0xA9, 0x18, 0x8D, 0x01, 0x43, //       LDA #$18    : STA $4301 (BBAD)
+            0xA9, 0x00, 0xC0, 0x8D, 0x02, 0x43, // LDA #$C000  : STA $4302 (A1TL/H)
+            0xA9, 0x05, 0x8D, 0x04, 0x43, //       LDA #$05    : STA $4304 (A1B)
+        ];
+        data[0x20..0x20 + prog.len()].copy_from_slice(&prog);
+
+        let sites = scan_dma_setup_sites(&data);
+        let site = sites.iter().find(|s| s.start_offset == 0x22).expect("site");
+        assert_eq!(site.kind, "immediate");
+        assert!(!site.uses_index);
+        assert!(site.param_operands.is_empty());
+        assert!(site.writes.iter().all(|w| w.value_source == "imm"));
+    }
+
+    #[test]
+    fn ignores_lone_register_store() {
+        // A single `STA $4302` with no neighbours is not a setup site.
+        let mut data = vec![0u8; 0x40];
+        data[0x10..0x13].copy_from_slice(&[0x8D, 0x02, 0x43]);
+        assert!(scan_dma_setup_sites(&data).is_empty());
     }
 }

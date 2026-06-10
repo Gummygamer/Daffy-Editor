@@ -1,0 +1,1778 @@
+{
+  "confidence": "speculative",
+  "parameterized_count": 18,
+  "rom": {
+    "crc32": "5F02A044",
+    "size": 1048576,
+    "version": "DaffyDuckMarvinMissionsUsa"
+  },
+  "site_count": 20,
+  "sites": [
+    {
+      "kind": "parameterized",
+      "param_operands": [
+        0,
+        1,
+        7946,
+        7947
+      ],
+      "start_offset": 612,
+      "start_snes": 33380,
+      "triggers_dma": true,
+      "uses_index": false,
+      "writes": [
+        {
+          "channel": 0,
+          "offset": 612,
+          "reg_low": 0,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "imm"
+        },
+        {
+          "channel": 0,
+          "offset": 617,
+          "reg_low": 1,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "imm"
+        },
+        {
+          "channel": 0,
+          "offset": 633,
+          "reg_low": 2,
+          "source_operand": 7946,
+          "store_mode": "abs",
+          "value_source": "mem"
+        },
+        {
+          "channel": 0,
+          "offset": 639,
+          "reg_low": 3,
+          "source_operand": 7947,
+          "store_mode": "abs",
+          "value_source": "mem"
+        },
+        {
+          "channel": 0,
+          "offset": 644,
+          "reg_low": 4,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "imm"
+        },
+        {
+          "channel": 0,
+          "offset": 649,
+          "reg_low": 5,
+          "source_operand": 0,
+          "store_mode": "abs",
+          "value_source": "mem"
+        },
+        {
+          "channel": 0,
+          "offset": 654,
+          "reg_low": 6,
+          "source_operand": 1,
+          "store_mode": "abs",
+          "value_source": "mem"
+        },
+        {
+          "channel": 0,
+          "offset": 667,
+          "reg_low": 0,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "imm"
+        },
+        {
+          "channel": 0,
+          "offset": 672,
+          "reg_low": 1,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "imm"
+        },
+        {
+          "channel": 0,
+          "offset": 691,
+          "reg_low": 2,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "?"
+        },
+        {
+          "channel": 0,
+          "offset": 699,
+          "reg_low": 3,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "?"
+        },
+        {
+          "channel": 0,
+          "offset": 704,
+          "reg_low": 4,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "imm"
+        },
+        {
+          "channel": 0,
+          "offset": 709,
+          "reg_low": 5,
+          "source_operand": 0,
+          "store_mode": "abs",
+          "value_source": "mem"
+        },
+        {
+          "channel": 0,
+          "offset": 714,
+          "reg_low": 6,
+          "source_operand": 1,
+          "store_mode": "abs",
+          "value_source": "mem"
+        }
+      ]
+    },
+    {
+      "kind": "parameterized",
+      "param_operands": [
+        231,
+        232,
+        233
+      ],
+      "start_offset": 767,
+      "start_snes": 33535,
+      "triggers_dma": true,
+      "uses_index": false,
+      "writes": [
+        {
+          "channel": 0,
+          "offset": 767,
+          "reg_low": 0,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "imm"
+        },
+        {
+          "channel": 0,
+          "offset": 772,
+          "reg_low": 1,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "imm"
+        },
+        {
+          "channel": 0,
+          "offset": 789,
+          "reg_low": 2,
+          "source_operand": 231,
+          "store_mode": "abs",
+          "value_source": "mem"
+        },
+        {
+          "channel": 0,
+          "offset": 794,
+          "reg_low": 3,
+          "source_operand": 232,
+          "store_mode": "abs",
+          "value_source": "mem"
+        },
+        {
+          "channel": 0,
+          "offset": 799,
+          "reg_low": 4,
+          "source_operand": 233,
+          "store_mode": "abs",
+          "value_source": "mem"
+        },
+        {
+          "channel": 0,
+          "offset": 804,
+          "reg_low": 5,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "imm"
+        },
+        {
+          "channel": 0,
+          "offset": 809,
+          "reg_low": 6,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "imm"
+        },
+        {
+          "channel": 0,
+          "offset": 822,
+          "reg_low": 0,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "imm"
+        },
+        {
+          "channel": 0,
+          "offset": 827,
+          "reg_low": 1,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "imm"
+        },
+        {
+          "channel": 0,
+          "offset": 852,
+          "reg_low": 2,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "?"
+        },
+        {
+          "channel": 0,
+          "offset": 859,
+          "reg_low": 3,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "?"
+        },
+        {
+          "channel": 0,
+          "offset": 864,
+          "reg_low": 4,
+          "source_operand": 233,
+          "store_mode": "abs",
+          "value_source": "mem"
+        },
+        {
+          "channel": 0,
+          "offset": 869,
+          "reg_low": 5,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "imm"
+        },
+        {
+          "channel": 0,
+          "offset": 874,
+          "reg_low": 6,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "imm"
+        }
+      ]
+    },
+    {
+      "kind": "parameterized",
+      "param_operands": [
+        7972,
+        7973,
+        33810,
+        33811
+      ],
+      "start_offset": 920,
+      "start_snes": 33688,
+      "triggers_dma": true,
+      "uses_index": false,
+      "writes": [
+        {
+          "channel": 0,
+          "offset": 920,
+          "reg_low": 0,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "imm"
+        },
+        {
+          "channel": 0,
+          "offset": 925,
+          "reg_low": 1,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "imm"
+        },
+        {
+          "channel": 0,
+          "offset": 941,
+          "reg_low": 2,
+          "source_operand": 7972,
+          "store_mode": "abs",
+          "value_source": "mem"
+        },
+        {
+          "channel": 0,
+          "offset": 947,
+          "reg_low": 3,
+          "source_operand": 7973,
+          "store_mode": "abs",
+          "value_source": "mem"
+        },
+        {
+          "channel": 0,
+          "offset": 952,
+          "reg_low": 4,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "imm"
+        },
+        {
+          "channel": 0,
+          "offset": 957,
+          "reg_low": 5,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "imm"
+        },
+        {
+          "channel": 0,
+          "offset": 962,
+          "reg_low": 6,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "imm"
+        },
+        {
+          "channel": 0,
+          "offset": 985,
+          "reg_low": 0,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "imm"
+        },
+        {
+          "channel": 0,
+          "offset": 990,
+          "reg_low": 1,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "imm"
+        },
+        {
+          "channel": 0,
+          "offset": 1011,
+          "reg_low": 2,
+          "source_operand": 33810,
+          "store_mode": "abs",
+          "value_source": "indexed"
+        },
+        {
+          "channel": 0,
+          "offset": 1017,
+          "reg_low": 3,
+          "source_operand": 33811,
+          "store_mode": "abs",
+          "value_source": "indexed"
+        },
+        {
+          "channel": 0,
+          "offset": 1022,
+          "reg_low": 4,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "imm"
+        },
+        {
+          "channel": 0,
+          "offset": 1027,
+          "reg_low": 5,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "imm"
+        },
+        {
+          "channel": 0,
+          "offset": 1032,
+          "reg_low": 6,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "imm"
+        }
+      ]
+    },
+    {
+      "kind": "parameterized",
+      "param_operands": [
+        231,
+        232,
+        233,
+        8030,
+        8031
+      ],
+      "start_offset": 1083,
+      "start_snes": 33851,
+      "triggers_dma": true,
+      "uses_index": false,
+      "writes": [
+        {
+          "channel": 0,
+          "offset": 1083,
+          "reg_low": 0,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "imm"
+        },
+        {
+          "channel": 0,
+          "offset": 1098,
+          "reg_low": 1,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "imm"
+        },
+        {
+          "channel": 0,
+          "offset": 1110,
+          "reg_low": 1,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "imm"
+        },
+        {
+          "channel": 0,
+          "offset": 1127,
+          "reg_low": 2,
+          "source_operand": 231,
+          "store_mode": "abs",
+          "value_source": "mem"
+        },
+        {
+          "channel": 0,
+          "offset": 1132,
+          "reg_low": 3,
+          "source_operand": 232,
+          "store_mode": "abs",
+          "value_source": "mem"
+        },
+        {
+          "channel": 0,
+          "offset": 1137,
+          "reg_low": 4,
+          "source_operand": 233,
+          "store_mode": "abs",
+          "value_source": "mem"
+        },
+        {
+          "channel": 0,
+          "offset": 1143,
+          "reg_low": 5,
+          "source_operand": 8030,
+          "store_mode": "abs",
+          "value_source": "mem"
+        },
+        {
+          "channel": 0,
+          "offset": 1149,
+          "reg_low": 6,
+          "source_operand": 8031,
+          "store_mode": "abs",
+          "value_source": "mem"
+        }
+      ]
+    },
+    {
+      "kind": "parameterized",
+      "param_operands": [
+        234,
+        235,
+        236,
+        8034,
+        8035
+      ],
+      "start_offset": 1202,
+      "start_snes": 33970,
+      "triggers_dma": true,
+      "uses_index": false,
+      "writes": [
+        {
+          "channel": 1,
+          "offset": 1202,
+          "reg_low": 16,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "imm"
+        },
+        {
+          "channel": 1,
+          "offset": 1207,
+          "reg_low": 17,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "imm"
+        },
+        {
+          "channel": 1,
+          "offset": 1218,
+          "reg_low": 18,
+          "source_operand": 234,
+          "store_mode": "abs",
+          "value_source": "mem"
+        },
+        {
+          "channel": 1,
+          "offset": 1223,
+          "reg_low": 19,
+          "source_operand": 235,
+          "store_mode": "abs",
+          "value_source": "mem"
+        },
+        {
+          "channel": 1,
+          "offset": 1228,
+          "reg_low": 20,
+          "source_operand": 236,
+          "store_mode": "abs",
+          "value_source": "mem"
+        },
+        {
+          "channel": 1,
+          "offset": 1234,
+          "reg_low": 21,
+          "source_operand": 8034,
+          "store_mode": "abs",
+          "value_source": "mem"
+        },
+        {
+          "channel": 1,
+          "offset": 1240,
+          "reg_low": 22,
+          "source_operand": 8035,
+          "store_mode": "abs",
+          "value_source": "mem"
+        }
+      ]
+    },
+    {
+      "kind": "parameterized",
+      "param_operands": [
+        30,
+        7865,
+        7866
+      ],
+      "start_offset": 1282,
+      "start_snes": 34050,
+      "triggers_dma": true,
+      "uses_index": false,
+      "writes": [
+        {
+          "channel": 1,
+          "offset": 1282,
+          "reg_low": 16,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "imm"
+        },
+        {
+          "channel": 1,
+          "offset": 1287,
+          "reg_low": 17,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "imm"
+        },
+        {
+          "channel": 1,
+          "offset": 1303,
+          "reg_low": 18,
+          "source_operand": 30,
+          "store_mode": "abs",
+          "value_source": "indirect"
+        },
+        {
+          "channel": 1,
+          "offset": 1311,
+          "reg_low": 19,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "?"
+        },
+        {
+          "channel": 1,
+          "offset": 1319,
+          "reg_low": 20,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "?"
+        },
+        {
+          "channel": 1,
+          "offset": 1325,
+          "reg_low": 21,
+          "source_operand": 7865,
+          "store_mode": "abs",
+          "value_source": "mem"
+        },
+        {
+          "channel": 1,
+          "offset": 1331,
+          "reg_low": 22,
+          "source_operand": 7866,
+          "store_mode": "abs",
+          "value_source": "mem"
+        }
+      ]
+    },
+    {
+      "kind": "parameterized",
+      "param_operands": [
+        7882,
+        7883
+      ],
+      "start_offset": 1392,
+      "start_snes": 34160,
+      "triggers_dma": true,
+      "uses_index": false,
+      "writes": [
+        {
+          "channel": 1,
+          "offset": 1392,
+          "reg_low": 16,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "imm"
+        },
+        {
+          "channel": 1,
+          "offset": 1397,
+          "reg_low": 17,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "imm"
+        },
+        {
+          "channel": 1,
+          "offset": 1413,
+          "reg_low": 18,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "?"
+        },
+        {
+          "channel": 1,
+          "offset": 1421,
+          "reg_low": 19,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "?"
+        },
+        {
+          "channel": 1,
+          "offset": 1429,
+          "reg_low": 20,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "?"
+        },
+        {
+          "channel": 1,
+          "offset": 1435,
+          "reg_low": 21,
+          "source_operand": 7882,
+          "store_mode": "abs",
+          "value_source": "mem"
+        },
+        {
+          "channel": 1,
+          "offset": 1441,
+          "reg_low": 22,
+          "source_operand": 7883,
+          "store_mode": "abs",
+          "value_source": "mem"
+        }
+      ]
+    },
+    {
+      "kind": "parameterized",
+      "param_operands": [
+        8163,
+        8164,
+        8165
+      ],
+      "start_offset": 1487,
+      "start_snes": 34255,
+      "triggers_dma": true,
+      "uses_index": false,
+      "writes": [
+        {
+          "channel": 1,
+          "offset": 1487,
+          "reg_low": 16,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "imm"
+        },
+        {
+          "channel": 1,
+          "offset": 1492,
+          "reg_low": 17,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "imm"
+        },
+        {
+          "channel": 1,
+          "offset": 1518,
+          "reg_low": 18,
+          "source_operand": 8163,
+          "store_mode": "abs",
+          "value_source": "mem"
+        },
+        {
+          "channel": 1,
+          "offset": 1524,
+          "reg_low": 19,
+          "source_operand": 8164,
+          "store_mode": "abs",
+          "value_source": "mem"
+        },
+        {
+          "channel": 1,
+          "offset": 1530,
+          "reg_low": 20,
+          "source_operand": 8165,
+          "store_mode": "abs",
+          "value_source": "mem"
+        },
+        {
+          "channel": 1,
+          "offset": 1535,
+          "reg_low": 21,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "imm"
+        },
+        {
+          "channel": 1,
+          "offset": 1540,
+          "reg_low": 22,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "imm"
+        }
+      ]
+    },
+    {
+      "kind": "parameterized",
+      "param_operands": [
+        8163,
+        8164,
+        8165
+      ],
+      "start_offset": 1581,
+      "start_snes": 34349,
+      "triggers_dma": true,
+      "uses_index": false,
+      "writes": [
+        {
+          "channel": 1,
+          "offset": 1581,
+          "reg_low": 16,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "imm"
+        },
+        {
+          "channel": 1,
+          "offset": 1586,
+          "reg_low": 17,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "imm"
+        },
+        {
+          "channel": 1,
+          "offset": 1597,
+          "reg_low": 18,
+          "source_operand": 8163,
+          "store_mode": "abs",
+          "value_source": "mem"
+        },
+        {
+          "channel": 1,
+          "offset": 1603,
+          "reg_low": 19,
+          "source_operand": 8164,
+          "store_mode": "abs",
+          "value_source": "mem"
+        },
+        {
+          "channel": 1,
+          "offset": 1609,
+          "reg_low": 20,
+          "source_operand": 8165,
+          "store_mode": "abs",
+          "value_source": "mem"
+        },
+        {
+          "channel": 1,
+          "offset": 1614,
+          "reg_low": 21,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "imm"
+        },
+        {
+          "channel": 1,
+          "offset": 1619,
+          "reg_low": 22,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "imm"
+        }
+      ]
+    },
+    {
+      "kind": "parameterized",
+      "param_operands": [
+        237,
+        238,
+        8010,
+        8011,
+        8014
+      ],
+      "start_offset": 2035,
+      "start_snes": 34803,
+      "triggers_dma": true,
+      "uses_index": false,
+      "writes": [
+        {
+          "channel": 0,
+          "offset": 2035,
+          "reg_low": 0,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "imm"
+        },
+        {
+          "channel": 0,
+          "offset": 2040,
+          "reg_low": 1,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "imm"
+        },
+        {
+          "channel": 0,
+          "offset": 2056,
+          "reg_low": 2,
+          "source_operand": 8010,
+          "store_mode": "abs",
+          "value_source": "mem"
+        },
+        {
+          "channel": 0,
+          "offset": 2062,
+          "reg_low": 3,
+          "source_operand": 8011,
+          "store_mode": "abs",
+          "value_source": "mem"
+        },
+        {
+          "channel": 0,
+          "offset": 2068,
+          "reg_low": 4,
+          "source_operand": 8014,
+          "store_mode": "abs",
+          "value_source": "mem"
+        },
+        {
+          "channel": 0,
+          "offset": 2073,
+          "reg_low": 5,
+          "source_operand": 237,
+          "store_mode": "abs",
+          "value_source": "mem"
+        },
+        {
+          "channel": 0,
+          "offset": 2078,
+          "reg_low": 6,
+          "source_operand": 238,
+          "store_mode": "abs",
+          "value_source": "mem"
+        },
+        {
+          "channel": 0,
+          "offset": 2091,
+          "reg_low": 0,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "imm"
+        },
+        {
+          "channel": 0,
+          "offset": 2096,
+          "reg_low": 1,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "imm"
+        },
+        {
+          "channel": 0,
+          "offset": 2115,
+          "reg_low": 2,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "?"
+        },
+        {
+          "channel": 0,
+          "offset": 2123,
+          "reg_low": 3,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "?"
+        },
+        {
+          "channel": 0,
+          "offset": 2129,
+          "reg_low": 4,
+          "source_operand": 8014,
+          "store_mode": "abs",
+          "value_source": "mem"
+        },
+        {
+          "channel": 0,
+          "offset": 2134,
+          "reg_low": 5,
+          "source_operand": 237,
+          "store_mode": "abs",
+          "value_source": "mem"
+        },
+        {
+          "channel": 0,
+          "offset": 2139,
+          "reg_low": 6,
+          "source_operand": 238,
+          "store_mode": "abs",
+          "value_source": "mem"
+        },
+        {
+          "channel": 0,
+          "offset": 2162,
+          "reg_low": 0,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "imm"
+        },
+        {
+          "channel": 0,
+          "offset": 2167,
+          "reg_low": 1,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "imm"
+        },
+        {
+          "channel": 0,
+          "offset": 2183,
+          "reg_low": 2,
+          "source_operand": 8010,
+          "store_mode": "abs",
+          "value_source": "mem"
+        },
+        {
+          "channel": 0,
+          "offset": 2189,
+          "reg_low": 3,
+          "source_operand": 8011,
+          "store_mode": "abs",
+          "value_source": "mem"
+        },
+        {
+          "channel": 0,
+          "offset": 2195,
+          "reg_low": 4,
+          "source_operand": 8014,
+          "store_mode": "abs",
+          "value_source": "mem"
+        },
+        {
+          "channel": 0,
+          "offset": 2200,
+          "reg_low": 5,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "imm"
+        },
+        {
+          "channel": 0,
+          "offset": 2205,
+          "reg_low": 6,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "imm"
+        }
+      ]
+    },
+    {
+      "kind": "parameterized",
+      "param_operands": [
+        237,
+        238,
+        8014
+      ],
+      "start_offset": 2239,
+      "start_snes": 35007,
+      "triggers_dma": true,
+      "uses_index": false,
+      "writes": [
+        {
+          "channel": 0,
+          "offset": 2239,
+          "reg_low": 0,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "imm"
+        },
+        {
+          "channel": 0,
+          "offset": 2244,
+          "reg_low": 1,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "imm"
+        },
+        {
+          "channel": 0,
+          "offset": 2263,
+          "reg_low": 2,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "?"
+        },
+        {
+          "channel": 0,
+          "offset": 2271,
+          "reg_low": 3,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "?"
+        },
+        {
+          "channel": 0,
+          "offset": 2277,
+          "reg_low": 4,
+          "source_operand": 8014,
+          "store_mode": "abs",
+          "value_source": "mem"
+        },
+        {
+          "channel": 0,
+          "offset": 2282,
+          "reg_low": 5,
+          "source_operand": 237,
+          "store_mode": "abs",
+          "value_source": "mem"
+        },
+        {
+          "channel": 0,
+          "offset": 2287,
+          "reg_low": 6,
+          "source_operand": 238,
+          "store_mode": "abs",
+          "value_source": "mem"
+        },
+        {
+          "channel": 0,
+          "offset": 2300,
+          "reg_low": 0,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "imm"
+        },
+        {
+          "channel": 0,
+          "offset": 2305,
+          "reg_low": 1,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "imm"
+        },
+        {
+          "channel": 0,
+          "offset": 2332,
+          "reg_low": 2,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "?"
+        },
+        {
+          "channel": 0,
+          "offset": 2336,
+          "reg_low": 3,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "?"
+        },
+        {
+          "channel": 0,
+          "offset": 2342,
+          "reg_low": 4,
+          "source_operand": 8014,
+          "store_mode": "abs",
+          "value_source": "mem"
+        },
+        {
+          "channel": 0,
+          "offset": 2347,
+          "reg_low": 5,
+          "source_operand": 237,
+          "store_mode": "abs",
+          "value_source": "mem"
+        },
+        {
+          "channel": 0,
+          "offset": 2352,
+          "reg_low": 6,
+          "source_operand": 238,
+          "store_mode": "abs",
+          "value_source": "mem"
+        }
+      ]
+    },
+    {
+      "kind": "parameterized",
+      "param_operands": [
+        22,
+        23,
+        24
+      ],
+      "start_offset": 5511,
+      "start_snes": 38279,
+      "triggers_dma": true,
+      "uses_index": false,
+      "writes": [
+        {
+          "channel": 0,
+          "offset": 5511,
+          "reg_low": 0,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "imm"
+        },
+        {
+          "channel": 0,
+          "offset": 5516,
+          "reg_low": 1,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "imm"
+        },
+        {
+          "channel": 0,
+          "offset": 5531,
+          "reg_low": 2,
+          "source_operand": 22,
+          "store_mode": "abs",
+          "value_source": "mem"
+        },
+        {
+          "channel": 0,
+          "offset": 5536,
+          "reg_low": 3,
+          "source_operand": 23,
+          "store_mode": "abs",
+          "value_source": "mem"
+        },
+        {
+          "channel": 0,
+          "offset": 5541,
+          "reg_low": 4,
+          "source_operand": 24,
+          "store_mode": "abs",
+          "value_source": "mem"
+        },
+        {
+          "channel": 0,
+          "offset": 5546,
+          "reg_low": 5,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "imm"
+        },
+        {
+          "channel": 0,
+          "offset": 5551,
+          "reg_low": 6,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "imm"
+        },
+        {
+          "channel": 0,
+          "offset": 5564,
+          "reg_low": 0,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "imm"
+        },
+        {
+          "channel": 0,
+          "offset": 5569,
+          "reg_low": 1,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "imm"
+        },
+        {
+          "channel": 0,
+          "offset": 5592,
+          "reg_low": 2,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "?"
+        },
+        {
+          "channel": 0,
+          "offset": 5599,
+          "reg_low": 3,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "?"
+        },
+        {
+          "channel": 0,
+          "offset": 5606,
+          "reg_low": 4,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "?"
+        },
+        {
+          "channel": 0,
+          "offset": 5611,
+          "reg_low": 5,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "imm"
+        },
+        {
+          "channel": 0,
+          "offset": 5616,
+          "reg_low": 6,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "imm"
+        }
+      ]
+    },
+    {
+      "kind": "parameterized",
+      "param_operands": [
+        32774,
+        32775
+      ],
+      "start_offset": 31837,
+      "start_snes": 64605,
+      "triggers_dma": true,
+      "uses_index": false,
+      "writes": [
+        {
+          "channel": 1,
+          "offset": 31837,
+          "reg_low": 16,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "imm"
+        },
+        {
+          "channel": 1,
+          "offset": 31842,
+          "reg_low": 17,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "imm"
+        },
+        {
+          "channel": 1,
+          "offset": 31864,
+          "reg_low": 18,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "imm"
+        },
+        {
+          "channel": 1,
+          "offset": 31869,
+          "reg_low": 19,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "imm"
+        },
+        {
+          "channel": 1,
+          "offset": 31874,
+          "reg_low": 20,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "imm"
+        },
+        {
+          "channel": 1,
+          "offset": 31880,
+          "reg_low": 21,
+          "source_operand": 32774,
+          "store_mode": "abs",
+          "value_source": "indexed"
+        },
+        {
+          "channel": 1,
+          "offset": 31886,
+          "reg_low": 22,
+          "source_operand": 32775,
+          "store_mode": "abs",
+          "value_source": "indexed"
+        }
+      ]
+    },
+    {
+      "kind": "parameterized",
+      "param_operands": [
+        32774,
+        32775
+      ],
+      "start_offset": 31922,
+      "start_snes": 64690,
+      "triggers_dma": true,
+      "uses_index": false,
+      "writes": [
+        {
+          "channel": 1,
+          "offset": 31922,
+          "reg_low": 16,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "imm"
+        },
+        {
+          "channel": 1,
+          "offset": 31927,
+          "reg_low": 17,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "imm"
+        },
+        {
+          "channel": 1,
+          "offset": 31938,
+          "reg_low": 18,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "imm"
+        },
+        {
+          "channel": 1,
+          "offset": 31943,
+          "reg_low": 19,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "imm"
+        },
+        {
+          "channel": 1,
+          "offset": 31948,
+          "reg_low": 20,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "imm"
+        },
+        {
+          "channel": 1,
+          "offset": 31954,
+          "reg_low": 21,
+          "source_operand": 32774,
+          "store_mode": "abs",
+          "value_source": "indexed"
+        },
+        {
+          "channel": 1,
+          "offset": 31960,
+          "reg_low": 22,
+          "source_operand": 32775,
+          "store_mode": "abs",
+          "value_source": "indexed"
+        }
+      ]
+    },
+    {
+      "kind": "parameterized",
+      "param_operands": [
+        37,
+        38
+      ],
+      "start_offset": 72583,
+      "start_snes": 170887,
+      "triggers_dma": true,
+      "uses_index": false,
+      "writes": [
+        {
+          "channel": 1,
+          "offset": 72583,
+          "reg_low": 16,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "imm"
+        },
+        {
+          "channel": 1,
+          "offset": 72588,
+          "reg_low": 17,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "imm"
+        },
+        {
+          "channel": 1,
+          "offset": 72610,
+          "reg_low": 18,
+          "source_operand": 37,
+          "store_mode": "abs",
+          "value_source": "mem"
+        },
+        {
+          "channel": 1,
+          "offset": 72615,
+          "reg_low": 19,
+          "source_operand": 38,
+          "store_mode": "abs",
+          "value_source": "mem"
+        },
+        {
+          "channel": 1,
+          "offset": 72620,
+          "reg_low": 20,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "imm"
+        },
+        {
+          "channel": 1,
+          "offset": 72625,
+          "reg_low": 21,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "imm"
+        },
+        {
+          "channel": 1,
+          "offset": 72630,
+          "reg_low": 22,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "imm"
+        }
+      ]
+    },
+    {
+      "kind": "parameterized",
+      "param_operands": [
+        37,
+        38,
+        43,
+        44
+      ],
+      "start_offset": 80996,
+      "start_snes": 179300,
+      "triggers_dma": true,
+      "uses_index": false,
+      "writes": [
+        {
+          "channel": 1,
+          "offset": 80996,
+          "reg_low": 16,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "imm"
+        },
+        {
+          "channel": 1,
+          "offset": 81001,
+          "reg_low": 17,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "imm"
+        },
+        {
+          "channel": 1,
+          "offset": 81021,
+          "reg_low": 18,
+          "source_operand": 37,
+          "store_mode": "abs",
+          "value_source": "mem"
+        },
+        {
+          "channel": 1,
+          "offset": 81026,
+          "reg_low": 19,
+          "source_operand": 38,
+          "store_mode": "abs",
+          "value_source": "mem"
+        },
+        {
+          "channel": 1,
+          "offset": 81031,
+          "reg_low": 20,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "imm"
+        },
+        {
+          "channel": 1,
+          "offset": 81036,
+          "reg_low": 21,
+          "source_operand": 43,
+          "store_mode": "abs",
+          "value_source": "mem"
+        },
+        {
+          "channel": 1,
+          "offset": 81041,
+          "reg_low": 22,
+          "source_operand": 44,
+          "store_mode": "abs",
+          "value_source": "mem"
+        }
+      ]
+    },
+    {
+      "kind": "parameterized",
+      "param_operands": [
+        8098,
+        8099,
+        8100
+      ],
+      "start_offset": 6148,
+      "start_snes": 38916,
+      "triggers_dma": false,
+      "uses_index": false,
+      "writes": [
+        {
+          "channel": 7,
+          "offset": 6148,
+          "reg_low": 112,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "imm"
+        },
+        {
+          "channel": 7,
+          "offset": 6153,
+          "reg_low": 113,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "imm"
+        },
+        {
+          "channel": 7,
+          "offset": 6159,
+          "reg_low": 114,
+          "source_operand": 8098,
+          "store_mode": "abs",
+          "value_source": "mem"
+        },
+        {
+          "channel": 7,
+          "offset": 6165,
+          "reg_low": 115,
+          "source_operand": 8099,
+          "store_mode": "abs",
+          "value_source": "mem"
+        },
+        {
+          "channel": 7,
+          "offset": 6171,
+          "reg_low": 116,
+          "source_operand": 8100,
+          "store_mode": "abs",
+          "value_source": "mem"
+        }
+      ]
+    },
+    {
+      "kind": "parameterized",
+      "param_operands": [
+        8098,
+        8099,
+        8100
+      ],
+      "start_offset": 7532,
+      "start_snes": 40300,
+      "triggers_dma": false,
+      "uses_index": false,
+      "writes": [
+        {
+          "channel": 7,
+          "offset": 7532,
+          "reg_low": 112,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "imm"
+        },
+        {
+          "channel": 7,
+          "offset": 7537,
+          "reg_low": 113,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "imm"
+        },
+        {
+          "channel": 7,
+          "offset": 7543,
+          "reg_low": 114,
+          "source_operand": 8098,
+          "store_mode": "abs",
+          "value_source": "mem"
+        },
+        {
+          "channel": 7,
+          "offset": 7549,
+          "reg_low": 115,
+          "source_operand": 8099,
+          "store_mode": "abs",
+          "value_source": "mem"
+        },
+        {
+          "channel": 7,
+          "offset": 7555,
+          "reg_low": 116,
+          "source_operand": 8100,
+          "store_mode": "abs",
+          "value_source": "mem"
+        }
+      ]
+    },
+    {
+      "kind": "immediate",
+      "param_operands": [],
+      "start_offset": 4736,
+      "start_snes": 37504,
+      "triggers_dma": true,
+      "uses_index": false,
+      "writes": [
+        {
+          "channel": 2,
+          "offset": 4736,
+          "reg_low": 32,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "imm"
+        },
+        {
+          "channel": 2,
+          "offset": 4741,
+          "reg_low": 33,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "imm"
+        },
+        {
+          "channel": 2,
+          "offset": 4752,
+          "reg_low": 34,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "imm"
+        },
+        {
+          "channel": 2,
+          "offset": 4757,
+          "reg_low": 35,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "imm"
+        },
+        {
+          "channel": 2,
+          "offset": 4762,
+          "reg_low": 36,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "imm"
+        },
+        {
+          "channel": 2,
+          "offset": 4767,
+          "reg_low": 37,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "imm"
+        },
+        {
+          "channel": 2,
+          "offset": 4772,
+          "reg_low": 38,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "imm"
+        }
+      ]
+    },
+    {
+      "kind": "immediate",
+      "param_operands": [],
+      "start_offset": 72353,
+      "start_snes": 170657,
+      "triggers_dma": true,
+      "uses_index": false,
+      "writes": [
+        {
+          "channel": 1,
+          "offset": 72353,
+          "reg_low": 16,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "imm"
+        },
+        {
+          "channel": 1,
+          "offset": 72358,
+          "reg_low": 17,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "imm"
+        },
+        {
+          "channel": 1,
+          "offset": 72384,
+          "reg_low": 18,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "imm"
+        },
+        {
+          "channel": 1,
+          "offset": 72392,
+          "reg_low": 19,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "imm"
+        },
+        {
+          "channel": 1,
+          "offset": 72400,
+          "reg_low": 20,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "imm"
+        },
+        {
+          "channel": 1,
+          "offset": 72405,
+          "reg_low": 21,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "imm"
+        },
+        {
+          "channel": 1,
+          "offset": 72410,
+          "reg_low": 22,
+          "source_operand": null,
+          "store_mode": "abs",
+          "value_source": "imm"
+        }
+      ]
+    }
+  ],
+  "tool": "scan_dma_helper"
+}

@@ -1,0 +1,719 @@
+{
+  "tool": "mesen2 dma_log.lua / trace_decompressor.lua (live, emulator-confirmed)",
+  "confidence": "confirmed",
+  "rom": {
+    "crc32": "5F02A044",
+    "size": 1048576,
+    "version": "DaffyDuckMarvinMissionsUsa"
+  },
+  "capture": "boot -> title screen, 1500 frames, USA ROM",
+  "graphics_pipeline": {
+    "decompressor_routine": "$82:8549-$82:8655 (PC ~0x10549)",
+    "decompressor_store_pcs": [
+      {
+        "pc": "$8285F8",
+        "writes": 25689
+      },
+      {
+        "pc": "$828549",
+        "writes": 12249
+      },
+      {
+        "pc": "$828626",
+        "writes": 1524
+      },
+      {
+        "pc": "$828655",
+        "writes": 578
+      },
+      {
+        "pc": "$8285A8",
+        "writes": 234
+      },
+      {
+        "pc": "$82859E",
+        "writes": 234
+      }
+    ],
+    "compressed_source_banks": [
+      {
+        "bank": "$92",
+        "reads": 14060
+      },
+      {
+        "bank": "$95",
+        "reads": 12198
+      },
+      {
+        "bank": "$96",
+        "reads": 5338
+      },
+      {
+        "bank": "$93",
+        "reads": 4946
+      },
+      {
+        "bank": "$83",
+        "reads": 100
+      },
+      {
+        "bank": "$00",
+        "reads": 96
+      },
+      {
+        "bank": "$80",
+        "reads": 1
+      }
+    ],
+    "compressed_source_span": {
+      "min": "$00FFEA",
+      "max": "$96986D"
+    },
+    "wram_staging": "$7F:C000-$7F:CFFF (tiles) and $7F:D000 (2KB, tilemap)",
+    "vram_upload_loop": "$82:9BBE (64-byte chunks of $7F:C080-$7F:CFC0)",
+    "note": "graphics are decompressed from ROM banks $92-$96 into WRAM, then DMA'd to VRAM"
+  },
+  "transfer_count": 64,
+  "transfers": [
+    {
+      "n": 1,
+      "channel": 2,
+      "trigger_pc": "$8092AC",
+      "dest": "oam",
+      "src": "$00:1C6A",
+      "src_space": "LowRAM",
+      "size": 544,
+      "dir": "A2B"
+    },
+    {
+      "n": 2,
+      "channel": 1,
+      "trigger_pc": "$829AE2",
+      "dest": "vram",
+      "src": "$7F:D000",
+      "src_space": "WRAM",
+      "size": 2048,
+      "dir": "A2B"
+    },
+    {
+      "n": 3,
+      "channel": 1,
+      "trigger_pc": "$829BBE",
+      "dest": "vram",
+      "src": "$7F:CFC0",
+      "src_space": "WRAM",
+      "size": 64,
+      "dir": "A2B"
+    },
+    {
+      "n": 4,
+      "channel": 1,
+      "trigger_pc": "$829BBE",
+      "dest": "vram",
+      "src": "$7F:CF80",
+      "src_space": "WRAM",
+      "size": 64,
+      "dir": "A2B"
+    },
+    {
+      "n": 5,
+      "channel": 1,
+      "trigger_pc": "$829BBE",
+      "dest": "vram",
+      "src": "$7F:CF40",
+      "src_space": "WRAM",
+      "size": 64,
+      "dir": "A2B"
+    },
+    {
+      "n": 6,
+      "channel": 1,
+      "trigger_pc": "$829BBE",
+      "dest": "vram",
+      "src": "$7F:CF00",
+      "src_space": "WRAM",
+      "size": 64,
+      "dir": "A2B"
+    },
+    {
+      "n": 7,
+      "channel": 1,
+      "trigger_pc": "$829BBE",
+      "dest": "vram",
+      "src": "$7F:CEC0",
+      "src_space": "WRAM",
+      "size": 64,
+      "dir": "A2B"
+    },
+    {
+      "n": 8,
+      "channel": 1,
+      "trigger_pc": "$829BBE",
+      "dest": "vram",
+      "src": "$7F:CE80",
+      "src_space": "WRAM",
+      "size": 64,
+      "dir": "A2B"
+    },
+    {
+      "n": 9,
+      "channel": 1,
+      "trigger_pc": "$829BBE",
+      "dest": "vram",
+      "src": "$7F:CE40",
+      "src_space": "WRAM",
+      "size": 64,
+      "dir": "A2B"
+    },
+    {
+      "n": 10,
+      "channel": 1,
+      "trigger_pc": "$829BBE",
+      "dest": "vram",
+      "src": "$7F:CE00",
+      "src_space": "WRAM",
+      "size": 64,
+      "dir": "A2B"
+    },
+    {
+      "n": 11,
+      "channel": 1,
+      "trigger_pc": "$829BBE",
+      "dest": "vram",
+      "src": "$7F:CDC0",
+      "src_space": "WRAM",
+      "size": 64,
+      "dir": "A2B"
+    },
+    {
+      "n": 12,
+      "channel": 1,
+      "trigger_pc": "$829BBE",
+      "dest": "vram",
+      "src": "$7F:CD80",
+      "src_space": "WRAM",
+      "size": 64,
+      "dir": "A2B"
+    },
+    {
+      "n": 13,
+      "channel": 1,
+      "trigger_pc": "$829BBE",
+      "dest": "vram",
+      "src": "$7F:CD40",
+      "src_space": "WRAM",
+      "size": 64,
+      "dir": "A2B"
+    },
+    {
+      "n": 14,
+      "channel": 1,
+      "trigger_pc": "$829BBE",
+      "dest": "vram",
+      "src": "$7F:CD00",
+      "src_space": "WRAM",
+      "size": 64,
+      "dir": "A2B"
+    },
+    {
+      "n": 15,
+      "channel": 1,
+      "trigger_pc": "$829BBE",
+      "dest": "vram",
+      "src": "$7F:CCC0",
+      "src_space": "WRAM",
+      "size": 64,
+      "dir": "A2B"
+    },
+    {
+      "n": 16,
+      "channel": 1,
+      "trigger_pc": "$829BBE",
+      "dest": "vram",
+      "src": "$7F:CC80",
+      "src_space": "WRAM",
+      "size": 64,
+      "dir": "A2B"
+    },
+    {
+      "n": 17,
+      "channel": 1,
+      "trigger_pc": "$829BBE",
+      "dest": "vram",
+      "src": "$7F:CC40",
+      "src_space": "WRAM",
+      "size": 64,
+      "dir": "A2B"
+    },
+    {
+      "n": 18,
+      "channel": 1,
+      "trigger_pc": "$829BBE",
+      "dest": "vram",
+      "src": "$7F:CC00",
+      "src_space": "WRAM",
+      "size": 64,
+      "dir": "A2B"
+    },
+    {
+      "n": 19,
+      "channel": 1,
+      "trigger_pc": "$829BBE",
+      "dest": "vram",
+      "src": "$7F:CBC0",
+      "src_space": "WRAM",
+      "size": 64,
+      "dir": "A2B"
+    },
+    {
+      "n": 20,
+      "channel": 1,
+      "trigger_pc": "$829BBE",
+      "dest": "vram",
+      "src": "$7F:CB80",
+      "src_space": "WRAM",
+      "size": 64,
+      "dir": "A2B"
+    },
+    {
+      "n": 21,
+      "channel": 1,
+      "trigger_pc": "$829BBE",
+      "dest": "vram",
+      "src": "$7F:CB40",
+      "src_space": "WRAM",
+      "size": 64,
+      "dir": "A2B"
+    },
+    {
+      "n": 22,
+      "channel": 1,
+      "trigger_pc": "$829BBE",
+      "dest": "vram",
+      "src": "$7F:CB00",
+      "src_space": "WRAM",
+      "size": 64,
+      "dir": "A2B"
+    },
+    {
+      "n": 23,
+      "channel": 1,
+      "trigger_pc": "$829BBE",
+      "dest": "vram",
+      "src": "$7F:CAC0",
+      "src_space": "WRAM",
+      "size": 64,
+      "dir": "A2B"
+    },
+    {
+      "n": 24,
+      "channel": 1,
+      "trigger_pc": "$829BBE",
+      "dest": "vram",
+      "src": "$7F:CA80",
+      "src_space": "WRAM",
+      "size": 64,
+      "dir": "A2B"
+    },
+    {
+      "n": 25,
+      "channel": 1,
+      "trigger_pc": "$829BBE",
+      "dest": "vram",
+      "src": "$7F:CA40",
+      "src_space": "WRAM",
+      "size": 64,
+      "dir": "A2B"
+    },
+    {
+      "n": 26,
+      "channel": 1,
+      "trigger_pc": "$829BBE",
+      "dest": "vram",
+      "src": "$7F:CA00",
+      "src_space": "WRAM",
+      "size": 64,
+      "dir": "A2B"
+    },
+    {
+      "n": 27,
+      "channel": 1,
+      "trigger_pc": "$829BBE",
+      "dest": "vram",
+      "src": "$7F:C9C0",
+      "src_space": "WRAM",
+      "size": 64,
+      "dir": "A2B"
+    },
+    {
+      "n": 28,
+      "channel": 1,
+      "trigger_pc": "$829BBE",
+      "dest": "vram",
+      "src": "$7F:C980",
+      "src_space": "WRAM",
+      "size": 64,
+      "dir": "A2B"
+    },
+    {
+      "n": 29,
+      "channel": 1,
+      "trigger_pc": "$829BBE",
+      "dest": "vram",
+      "src": "$7F:C940",
+      "src_space": "WRAM",
+      "size": 64,
+      "dir": "A2B"
+    },
+    {
+      "n": 30,
+      "channel": 1,
+      "trigger_pc": "$829BBE",
+      "dest": "vram",
+      "src": "$7F:C900",
+      "src_space": "WRAM",
+      "size": 64,
+      "dir": "A2B"
+    },
+    {
+      "n": 31,
+      "channel": 1,
+      "trigger_pc": "$829BBE",
+      "dest": "vram",
+      "src": "$7F:C8C0",
+      "src_space": "WRAM",
+      "size": 64,
+      "dir": "A2B"
+    },
+    {
+      "n": 32,
+      "channel": 1,
+      "trigger_pc": "$829BBE",
+      "dest": "vram",
+      "src": "$7F:C880",
+      "src_space": "WRAM",
+      "size": 64,
+      "dir": "A2B"
+    },
+    {
+      "n": 33,
+      "channel": 1,
+      "trigger_pc": "$829BBE",
+      "dest": "vram",
+      "src": "$7F:C840",
+      "src_space": "WRAM",
+      "size": 64,
+      "dir": "A2B"
+    },
+    {
+      "n": 34,
+      "channel": 1,
+      "trigger_pc": "$829BBE",
+      "dest": "vram",
+      "src": "$7F:C800",
+      "src_space": "WRAM",
+      "size": 64,
+      "dir": "A2B"
+    },
+    {
+      "n": 35,
+      "channel": 1,
+      "trigger_pc": "$829BBE",
+      "dest": "vram",
+      "src": "$7F:C7C0",
+      "src_space": "WRAM",
+      "size": 64,
+      "dir": "A2B"
+    },
+    {
+      "n": 36,
+      "channel": 1,
+      "trigger_pc": "$829BBE",
+      "dest": "vram",
+      "src": "$7F:C780",
+      "src_space": "WRAM",
+      "size": 64,
+      "dir": "A2B"
+    },
+    {
+      "n": 37,
+      "channel": 1,
+      "trigger_pc": "$829BBE",
+      "dest": "vram",
+      "src": "$7F:C740",
+      "src_space": "WRAM",
+      "size": 64,
+      "dir": "A2B"
+    },
+    {
+      "n": 38,
+      "channel": 1,
+      "trigger_pc": "$829BBE",
+      "dest": "vram",
+      "src": "$7F:C700",
+      "src_space": "WRAM",
+      "size": 64,
+      "dir": "A2B"
+    },
+    {
+      "n": 39,
+      "channel": 1,
+      "trigger_pc": "$829BBE",
+      "dest": "vram",
+      "src": "$7F:C6C0",
+      "src_space": "WRAM",
+      "size": 64,
+      "dir": "A2B"
+    },
+    {
+      "n": 40,
+      "channel": 1,
+      "trigger_pc": "$829BBE",
+      "dest": "vram",
+      "src": "$7F:C680",
+      "src_space": "WRAM",
+      "size": 64,
+      "dir": "A2B"
+    },
+    {
+      "n": 41,
+      "channel": 1,
+      "trigger_pc": "$829BBE",
+      "dest": "vram",
+      "src": "$7F:C640",
+      "src_space": "WRAM",
+      "size": 64,
+      "dir": "A2B"
+    },
+    {
+      "n": 42,
+      "channel": 1,
+      "trigger_pc": "$829BBE",
+      "dest": "vram",
+      "src": "$7F:C600",
+      "src_space": "WRAM",
+      "size": 64,
+      "dir": "A2B"
+    },
+    {
+      "n": 43,
+      "channel": 1,
+      "trigger_pc": "$829BBE",
+      "dest": "vram",
+      "src": "$7F:C5C0",
+      "src_space": "WRAM",
+      "size": 64,
+      "dir": "A2B"
+    },
+    {
+      "n": 44,
+      "channel": 1,
+      "trigger_pc": "$829BBE",
+      "dest": "vram",
+      "src": "$7F:C580",
+      "src_space": "WRAM",
+      "size": 64,
+      "dir": "A2B"
+    },
+    {
+      "n": 45,
+      "channel": 1,
+      "trigger_pc": "$829BBE",
+      "dest": "vram",
+      "src": "$7F:C540",
+      "src_space": "WRAM",
+      "size": 64,
+      "dir": "A2B"
+    },
+    {
+      "n": 46,
+      "channel": 1,
+      "trigger_pc": "$829BBE",
+      "dest": "vram",
+      "src": "$7F:C500",
+      "src_space": "WRAM",
+      "size": 64,
+      "dir": "A2B"
+    },
+    {
+      "n": 47,
+      "channel": 1,
+      "trigger_pc": "$829BBE",
+      "dest": "vram",
+      "src": "$7F:C4C0",
+      "src_space": "WRAM",
+      "size": 64,
+      "dir": "A2B"
+    },
+    {
+      "n": 48,
+      "channel": 1,
+      "trigger_pc": "$829BBE",
+      "dest": "vram",
+      "src": "$7F:C480",
+      "src_space": "WRAM",
+      "size": 64,
+      "dir": "A2B"
+    },
+    {
+      "n": 49,
+      "channel": 1,
+      "trigger_pc": "$829BBE",
+      "dest": "vram",
+      "src": "$7F:C440",
+      "src_space": "WRAM",
+      "size": 64,
+      "dir": "A2B"
+    },
+    {
+      "n": 50,
+      "channel": 1,
+      "trigger_pc": "$829BBE",
+      "dest": "vram",
+      "src": "$7F:C400",
+      "src_space": "WRAM",
+      "size": 64,
+      "dir": "A2B"
+    },
+    {
+      "n": 51,
+      "channel": 1,
+      "trigger_pc": "$829BBE",
+      "dest": "vram",
+      "src": "$7F:C3C0",
+      "src_space": "WRAM",
+      "size": 64,
+      "dir": "A2B"
+    },
+    {
+      "n": 52,
+      "channel": 1,
+      "trigger_pc": "$829BBE",
+      "dest": "vram",
+      "src": "$7F:C380",
+      "src_space": "WRAM",
+      "size": 64,
+      "dir": "A2B"
+    },
+    {
+      "n": 53,
+      "channel": 1,
+      "trigger_pc": "$829BBE",
+      "dest": "vram",
+      "src": "$7F:C340",
+      "src_space": "WRAM",
+      "size": 64,
+      "dir": "A2B"
+    },
+    {
+      "n": 54,
+      "channel": 1,
+      "trigger_pc": "$829BBE",
+      "dest": "vram",
+      "src": "$7F:C300",
+      "src_space": "WRAM",
+      "size": 64,
+      "dir": "A2B"
+    },
+    {
+      "n": 55,
+      "channel": 1,
+      "trigger_pc": "$829BBE",
+      "dest": "vram",
+      "src": "$7F:C2C0",
+      "src_space": "WRAM",
+      "size": 64,
+      "dir": "A2B"
+    },
+    {
+      "n": 56,
+      "channel": 1,
+      "trigger_pc": "$829BBE",
+      "dest": "vram",
+      "src": "$7F:C280",
+      "src_space": "WRAM",
+      "size": 64,
+      "dir": "A2B"
+    },
+    {
+      "n": 57,
+      "channel": 1,
+      "trigger_pc": "$829BBE",
+      "dest": "vram",
+      "src": "$7F:C240",
+      "src_space": "WRAM",
+      "size": 64,
+      "dir": "A2B"
+    },
+    {
+      "n": 58,
+      "channel": 1,
+      "trigger_pc": "$829BBE",
+      "dest": "vram",
+      "src": "$7F:C200",
+      "src_space": "WRAM",
+      "size": 64,
+      "dir": "A2B"
+    },
+    {
+      "n": 59,
+      "channel": 1,
+      "trigger_pc": "$829BBE",
+      "dest": "vram",
+      "src": "$7F:C1C0",
+      "src_space": "WRAM",
+      "size": 64,
+      "dir": "A2B"
+    },
+    {
+      "n": 60,
+      "channel": 1,
+      "trigger_pc": "$829BBE",
+      "dest": "vram",
+      "src": "$7F:C180",
+      "src_space": "WRAM",
+      "size": 64,
+      "dir": "A2B"
+    },
+    {
+      "n": 61,
+      "channel": 1,
+      "trigger_pc": "$829BBE",
+      "dest": "vram",
+      "src": "$7F:C140",
+      "src_space": "WRAM",
+      "size": 64,
+      "dir": "A2B"
+    },
+    {
+      "n": 62,
+      "channel": 1,
+      "trigger_pc": "$829BBE",
+      "dest": "vram",
+      "src": "$7F:C100",
+      "src_space": "WRAM",
+      "size": 64,
+      "dir": "A2B"
+    },
+    {
+      "n": 63,
+      "channel": 1,
+      "trigger_pc": "$829BBE",
+      "dest": "vram",
+      "src": "$7F:C0C0",
+      "src_space": "WRAM",
+      "size": 64,
+      "dir": "A2B"
+    },
+    {
+      "n": 64,
+      "channel": 1,
+      "trigger_pc": "$829BBE",
+      "dest": "vram",
+      "src": "$7F:C080",
+      "src_space": "WRAM",
+      "size": 64,
+      "dir": "A2B"
+    }
+  ]
+}

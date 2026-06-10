@@ -6,6 +6,77 @@ docs/reverse-engineering/ when they stabilize.
 
 ---
 
+## 2026-06-10 — Live DMA capture in Mesen2 (graphics pipeline CONFIRMED)
+
+- Got a working emulator: the official Mesen2 2.1.1 Linux binary crashes at
+  load here (`std::bad_cast`), so built Mesen2 **from source** with GCC
+  (`USE_GCC=true make LTO=false`, .NET 8 SDK installed user-local to `~/.dotnet`,
+  SDL2 already present). The from-source `MesenCore.so` links against this
+  system's libstdc++ and **does not crash** — headless `--testRunner` runs Lua.
+- Mesen2 Lua API gotchas (now baked into `tools/mesen/*.lua`): the callback enum
+  is `emu.callbackType` (not `memCallbackType`); `emu.getState()` is a FLAT table
+  keyed `"cpu.pc"`/`"cpu.k"`; Lua `io.*` corrupts the heap under testRunner — use
+  `print()` (the only stdout channel); stdout is noisy with
+  `[CPU] Uninitialized memory read`, so filter by tag.
+- `dma_log.lua` (hooks `$420B`) captured **64 unique transfers** boot→title. The
+  OAM (`$80:92AC` ← `$00:1C6A`, 544B) and `$7F:D000` (`$82:9AE2`, 2048B) uploads
+  reproduce the static `scan_dma` hits to within a few bytes — cross-validated.
+- `trace_decompressor.lua` located the pipeline — **confirmed**:
+  - compressed graphics live in ROM banks **`$92,$93,$95,$96`** (reads to
+    `$96:986D`; PC ≈ `0x90000-0xB7FFF`);
+  - the **decompressor is `$82:8549-$82:8655`** (dominant store `$82:85F8`),
+    filling WRAM `$7F:C000-CFFF`;
+  - the VRAM upload loop is `$82:9BBE` (64×64-byte chunks of `$7F:C080-CFC0`).
+  Report: `reverse-engineering/reports/live_dma_capture.json`. Write-up:
+  `reverse-engineering/graphics-pipeline.md`. This promotes graphics storage from
+  *unknown* to a **confirmed** ROM location and compression from *likely* to
+  *confirmed present*.
+
+### Next research steps
+
+1. Disassemble `$82:8549-$82:8655` to identify the **compression scheme** and its
+   source pointer; write a codec only after a round-trip test passes.
+2. Find the table mapping graphics-id → `$92-$96` source address (what sets the
+   decompressor's source pointer) — that index is what the loader uses.
+3. Reach **level 1** (drive the GUI or script `emu.setInput`) and re-run
+   `trace_decompressor.lua` to capture in-level graphics sources.
+
+---
+
+## 2026-06-10 — Parameterized DMA helper trace (static)
+
+- Tried to bring up **Mesen2** for live DMA logging (the roadmap's preferred
+  path). Wrote `tools/mesen/dma_log.lua` (hooks the real `$420B` trigger to log
+  every transfer's source→dest→size + PC). The official Mesen2 **2.1.1 Linux
+  binary crashes at load** on this system — `std::bad_cast` thrown from a
+  `std::regex`/`use_facet<collate>` in MesenCore.so's static init (gdb backtrace
+  in session notes); not fixable via locale env. Dynamic analysis is therefore
+  **parked** pending a from-source Mesen build or another scriptable emulator.
+  The Lua logger is ready for whenever that lands.
+- Added **`scan_dma_helper`** (static): clusters stores to the DMA registers
+  (`$43xx`) and classifies each register's value as `immediate` vs
+  `parameterized` (loaded from memory/table), then reports the operands feeding
+  the source registers. Verified on planted code (indexed helper, immediate
+  site, lone-store rejection). Report:
+  `reverse-engineering/reports/scan_dma_helper.json`.
+- On the USA ROM: **16 parameterized, triggering DMA setups**, all in bank $00
+  (`$00:82xx`–`$00:95xx`). They load the channel source registers from
+  direct-page pointers **`$E7..$E9` / `$EA..$EC` / `$16..$18`** (24-bit) and
+  low-RAM `$1Fxx` variables — the source address is *computed into RAM*, never a
+  ROM immediate. — **likely**. This sharpens the decompress-then-DMA picture:
+  the graphics lead is now "whatever writes `$E7..$E9`/`$16..$18`", i.e. the
+  loader/decompressor. See `reverse-engineering/dma-helper.md`.
+
+### Next research steps
+
+1. Trace the *writers* of DP `$E7..$E9` / `$16..$18` (a "stores to DP $E7" scan,
+   or a DP write breakpoint once an emulator runs) — that routine is the loader.
+2. `inspect_offset --snes 0x008412` — check the lone ROM-space source operand.
+3. Get a working emulator (build Mesen2 from source / try BizHawk) and confirm
+   the live transfer PCs fall inside the `$00:82xx`–`$00:95xx` sites.
+
+---
+
 ## 2026-06-09 — DMA upload scan (first real-ROM finding)
 
 - Added `scan_dma`: reconstructs general-purpose DMA transfers from immediate-fed

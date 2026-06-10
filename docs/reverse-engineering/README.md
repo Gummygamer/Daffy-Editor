@@ -26,15 +26,30 @@ cargo run --bin scan_palettes        -- path/to/rom.sfc --min-rows 2
 cargo run --bin scan_tile_patterns   -- path/to/rom.sfc --min-tiles 16
 cargo run --bin scan_repeated_blocks -- path/to/rom.sfc --block-len 32 --min-count 4
 cargo run --bin scan_dma             -- path/to/rom.sfc
+cargo run --bin scan_dma_helper      -- path/to/rom.sfc
 cargo run --bin inspect_offset       -- path/to/rom.sfc --snes 0x008000 --len 64
 cargo run --bin inspect_offset       -- path/to/rom.sfc --pc 0x7FC0 --len 32
 ```
 
 `scan_dma` disassembles just enough 65816 to reconstruct general-purpose DMA
 transfers (source address + VRAM/CGRAM/OAM destination) from their setup code.
-Unlike the pattern scanners it yields a small, high-signal list.
+Unlike the pattern scanners it yields a small, high-signal list. `scan_dma_helper`
+goes one step further: it finds the *parameterized* setup sites (register values
+loaded from memory/tables, which `scan_dma` cannot follow) and reports the
+direct-page/RAM variables that feed each channel's source pointer.
 
 ## Index
 
 - [rom-identity.md](rom-identity.md) — supported ROM identification (confirmed)
 - [dma-transfers.md](dma-transfers.md) — DMA upload sources/destinations (likely)
+- [dma-helper.md](dma-helper.md) — parameterized DMA sites & source-pointer
+  variables `$E7..$EC`/`$16..$18` (likely/speculative)
+- [graphics-pipeline.md](graphics-pipeline.md) — **confirmed** decompress→WRAM→DMA
+  pipeline: compressed graphics in ROM banks `$92-$96`, decompressor `$82:8549`
+
+## Dynamic analysis (Mesen2)
+
+Live captures use Lua scripts under [`../../tools/mesen/`](../../tools/mesen/)
+run against a from-source Mesen2 build (see `tools/mesen/run-headless.sh`).
+These produce the **confirmed** findings; the static scanners above produce
+candidates/leads.

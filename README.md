@@ -21,15 +21,17 @@ The game's level format is **not yet reverse engineered**. What works today:
   undo/redo, dirty tracking, and validation.
 - JSON project save/load (stores ROM *hashes*, never ROM bytes).
 - IPS and BPS patch export (changed bytes only; BPS carries checksums).
-- Six CLI scanners for hunting pointer tables, palettes, tile graphics,
-  repeated structures, and DMA upload sources (`scan_dma`, the highest-signal
-  one — it reconstructs transfers from the game's own setup code).
+- CLI scanners for hunting pointer tables, palettes, tile graphics, repeated
+  structures, and DMA upload sources. The highest-signal ones reconstruct DMA
+  from the game's own setup code: `scan_dma` (immediate-fed transfers) and
+  `scan_dma_helper` (the parameterized setup sites and the source-pointer
+  variables they read).
 
 ## Quick start
 
 ```sh
 cargo run --release      # the editor
-cargo test               # 82 automated tests, no ROM required
+cargo test               # automated tests, no ROM required
 ```
 
 ## Documentation

@@ -33,14 +33,20 @@ complement (+0x1C, LE), checksum (+0x1E, LE). Parsed by `src/rom/info.rs`.
 Field values for the real USA ROM should be recorded in
 `docs/reverse-engineering/rom-identity.md` after first manual inspection.
 
-## Graphics — likely (generic), locations unknown
+## Graphics — storage location confirmed, format compressed
 
 The SNES PPU dictates 4bpp planar tiles (32 bytes/tile) and BGR555 palettes;
 decoding helpers are in `src/snes/tiles.rs` / `src/snes/palette.rs`
-(confirmed as formats, since they are hardware-defined). *Where* this game
-stores tiles/palettes is **unknown**; see the compression note below for why
-the `scan_tile_patterns` / `scan_palettes` candidates are probably *not* the
-raw ROM storage locations.
+(confirmed as formats, since they are hardware-defined).
+
+**Compressed graphics are stored in ROM banks `$92`, `$93`, `$95`, `$96`**
+(PC ≈ `0x90000`–`0xB7FFF`) — **confirmed** by tracing the decompressor's ROM
+reads live in Mesen2. They are decompressed by the routine at **`$82:8549`–
+`$82:8655`** into WRAM `$7F:C000-$7F:CFFF`, then DMA'd to VRAM. Full pipeline:
+[reverse-engineering/graphics-pipeline.md](reverse-engineering/graphics-pipeline.md).
+The `scan_tile_patterns` / `scan_palettes` candidates elsewhere are therefore
+*not* the raw storage, as predicted. The compression scheme itself is still
+**unknown** (disassemble `$82:8549` next); no codec until it is confirmed.
 
 ## DMA uploads — likely
 
@@ -49,7 +55,16 @@ init/HUD uploads). All of them source from **RAM** (`$7F` WRAM / `$00` low
 RAM), never directly from ROM, and one is a textbook 544-byte OAM upload.
 Details and emulator-confirmation steps:
 [reverse-engineering/dma-transfers.md](reverse-engineering/dma-transfers.md).
-Most uploads run through a parameterized DMA helper the scanner cannot follow.
+Most uploads run through parameterized setup code the immediate scanner cannot
+follow.
+
+`scan_dma_helper` recovers those parameterized sites statically: 16 triggering
+DMA setups in bank $00 (`$00:82xx`–`$00:95xx`) that load each channel's source
+register from **direct-page pointers `$E7..$E9`, `$EA..$EC`, `$16..$18`** and
+low-RAM `$1Fxx` variables — i.e. the source address is *computed into RAM*, not
+read from a ROM immediate. The graphics lead is therefore the code that writes
+those pointers (the loader/decompressor). See
+[reverse-engineering/dma-helper.md](reverse-engineering/dma-helper.md).
 
 ## Level data — unknown
 
@@ -58,13 +73,13 @@ yet**. The editor currently displays synthetic placeholder data, labeled as
 such in the UI. Candidate-hunting tools: `scan_pointers`,
 `scan_repeated_blocks`, `inspect_offset`.
 
-## Compression — likely (present), scheme unknown
+## Compression — present (confirmed), scheme unknown
 
-The graphics/palette DMA transfers found by `scan_dma` all upload from WRAM,
-not from ROM (see DMA uploads above). A decompress-into-RAM-then-DMA pipeline
-is the usual reason for that, so the ROM **likely** stores tiles/palettes in a
-compressed form rather than raw at the addresses the pattern scanners flag.
-The specific scheme (LZ variant, RLE, etc.) is still **unknown** and no codec
-should be written until the decompressor is located and confirmed in an
-emulator. Tracking note:
-[reverse-engineering/dma-transfers.md](reverse-engineering/dma-transfers.md).
+**Confirmed**: graphics are decompressed from ROM banks `$92-$96` into WRAM by
+`$82:8549-$82:8655` before being DMA'd (live capture, not inference). The
+decompress-into-RAM-then-DMA pipeline is real. The specific scheme (LZ variant,
+RLE, etc.) is still **unknown** and no codec should be written until the
+routine at `$82:8549` is disassembled and a round-trip is confirmed. Tracking
+notes:
+[reverse-engineering/graphics-pipeline.md](reverse-engineering/graphics-pipeline.md),
+[reverse-engineering/dma-helper.md](reverse-engineering/dma-helper.md).
