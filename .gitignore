@@ -1,0 +1,6 @@
+/target
+.codex
+*.sfc
+*.smc
+*.srm
+*.zip

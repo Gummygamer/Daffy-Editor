@@ -1,0 +1,1412 @@
+{
+  "candidates": [
+    {
+      "offset": 262154,
+      "rows": 129,
+      "score": 129.5,
+      "snes_addr": 557066,
+      "starts_with_black": true
+    },
+    {
+      "offset": 268972,
+      "rows": 90,
+      "score": 90.5,
+      "snes_addr": 563884,
+      "starts_with_black": true
+    },
+    {
+      "offset": 266440,
+      "rows": 25,
+      "score": 25.0,
+      "snes_addr": 561352,
+      "starts_with_black": false
+    },
+    {
+      "offset": 306544,
+      "rows": 23,
+      "score": 23.0,
+      "snes_addr": 634224,
+      "starts_with_black": false
+    },
+    {
+      "offset": 494496,
+      "rows": 21,
+      "score": 21.0,
+      "snes_addr": 1018784,
+      "starts_with_black": false
+    },
+    {
+      "offset": 546410,
+      "rows": 18,
+      "score": 18.5,
+      "snes_addr": 1103466,
+      "starts_with_black": true
+    },
+    {
+      "offset": 233320,
+      "rows": 18,
+      "score": 18.0,
+      "snes_addr": 495464,
+      "starts_with_black": false
+    },
+    {
+      "offset": 585076,
+      "rows": 17,
+      "score": 17.0,
+      "snes_addr": 1174900,
+      "starts_with_black": false
+    },
+    {
+      "offset": 36342,
+      "rows": 16,
+      "score": 16.0,
+      "snes_addr": 101878,
+      "starts_with_black": false
+    },
+    {
+      "offset": 67896,
+      "rows": 16,
+      "score": 16.0,
+      "snes_addr": 166200,
+      "starts_with_black": false
+    },
+    {
+      "offset": 94548,
+      "rows": 16,
+      "score": 16.0,
+      "snes_addr": 192852,
+      "starts_with_black": false
+    },
+    {
+      "offset": 95146,
+      "rows": 16,
+      "score": 16.0,
+      "snes_addr": 193450,
+      "starts_with_black": false
+    },
+    {
+      "offset": 295850,
+      "rows": 16,
+      "score": 16.0,
+      "snes_addr": 623530,
+      "starts_with_black": false
+    },
+    {
+      "offset": 107018,
+      "rows": 15,
+      "score": 15.5,
+      "snes_addr": 238090,
+      "starts_with_black": true
+    },
+    {
+      "offset": 302762,
+      "rows": 15,
+      "score": 15.0,
+      "snes_addr": 630442,
+      "starts_with_black": false
+    },
+    {
+      "offset": 144122,
+      "rows": 14,
+      "score": 14.0,
+      "snes_addr": 307962,
+      "starts_with_black": false
+    },
+    {
+      "offset": 235010,
+      "rows": 14,
+      "score": 14.0,
+      "snes_addr": 497154,
+      "starts_with_black": false
+    },
+    {
+      "offset": 520458,
+      "rows": 14,
+      "score": 14.0,
+      "snes_addr": 1044746,
+      "starts_with_black": false
+    },
+    {
+      "offset": 580108,
+      "rows": 14,
+      "score": 14.0,
+      "snes_addr": 1169932,
+      "starts_with_black": false
+    },
+    {
+      "offset": 106506,
+      "rows": 13,
+      "score": 13.5,
+      "snes_addr": 237578,
+      "starts_with_black": true
+    },
+    {
+      "offset": 551750,
+      "rows": 13,
+      "score": 13.5,
+      "snes_addr": 1108806,
+      "starts_with_black": true
+    },
+    {
+      "offset": 102888,
+      "rows": 13,
+      "score": 13.0,
+      "snes_addr": 233960,
+      "starts_with_black": false
+    },
+    {
+      "offset": 300234,
+      "rows": 13,
+      "score": 13.0,
+      "snes_addr": 627914,
+      "starts_with_black": false
+    },
+    {
+      "offset": 301580,
+      "rows": 13,
+      "score": 13.0,
+      "snes_addr": 629260,
+      "starts_with_black": false
+    },
+    {
+      "offset": 306094,
+      "rows": 13,
+      "score": 13.0,
+      "snes_addr": 633774,
+      "starts_with_black": false
+    },
+    {
+      "offset": 208688,
+      "rows": 12,
+      "score": 12.5,
+      "snes_addr": 438064,
+      "starts_with_black": true
+    },
+    {
+      "offset": 575920,
+      "rows": 12,
+      "score": 12.5,
+      "snes_addr": 1165744,
+      "starts_with_black": true
+    },
+    {
+      "offset": 75626,
+      "rows": 12,
+      "score": 12.0,
+      "snes_addr": 173930,
+      "starts_with_black": false
+    },
+    {
+      "offset": 100912,
+      "rows": 12,
+      "score": 12.0,
+      "snes_addr": 231984,
+      "starts_with_black": false
+    },
+    {
+      "offset": 107596,
+      "rows": 12,
+      "score": 12.0,
+      "snes_addr": 238668,
+      "starts_with_black": false
+    },
+    {
+      "offset": 137306,
+      "rows": 12,
+      "score": 12.0,
+      "snes_addr": 301146,
+      "starts_with_black": false
+    },
+    {
+      "offset": 244072,
+      "rows": 12,
+      "score": 12.0,
+      "snes_addr": 506216,
+      "starts_with_black": false
+    },
+    {
+      "offset": 247252,
+      "rows": 12,
+      "score": 12.0,
+      "snes_addr": 509396,
+      "starts_with_black": false
+    },
+    {
+      "offset": 268586,
+      "rows": 12,
+      "score": 12.0,
+      "snes_addr": 563498,
+      "starts_with_black": false
+    },
+    {
+      "offset": 298240,
+      "rows": 12,
+      "score": 12.0,
+      "snes_addr": 625920,
+      "starts_with_black": false
+    },
+    {
+      "offset": 307298,
+      "rows": 12,
+      "score": 12.0,
+      "snes_addr": 634978,
+      "starts_with_black": false
+    },
+    {
+      "offset": 561542,
+      "rows": 12,
+      "score": 12.0,
+      "snes_addr": 1151366,
+      "starts_with_black": false
+    },
+    {
+      "offset": 361002,
+      "rows": 11,
+      "score": 11.5,
+      "snes_addr": 754218,
+      "starts_with_black": true
+    },
+    {
+      "offset": 361578,
+      "rows": 11,
+      "score": 11.5,
+      "snes_addr": 754794,
+      "starts_with_black": true
+    },
+    {
+      "offset": 369802,
+      "rows": 11,
+      "score": 11.5,
+      "snes_addr": 763018,
+      "starts_with_black": true
+    },
+    {
+      "offset": 221498,
+      "rows": 11,
+      "score": 11.0,
+      "snes_addr": 450874,
+      "starts_with_black": false
+    },
+    {
+      "offset": 237252,
+      "rows": 11,
+      "score": 11.0,
+      "snes_addr": 499396,
+      "starts_with_black": false
+    },
+    {
+      "offset": 247734,
+      "rows": 11,
+      "score": 11.0,
+      "snes_addr": 509878,
+      "starts_with_black": false
+    },
+    {
+      "offset": 250270,
+      "rows": 11,
+      "score": 11.0,
+      "snes_addr": 512414,
+      "starts_with_black": false
+    },
+    {
+      "offset": 431114,
+      "rows": 11,
+      "score": 11.0,
+      "snes_addr": 889866,
+      "starts_with_black": false
+    },
+    {
+      "offset": 560466,
+      "rows": 11,
+      "score": 11.0,
+      "snes_addr": 1150290,
+      "starts_with_black": false
+    },
+    {
+      "offset": 579596,
+      "rows": 11,
+      "score": 11.0,
+      "snes_addr": 1169420,
+      "starts_with_black": false
+    },
+    {
+      "offset": 103562,
+      "rows": 10,
+      "score": 10.5,
+      "snes_addr": 234634,
+      "starts_with_black": true
+    },
+    {
+      "offset": 369326,
+      "rows": 10,
+      "score": 10.5,
+      "snes_addr": 762542,
+      "starts_with_black": true
+    },
+    {
+      "offset": 521336,
+      "rows": 10,
+      "score": 10.5,
+      "snes_addr": 1045624,
+      "starts_with_black": true
+    },
+    {
+      "offset": 54378,
+      "rows": 10,
+      "score": 10.0,
+      "snes_addr": 119914,
+      "starts_with_black": false
+    },
+    {
+      "offset": 213400,
+      "rows": 10,
+      "score": 10.0,
+      "snes_addr": 442776,
+      "starts_with_black": false
+    },
+    {
+      "offset": 243320,
+      "rows": 10,
+      "score": 10.0,
+      "snes_addr": 505464,
+      "starts_with_black": false
+    },
+    {
+      "offset": 245056,
+      "rows": 10,
+      "score": 10.0,
+      "snes_addr": 507200,
+      "starts_with_black": false
+    },
+    {
+      "offset": 249162,
+      "rows": 10,
+      "score": 10.0,
+      "snes_addr": 511306,
+      "starts_with_black": false
+    },
+    {
+      "offset": 251130,
+      "rows": 10,
+      "score": 10.0,
+      "snes_addr": 513274,
+      "starts_with_black": false
+    },
+    {
+      "offset": 294932,
+      "rows": 10,
+      "score": 10.0,
+      "snes_addr": 622612,
+      "starts_with_black": false
+    },
+    {
+      "offset": 344190,
+      "rows": 10,
+      "score": 10.0,
+      "snes_addr": 704638,
+      "starts_with_black": false
+    },
+    {
+      "offset": 99142,
+      "rows": 9,
+      "score": 9.5,
+      "snes_addr": 230214,
+      "starts_with_black": true
+    },
+    {
+      "offset": 545082,
+      "rows": 9,
+      "score": 9.5,
+      "snes_addr": 1102138,
+      "starts_with_black": true
+    },
+    {
+      "offset": 60346,
+      "rows": 9,
+      "score": 9.0,
+      "snes_addr": 125882,
+      "starts_with_black": false
+    },
+    {
+      "offset": 203932,
+      "rows": 9,
+      "score": 9.0,
+      "snes_addr": 433308,
+      "starts_with_black": false
+    },
+    {
+      "offset": 222228,
+      "rows": 9,
+      "score": 9.0,
+      "snes_addr": 451604,
+      "starts_with_black": false
+    },
+    {
+      "offset": 238276,
+      "rows": 9,
+      "score": 9.0,
+      "snes_addr": 500420,
+      "starts_with_black": false
+    },
+    {
+      "offset": 238954,
+      "rows": 9,
+      "score": 9.0,
+      "snes_addr": 501098,
+      "starts_with_black": false
+    },
+    {
+      "offset": 240708,
+      "rows": 9,
+      "score": 9.0,
+      "snes_addr": 502852,
+      "starts_with_black": false
+    },
+    {
+      "offset": 248812,
+      "rows": 9,
+      "score": 9.0,
+      "snes_addr": 510956,
+      "starts_with_black": false
+    },
+    {
+      "offset": 267382,
+      "rows": 9,
+      "score": 9.0,
+      "snes_addr": 562294,
+      "starts_with_black": false
+    },
+    {
+      "offset": 267788,
+      "rows": 9,
+      "score": 9.0,
+      "snes_addr": 562700,
+      "starts_with_black": false
+    },
+    {
+      "offset": 309292,
+      "rows": 9,
+      "score": 9.0,
+      "snes_addr": 636972,
+      "starts_with_black": false
+    },
+    {
+      "offset": 436324,
+      "rows": 9,
+      "score": 9.0,
+      "snes_addr": 895076,
+      "starts_with_black": false
+    },
+    {
+      "offset": 542504,
+      "rows": 9,
+      "score": 9.0,
+      "snes_addr": 1099560,
+      "starts_with_black": false
+    },
+    {
+      "offset": 561108,
+      "rows": 9,
+      "score": 9.0,
+      "snes_addr": 1150932,
+      "starts_with_black": false
+    },
+    {
+      "offset": 567086,
+      "rows": 9,
+      "score": 9.0,
+      "snes_addr": 1156910,
+      "starts_with_black": false
+    },
+    {
+      "offset": 848340,
+      "rows": 9,
+      "score": 9.0,
+      "snes_addr": 1700308,
+      "starts_with_black": false
+    },
+    {
+      "offset": 368236,
+      "rows": 8,
+      "score": 8.5,
+      "snes_addr": 761452,
+      "starts_with_black": true
+    },
+    {
+      "offset": 544772,
+      "rows": 8,
+      "score": 8.5,
+      "snes_addr": 1101828,
+      "starts_with_black": true
+    },
+    {
+      "offset": 141666,
+      "rows": 8,
+      "score": 8.0,
+      "snes_addr": 305506,
+      "starts_with_black": false
+    },
+    {
+      "offset": 212028,
+      "rows": 8,
+      "score": 8.0,
+      "snes_addr": 441404,
+      "starts_with_black": false
+    },
+    {
+      "offset": 221970,
+      "rows": 8,
+      "score": 8.0,
+      "snes_addr": 451346,
+      "starts_with_black": false
+    },
+    {
+      "offset": 222540,
+      "rows": 8,
+      "score": 8.0,
+      "snes_addr": 451916,
+      "starts_with_black": false
+    },
+    {
+      "offset": 225578,
+      "rows": 8,
+      "score": 8.0,
+      "snes_addr": 454954,
+      "starts_with_black": false
+    },
+    {
+      "offset": 250828,
+      "rows": 8,
+      "score": 8.0,
+      "snes_addr": 512972,
+      "starts_with_black": false
+    },
+    {
+      "offset": 367252,
+      "rows": 8,
+      "score": 8.0,
+      "snes_addr": 760468,
+      "starts_with_black": false
+    },
+    {
+      "offset": 430610,
+      "rows": 8,
+      "score": 8.0,
+      "snes_addr": 889362,
+      "starts_with_black": false
+    },
+    {
+      "offset": 437964,
+      "rows": 8,
+      "score": 8.0,
+      "snes_addr": 896716,
+      "starts_with_black": false
+    },
+    {
+      "offset": 548176,
+      "rows": 8,
+      "score": 8.0,
+      "snes_addr": 1105232,
+      "starts_with_black": false
+    },
+    {
+      "offset": 711204,
+      "rows": 8,
+      "score": 8.0,
+      "snes_addr": 1432100,
+      "starts_with_black": false
+    },
+    {
+      "offset": 105002,
+      "rows": 7,
+      "score": 7.5,
+      "snes_addr": 236074,
+      "starts_with_black": true
+    },
+    {
+      "offset": 105770,
+      "rows": 7,
+      "score": 7.5,
+      "snes_addr": 236842,
+      "starts_with_black": true
+    },
+    {
+      "offset": 106186,
+      "rows": 7,
+      "score": 7.5,
+      "snes_addr": 237258,
+      "starts_with_black": true
+    },
+    {
+      "offset": 109292,
+      "rows": 7,
+      "score": 7.5,
+      "snes_addr": 240364,
+      "starts_with_black": true
+    },
+    {
+      "offset": 362276,
+      "rows": 7,
+      "score": 7.5,
+      "snes_addr": 755492,
+      "starts_with_black": true
+    },
+    {
+      "offset": 363148,
+      "rows": 7,
+      "score": 7.5,
+      "snes_addr": 756364,
+      "starts_with_black": true
+    },
+    {
+      "offset": 364108,
+      "rows": 7,
+      "score": 7.5,
+      "snes_addr": 757324,
+      "starts_with_black": true
+    },
+    {
+      "offset": 521680,
+      "rows": 7,
+      "score": 7.5,
+      "snes_addr": 1045968,
+      "starts_with_black": true
+    },
+    {
+      "offset": 543120,
+      "rows": 7,
+      "score": 7.5,
+      "snes_addr": 1100176,
+      "starts_with_black": true
+    },
+    {
+      "offset": 543606,
+      "rows": 7,
+      "score": 7.5,
+      "snes_addr": 1100662,
+      "starts_with_black": true
+    },
+    {
+      "offset": 544216,
+      "rows": 7,
+      "score": 7.5,
+      "snes_addr": 1101272,
+      "starts_with_black": true
+    },
+    {
+      "offset": 68414,
+      "rows": 7,
+      "score": 7.0,
+      "snes_addr": 166718,
+      "starts_with_black": false
+    },
+    {
+      "offset": 69180,
+      "rows": 7,
+      "score": 7.0,
+      "snes_addr": 167484,
+      "starts_with_black": false
+    },
+    {
+      "offset": 104200,
+      "rows": 7,
+      "score": 7.0,
+      "snes_addr": 235272,
+      "starts_with_black": false
+    },
+    {
+      "offset": 134074,
+      "rows": 7,
+      "score": 7.0,
+      "snes_addr": 297914,
+      "starts_with_black": false
+    },
+    {
+      "offset": 147984,
+      "rows": 7,
+      "score": 7.0,
+      "snes_addr": 311824,
+      "starts_with_black": false
+    },
+    {
+      "offset": 187748,
+      "rows": 7,
+      "score": 7.0,
+      "snes_addr": 384356,
+      "starts_with_black": false
+    },
+    {
+      "offset": 232832,
+      "rows": 7,
+      "score": 7.0,
+      "snes_addr": 494976,
+      "starts_with_black": false
+    },
+    {
+      "offset": 245870,
+      "rows": 7,
+      "score": 7.0,
+      "snes_addr": 508014,
+      "starts_with_black": false
+    },
+    {
+      "offset": 246280,
+      "rows": 7,
+      "score": 7.0,
+      "snes_addr": 508424,
+      "starts_with_black": false
+    },
+    {
+      "offset": 297974,
+      "rows": 7,
+      "score": 7.0,
+      "snes_addr": 625654,
+      "starts_with_black": false
+    },
+    {
+      "offset": 302242,
+      "rows": 7,
+      "score": 7.0,
+      "snes_addr": 629922,
+      "starts_with_black": false
+    },
+    {
+      "offset": 304832,
+      "rows": 7,
+      "score": 7.0,
+      "snes_addr": 632512,
+      "starts_with_black": false
+    },
+    {
+      "offset": 308098,
+      "rows": 7,
+      "score": 7.0,
+      "snes_addr": 635778,
+      "starts_with_black": false
+    },
+    {
+      "offset": 366704,
+      "rows": 7,
+      "score": 7.0,
+      "snes_addr": 759920,
+      "starts_with_black": false
+    },
+    {
+      "offset": 437030,
+      "rows": 7,
+      "score": 7.0,
+      "snes_addr": 895782,
+      "starts_with_black": false
+    },
+    {
+      "offset": 565694,
+      "rows": 7,
+      "score": 7.0,
+      "snes_addr": 1155518,
+      "starts_with_black": false
+    },
+    {
+      "offset": 567590,
+      "rows": 7,
+      "score": 7.0,
+      "snes_addr": 1157414,
+      "starts_with_black": false
+    },
+    {
+      "offset": 580904,
+      "rows": 7,
+      "score": 7.0,
+      "snes_addr": 1170728,
+      "starts_with_black": false
+    },
+    {
+      "offset": 581378,
+      "rows": 7,
+      "score": 7.0,
+      "snes_addr": 1171202,
+      "starts_with_black": false
+    },
+    {
+      "offset": 103312,
+      "rows": 6,
+      "score": 6.5,
+      "snes_addr": 234384,
+      "starts_with_black": true
+    },
+    {
+      "offset": 108330,
+      "rows": 6,
+      "score": 6.5,
+      "snes_addr": 239402,
+      "starts_with_black": true
+    },
+    {
+      "offset": 360574,
+      "rows": 6,
+      "score": 6.5,
+      "snes_addr": 753790,
+      "starts_with_black": true
+    },
+    {
+      "offset": 362006,
+      "rows": 6,
+      "score": 6.5,
+      "snes_addr": 755222,
+      "starts_with_black": true
+    },
+    {
+      "offset": 363400,
+      "rows": 6,
+      "score": 6.5,
+      "snes_addr": 756616,
+      "starts_with_black": true
+    },
+    {
+      "offset": 370476,
+      "rows": 6,
+      "score": 6.5,
+      "snes_addr": 763692,
+      "starts_with_black": true
+    },
+    {
+      "offset": 547130,
+      "rows": 6,
+      "score": 6.5,
+      "snes_addr": 1104186,
+      "starts_with_black": true
+    },
+    {
+      "offset": 75412,
+      "rows": 6,
+      "score": 6.0,
+      "snes_addr": 173716,
+      "starts_with_black": false
+    },
+    {
+      "offset": 98492,
+      "rows": 6,
+      "score": 6.0,
+      "snes_addr": 229564,
+      "starts_with_black": false
+    },
+    {
+      "offset": 104512,
+      "rows": 6,
+      "score": 6.0,
+      "snes_addr": 235584,
+      "starts_with_black": false
+    },
+    {
+      "offset": 199598,
+      "rows": 6,
+      "score": 6.0,
+      "snes_addr": 428974,
+      "starts_with_black": false
+    },
+    {
+      "offset": 199794,
+      "rows": 6,
+      "score": 6.0,
+      "snes_addr": 429170,
+      "starts_with_black": false
+    },
+    {
+      "offset": 210372,
+      "rows": 6,
+      "score": 6.0,
+      "snes_addr": 439748,
+      "starts_with_black": false
+    },
+    {
+      "offset": 211254,
+      "rows": 6,
+      "score": 6.0,
+      "snes_addr": 440630,
+      "starts_with_black": false
+    },
+    {
+      "offset": 224088,
+      "rows": 6,
+      "score": 6.0,
+      "snes_addr": 453464,
+      "starts_with_black": false
+    },
+    {
+      "offset": 225284,
+      "rows": 6,
+      "score": 6.0,
+      "snes_addr": 454660,
+      "starts_with_black": false
+    },
+    {
+      "offset": 233914,
+      "rows": 6,
+      "score": 6.0,
+      "snes_addr": 496058,
+      "starts_with_black": false
+    },
+    {
+      "offset": 268330,
+      "rows": 6,
+      "score": 6.0,
+      "snes_addr": 563242,
+      "starts_with_black": false
+    },
+    {
+      "offset": 297112,
+      "rows": 6,
+      "score": 6.0,
+      "snes_addr": 624792,
+      "starts_with_black": false
+    },
+    {
+      "offset": 299748,
+      "rows": 6,
+      "score": 6.0,
+      "snes_addr": 627428,
+      "starts_with_black": false
+    },
+    {
+      "offset": 301064,
+      "rows": 6,
+      "score": 6.0,
+      "snes_addr": 628744,
+      "starts_with_black": false
+    },
+    {
+      "offset": 305622,
+      "rows": 6,
+      "score": 6.0,
+      "snes_addr": 633302,
+      "starts_with_black": false
+    },
+    {
+      "offset": 308516,
+      "rows": 6,
+      "score": 6.0,
+      "snes_addr": 636196,
+      "starts_with_black": false
+    },
+    {
+      "offset": 428542,
+      "rows": 6,
+      "score": 6.0,
+      "snes_addr": 887294,
+      "starts_with_black": false
+    },
+    {
+      "offset": 547356,
+      "rows": 6,
+      "score": 6.0,
+      "snes_addr": 1104412,
+      "starts_with_black": false
+    },
+    {
+      "offset": 549594,
+      "rows": 6,
+      "score": 6.0,
+      "snes_addr": 1106650,
+      "starts_with_black": false
+    },
+    {
+      "offset": 562388,
+      "rows": 6,
+      "score": 6.0,
+      "snes_addr": 1152212,
+      "starts_with_black": false
+    },
+    {
+      "offset": 562712,
+      "rows": 6,
+      "score": 6.0,
+      "snes_addr": 1152536,
+      "starts_with_black": false
+    },
+    {
+      "offset": 582320,
+      "rows": 6,
+      "score": 6.0,
+      "snes_addr": 1172144,
+      "starts_with_black": false
+    },
+    {
+      "offset": 582834,
+      "rows": 6,
+      "score": 6.0,
+      "snes_addr": 1172658,
+      "starts_with_black": false
+    },
+    {
+      "offset": 583296,
+      "rows": 6,
+      "score": 6.0,
+      "snes_addr": 1173120,
+      "starts_with_black": false
+    },
+    {
+      "offset": 584054,
+      "rows": 6,
+      "score": 6.0,
+      "snes_addr": 1173878,
+      "starts_with_black": false
+    },
+    {
+      "offset": 828472,
+      "rows": 6,
+      "score": 6.0,
+      "snes_addr": 1680440,
+      "starts_with_black": false
+    },
+    {
+      "offset": 99850,
+      "rows": 5,
+      "score": 5.5,
+      "snes_addr": 230922,
+      "starts_with_black": true
+    },
+    {
+      "offset": 102412,
+      "rows": 5,
+      "score": 5.5,
+      "snes_addr": 233484,
+      "starts_with_black": true
+    },
+    {
+      "offset": 109834,
+      "rows": 5,
+      "score": 5.5,
+      "snes_addr": 240906,
+      "starts_with_black": true
+    },
+    {
+      "offset": 222964,
+      "rows": 5,
+      "score": 5.5,
+      "snes_addr": 452340,
+      "starts_with_black": true
+    },
+    {
+      "offset": 361392,
+      "rows": 5,
+      "score": 5.5,
+      "snes_addr": 754608,
+      "starts_with_black": true
+    },
+    {
+      "offset": 370314,
+      "rows": 5,
+      "score": 5.5,
+      "snes_addr": 763530,
+      "starts_with_black": true
+    },
+    {
+      "offset": 370990,
+      "rows": 5,
+      "score": 5.5,
+      "snes_addr": 764206,
+      "starts_with_black": true
+    },
+    {
+      "offset": 549164,
+      "rows": 5,
+      "score": 5.5,
+      "snes_addr": 1106220,
+      "starts_with_black": true
+    },
+    {
+      "offset": 142086,
+      "rows": 5,
+      "score": 5.0,
+      "snes_addr": 305926,
+      "starts_with_black": false
+    },
+    {
+      "offset": 145704,
+      "rows": 5,
+      "score": 5.0,
+      "snes_addr": 309544,
+      "starts_with_black": false
+    },
+    {
+      "offset": 148924,
+      "rows": 5,
+      "score": 5.0,
+      "snes_addr": 312764,
+      "starts_with_black": false
+    },
+    {
+      "offset": 200212,
+      "rows": 5,
+      "score": 5.0,
+      "snes_addr": 429588,
+      "starts_with_black": false
+    },
+    {
+      "offset": 209810,
+      "rows": 5,
+      "score": 5.0,
+      "snes_addr": 439186,
+      "starts_with_black": false
+    },
+    {
+      "offset": 235500,
+      "rows": 5,
+      "score": 5.0,
+      "snes_addr": 497644,
+      "starts_with_black": false
+    },
+    {
+      "offset": 295274,
+      "rows": 5,
+      "score": 5.0,
+      "snes_addr": 622954,
+      "starts_with_black": false
+    },
+    {
+      "offset": 297562,
+      "rows": 5,
+      "score": 5.0,
+      "snes_addr": 625242,
+      "starts_with_black": false
+    },
+    {
+      "offset": 308840,
+      "rows": 5,
+      "score": 5.0,
+      "snes_addr": 636520,
+      "starts_with_black": false
+    },
+    {
+      "offset": 363748,
+      "rows": 5,
+      "score": 5.0,
+      "snes_addr": 756964,
+      "starts_with_black": false
+    },
+    {
+      "offset": 364368,
+      "rows": 5,
+      "score": 5.0,
+      "snes_addr": 757584,
+      "starts_with_black": false
+    },
+    {
+      "offset": 364752,
+      "rows": 5,
+      "score": 5.0,
+      "snes_addr": 757968,
+      "starts_with_black": false
+    },
+    {
+      "offset": 364928,
+      "rows": 5,
+      "score": 5.0,
+      "snes_addr": 758144,
+      "starts_with_black": false
+    },
+    {
+      "offset": 366308,
+      "rows": 5,
+      "score": 5.0,
+      "snes_addr": 759524,
+      "starts_with_black": false
+    },
+    {
+      "offset": 367892,
+      "rows": 5,
+      "score": 5.0,
+      "snes_addr": 761108,
+      "starts_with_black": false
+    },
+    {
+      "offset": 412058,
+      "rows": 5,
+      "score": 5.0,
+      "snes_addr": 838042,
+      "starts_with_black": false
+    },
+    {
+      "offset": 412252,
+      "rows": 5,
+      "score": 5.0,
+      "snes_addr": 838236,
+      "starts_with_black": false
+    },
+    {
+      "offset": 425998,
+      "rows": 5,
+      "score": 5.0,
+      "snes_addr": 884750,
+      "starts_with_black": false
+    },
+    {
+      "offset": 427658,
+      "rows": 5,
+      "score": 5.0,
+      "snes_addr": 886410,
+      "starts_with_black": false
+    },
+    {
+      "offset": 427854,
+      "rows": 5,
+      "score": 5.0,
+      "snes_addr": 886606,
+      "starts_with_black": false
+    },
+    {
+      "offset": 429818,
+      "rows": 5,
+      "score": 5.0,
+      "snes_addr": 888570,
+      "starts_with_black": false
+    },
+    {
+      "offset": 433284,
+      "rows": 5,
+      "score": 5.0,
+      "snes_addr": 892036,
+      "starts_with_black": false
+    },
+    {
+      "offset": 434890,
+      "rows": 5,
+      "score": 5.0,
+      "snes_addr": 893642,
+      "starts_with_black": false
+    },
+    {
+      "offset": 439056,
+      "rows": 5,
+      "score": 5.0,
+      "snes_addr": 897808,
+      "starts_with_black": false
+    },
+    {
+      "offset": 514446,
+      "rows": 5,
+      "score": 5.0,
+      "snes_addr": 1038734,
+      "starts_with_black": false
+    },
+    {
+      "offset": 546092,
+      "rows": 5,
+      "score": 5.0,
+      "snes_addr": 1103148,
+      "starts_with_black": false
+    },
+    {
+      "offset": 547908,
+      "rows": 5,
+      "score": 5.0,
+      "snes_addr": 1104964,
+      "starts_with_black": false
+    },
+    {
+      "offset": 550568,
+      "rows": 5,
+      "score": 5.0,
+      "snes_addr": 1107624,
+      "starts_with_black": false
+    },
+    {
+      "offset": 562064,
+      "rows": 5,
+      "score": 5.0,
+      "snes_addr": 1151888,
+      "starts_with_black": false
+    },
+    {
+      "offset": 563090,
+      "rows": 5,
+      "score": 5.0,
+      "snes_addr": 1152914,
+      "starts_with_black": false
+    },
+    {
+      "offset": 563680,
+      "rows": 5,
+      "score": 5.0,
+      "snes_addr": 1153504,
+      "starts_with_black": false
+    },
+    {
+      "offset": 564490,
+      "rows": 5,
+      "score": 5.0,
+      "snes_addr": 1154314,
+      "starts_with_black": false
+    },
+    {
+      "offset": 565266,
+      "rows": 5,
+      "score": 5.0,
+      "snes_addr": 1155090,
+      "starts_with_black": false
+    },
+    {
+      "offset": 577682,
+      "rows": 5,
+      "score": 5.0,
+      "snes_addr": 1167506,
+      "starts_with_black": false
+    },
+    {
+      "offset": 711584,
+      "rows": 5,
+      "score": 5.0,
+      "snes_addr": 1432480,
+      "starts_with_black": false
+    },
+    {
+      "offset": 73350,
+      "rows": 4,
+      "score": 4.5,
+      "snes_addr": 171654,
+      "starts_with_black": true
+    },
+    {
+      "offset": 100394,
+      "rows": 4,
+      "score": 4.5,
+      "snes_addr": 231466,
+      "starts_with_black": true
+    },
+    {
+      "offset": 102658,
+      "rows": 4,
+      "score": 4.5,
+      "snes_addr": 233730,
+      "starts_with_black": true
+    },
+    {
+      "offset": 105334,
+      "rows": 4,
+      "score": 4.5,
+      "snes_addr": 236406,
+      "starts_with_black": true
+    },
+    {
+      "offset": 362506,
+      "rows": 4,
+      "score": 4.5,
+      "snes_addr": 755722,
+      "starts_with_black": true
+    },
+    {
+      "offset": 362856,
+      "rows": 4,
+      "score": 4.5,
+      "snes_addr": 756072,
+      "starts_with_black": true
+    }
+  ],
+  "confidence": "speculative",
+  "min_rows": 2,
+  "rom": {
+    "crc32": "5F02A044",
+    "size": 1048576,
+    "version": "DaffyDuckMarvinMissionsUsa"
+  },
+  "tool": "scan_palettes"
+}

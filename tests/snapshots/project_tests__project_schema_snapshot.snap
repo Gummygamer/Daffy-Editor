@@ -1,0 +1,28 @@
+---
+source: tests/project_tests.rs
+expression: p
+---
+{
+  "format_version": 1,
+  "name": "sample",
+  "rom": {
+    "crc32": 1594007620,
+    "sha1_hex": "0000000000000000000000000000000000000000",
+    "size": 1048576,
+    "had_copier_header": false,
+    "version": "DaffyDuckMarvinMissionsUsa"
+  },
+  "levels": [],
+  "changes": [
+    {
+      "offset": 32768,
+      "original": [
+        0
+      ],
+      "modified": [
+        234
+      ],
+      "note": "example"
+    }
+  ]
+}

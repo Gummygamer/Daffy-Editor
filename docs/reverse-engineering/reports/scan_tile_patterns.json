@@ -1,0 +1,984 @@
+{
+  "confidence": "speculative",
+  "min_tiles": 16,
+  "regions": [
+    {
+      "offset": 458752,
+      "score": 784.0,
+      "snes_addr": 950272,
+      "tiles": 784
+    },
+    {
+      "offset": 272480,
+      "score": 558.0,
+      "snes_addr": 567392,
+      "tiles": 558
+    },
+    {
+      "offset": 620160,
+      "score": 541.0,
+      "snes_addr": 1242752,
+      "tiles": 541
+    },
+    {
+      "offset": 327680,
+      "score": 540.0,
+      "snes_addr": 688128,
+      "tiles": 540
+    },
+    {
+      "offset": 524288,
+      "score": 525.0,
+      "snes_addr": 1081344,
+      "tiles": 525
+    },
+    {
+      "offset": 425792,
+      "score": 520.0,
+      "snes_addr": 851776,
+      "tiles": 520
+    },
+    {
+      "offset": 294848,
+      "score": 519.0,
+      "snes_addr": 589760,
+      "tiles": 519
+    },
+    {
+      "offset": 311488,
+      "score": 410.0,
+      "snes_addr": 639168,
+      "tiles": 410
+    },
+    {
+      "offset": 115136,
+      "score": 373.0,
+      "snes_addr": 246208,
+      "tiles": 373
+    },
+    {
+      "offset": 376832,
+      "score": 368.0,
+      "snes_addr": 770048,
+      "tiles": 368
+    },
+    {
+      "offset": 232832,
+      "score": 280.0,
+      "snes_addr": 494976,
+      "tiles": 280
+    },
+    {
+      "offset": 243328,
+      "score": 267.0,
+      "snes_addr": 505472,
+      "tiles": 267
+    },
+    {
+      "offset": 575872,
+      "score": 263.0,
+      "snes_addr": 1165696,
+      "tiles": 263
+    },
+    {
+      "offset": 141664,
+      "score": 262.0,
+      "snes_addr": 305504,
+      "tiles": 262
+    },
+    {
+      "offset": 560480,
+      "score": 253.0,
+      "snes_addr": 1150304,
+      "tiles": 253
+    },
+    {
+      "offset": 208672,
+      "score": 250.0,
+      "snes_addr": 438048,
+      "tiles": 250
+    },
+    {
+      "offset": 442976,
+      "score": 250.0,
+      "snes_addr": 901728,
+      "tiles": 250
+    },
+    {
+      "offset": 872416,
+      "score": 221.0,
+      "snes_addr": 1757152,
+      "tiles": 221
+    },
+    {
+      "offset": 262176,
+      "score": 212.0,
+      "snes_addr": 557088,
+      "tiles": 212
+    },
+    {
+      "offset": 221504,
+      "score": 165.0,
+      "snes_addr": 450880,
+      "tiles": 165
+    },
+    {
+      "offset": 199584,
+      "score": 159.0,
+      "snes_addr": 428960,
+      "tiles": 159
+    },
+    {
+      "offset": 857728,
+      "score": 156.0,
+      "snes_addr": 1742464,
+      "tiles": 156
+    },
+    {
+      "offset": 127136,
+      "score": 131.0,
+      "snes_addr": 258208,
+      "tiles": 131
+    },
+    {
+      "offset": 838272,
+      "score": 127.0,
+      "snes_addr": 1690240,
+      "tiles": 127
+    },
+    {
+      "offset": 615776,
+      "score": 114.0,
+      "snes_addr": 1238368,
+      "tiles": 114
+    },
+    {
+      "offset": 885856,
+      "score": 112.0,
+      "snes_addr": 1803360,
+      "tiles": 112
+    },
+    {
+      "offset": 87776,
+      "score": 111.0,
+      "snes_addr": 186080,
+      "tiles": 111
+    },
+    {
+      "offset": 137312,
+      "score": 111.0,
+      "snes_addr": 301152,
+      "tiles": 111
+    },
+    {
+      "offset": 823424,
+      "score": 97.0,
+      "snes_addr": 1675392,
+      "tiles": 97
+    },
+    {
+      "offset": 268992,
+      "score": 96.0,
+      "snes_addr": 563904,
+      "tiles": 96
+    },
+    {
+      "offset": 415584,
+      "score": 95.0,
+      "snes_addr": 841568,
+      "tiles": 95
+    },
+    {
+      "offset": 345376,
+      "score": 94.0,
+      "snes_addr": 705824,
+      "tiles": 94
+    },
+    {
+      "offset": 516928,
+      "score": 93.0,
+      "snes_addr": 1041216,
+      "tiles": 93
+    },
+    {
+      "offset": 33632,
+      "score": 88.0,
+      "snes_addr": 99168,
+      "tiles": 88
+    },
+    {
+      "offset": 407392,
+      "score": 85.0,
+      "snes_addr": 833376,
+      "tiles": 85
+    },
+    {
+      "offset": 826560,
+      "score": 83.0,
+      "snes_addr": 1678528,
+      "tiles": 83
+    },
+    {
+      "offset": 49536,
+      "score": 81.0,
+      "snes_addr": 115072,
+      "tiles": 81
+    },
+    {
+      "offset": 53312,
+      "score": 78.0,
+      "snes_addr": 118848,
+      "tiles": 78
+    },
+    {
+      "offset": 64960,
+      "score": 72.0,
+      "snes_addr": 130496,
+      "tiles": 72
+    },
+    {
+      "offset": 16000,
+      "score": 66.0,
+      "snes_addr": 48768,
+      "tiles": 66
+    },
+    {
+      "offset": 401056,
+      "score": 66.0,
+      "snes_addr": 827040,
+      "tiles": 66
+    },
+    {
+      "offset": 520128,
+      "score": 66.0,
+      "snes_addr": 1044416,
+      "tiles": 66
+    },
+    {
+      "offset": 603104,
+      "score": 65.0,
+      "snes_addr": 1225696,
+      "tiles": 65
+    },
+    {
+      "offset": 492640,
+      "score": 64.0,
+      "snes_addr": 1016928,
+      "tiles": 64
+    },
+    {
+      "offset": 845632,
+      "score": 64.0,
+      "snes_addr": 1697600,
+      "tiles": 64
+    },
+    {
+      "offset": 545696,
+      "score": 61.0,
+      "snes_addr": 1102752,
+      "tiles": 61
+    },
+    {
+      "offset": 504448,
+      "score": 58.0,
+      "snes_addr": 1028736,
+      "tiles": 58
+    },
+    {
+      "offset": 71072,
+      "score": 57.0,
+      "snes_addr": 169376,
+      "tiles": 57
+    },
+    {
+      "offset": 410752,
+      "score": 55.0,
+      "snes_addr": 836736,
+      "tiles": 55
+    },
+    {
+      "offset": 451104,
+      "score": 55.0,
+      "snes_addr": 909856,
+      "tiles": 55
+    },
+    {
+      "offset": 512768,
+      "score": 54.0,
+      "snes_addr": 1037056,
+      "tiles": 54
+    },
+    {
+      "offset": 100704,
+      "score": 53.0,
+      "snes_addr": 231776,
+      "tiles": 53
+    },
+    {
+      "offset": 483904,
+      "score": 52.0,
+      "snes_addr": 975424,
+      "tiles": 52
+    },
+    {
+      "offset": 758496,
+      "score": 52.0,
+      "snes_addr": 1544928,
+      "tiles": 52
+    },
+    {
+      "offset": 836608,
+      "score": 51.0,
+      "snes_addr": 1688576,
+      "tiles": 51
+    },
+    {
+      "offset": 847776,
+      "score": 51.0,
+      "snes_addr": 1699744,
+      "tiles": 51
+    },
+    {
+      "offset": 43232,
+      "score": 49.0,
+      "snes_addr": 108768,
+      "tiles": 49
+    },
+    {
+      "offset": 364544,
+      "score": 47.0,
+      "snes_addr": 757760,
+      "tiles": 47
+    },
+    {
+      "offset": 20832,
+      "score": 45.0,
+      "snes_addr": 53600,
+      "tiles": 45
+    },
+    {
+      "offset": 720320,
+      "score": 43.0,
+      "snes_addr": 1441216,
+      "tiles": 43
+    },
+    {
+      "offset": 393568,
+      "score": 42.0,
+      "snes_addr": 819552,
+      "tiles": 42
+    },
+    {
+      "offset": 702592,
+      "score": 42.0,
+      "snes_addr": 1423488,
+      "tiles": 42
+    },
+    {
+      "offset": 710784,
+      "score": 42.0,
+      "snes_addr": 1431680,
+      "tiles": 42
+    },
+    {
+      "offset": 68160,
+      "score": 40.0,
+      "snes_addr": 166464,
+      "tiles": 40
+    },
+    {
+      "offset": 97056,
+      "score": 39.0,
+      "snes_addr": 195360,
+      "tiles": 39
+    },
+    {
+      "offset": 350080,
+      "score": 38.0,
+      "snes_addr": 710528,
+      "tiles": 38
+    },
+    {
+      "offset": 716064,
+      "score": 38.0,
+      "snes_addr": 1436960,
+      "tiles": 38
+    },
+    {
+      "offset": 79200,
+      "score": 34.0,
+      "snes_addr": 177504,
+      "tiles": 34
+    },
+    {
+      "offset": 187488,
+      "score": 34.0,
+      "snes_addr": 384096,
+      "tiles": 34
+    },
+    {
+      "offset": 405632,
+      "score": 34.0,
+      "snes_addr": 831616,
+      "tiles": 34
+    },
+    {
+      "offset": 608,
+      "score": 32.0,
+      "snes_addr": 33376,
+      "tiles": 32
+    },
+    {
+      "offset": 366080,
+      "score": 32.0,
+      "snes_addr": 759296,
+      "tiles": 32
+    },
+    {
+      "offset": 590560,
+      "score": 31.0,
+      "snes_addr": 1213152,
+      "tiles": 31
+    },
+    {
+      "offset": 29440,
+      "score": 30.0,
+      "snes_addr": 62208,
+      "tiles": 30
+    },
+    {
+      "offset": 63680,
+      "score": 30.0,
+      "snes_addr": 129216,
+      "tiles": 30
+    },
+    {
+      "offset": 353312,
+      "score": 30.0,
+      "snes_addr": 713760,
+      "tiles": 30
+    },
+    {
+      "offset": 643776,
+      "score": 30.0,
+      "snes_addr": 1299136,
+      "tiles": 30
+    },
+    {
+      "offset": 834336,
+      "score": 30.0,
+      "snes_addr": 1686304,
+      "tiles": 30
+    },
+    {
+      "offset": 45696,
+      "score": 29.0,
+      "snes_addr": 111232,
+      "tiles": 29
+    },
+    {
+      "offset": 363168,
+      "score": 29.0,
+      "snes_addr": 756384,
+      "tiles": 29
+    },
+    {
+      "offset": 59488,
+      "score": 28.0,
+      "snes_addr": 125024,
+      "tiles": 28
+    },
+    {
+      "offset": 544736,
+      "score": 27.0,
+      "snes_addr": 1101792,
+      "tiles": 27
+    },
+    {
+      "offset": 654752,
+      "score": 27.0,
+      "snes_addr": 1310112,
+      "tiles": 27
+    },
+    {
+      "offset": 833440,
+      "score": 27.0,
+      "snes_addr": 1685408,
+      "tiles": 27
+    },
+    {
+      "offset": 6240,
+      "score": 26.0,
+      "snes_addr": 39008,
+      "tiles": 26
+    },
+    {
+      "offset": 776192,
+      "score": 26.0,
+      "snes_addr": 1562624,
+      "tiles": 26
+    },
+    {
+      "offset": 58176,
+      "score": 25.0,
+      "snes_addr": 123712,
+      "tiles": 25
+    },
+    {
+      "offset": 515680,
+      "score": 25.0,
+      "snes_addr": 1039968,
+      "tiles": 25
+    },
+    {
+      "offset": 547840,
+      "score": 25.0,
+      "snes_addr": 1104896,
+      "tiles": 25
+    },
+    {
+      "offset": 586880,
+      "score": 25.0,
+      "snes_addr": 1176704,
+      "tiles": 25
+    },
+    {
+      "offset": 640672,
+      "score": 25.0,
+      "snes_addr": 1296032,
+      "tiles": 25
+    },
+    {
+      "offset": 844800,
+      "score": 25.0,
+      "snes_addr": 1696768,
+      "tiles": 25
+    },
+    {
+      "offset": 27616,
+      "score": 24.0,
+      "snes_addr": 60384,
+      "tiles": 24
+    },
+    {
+      "offset": 511648,
+      "score": 24.0,
+      "snes_addr": 1035936,
+      "tiles": 24
+    },
+    {
+      "offset": 694272,
+      "score": 24.0,
+      "snes_addr": 1415168,
+      "tiles": 24
+    },
+    {
+      "offset": 774336,
+      "score": 24.0,
+      "snes_addr": 1560768,
+      "tiles": 24
+    },
+    {
+      "offset": 835808,
+      "score": 24.0,
+      "snes_addr": 1687776,
+      "tiles": 24
+    },
+    {
+      "offset": 1664,
+      "score": 23.0,
+      "snes_addr": 34432,
+      "tiles": 23
+    },
+    {
+      "offset": 61856,
+      "score": 23.0,
+      "snes_addr": 127392,
+      "tiles": 23
+    },
+    {
+      "offset": 395872,
+      "score": 23.0,
+      "snes_addr": 821856,
+      "tiles": 23
+    },
+    {
+      "offset": 732448,
+      "score": 23.0,
+      "snes_addr": 1486112,
+      "tiles": 23
+    },
+    {
+      "offset": 602368,
+      "score": 22.0,
+      "snes_addr": 1224960,
+      "tiles": 22
+    },
+    {
+      "offset": 25376,
+      "score": 21.0,
+      "snes_addr": 58144,
+      "tiles": 21
+    },
+    {
+      "offset": 73856,
+      "score": 21.0,
+      "snes_addr": 172160,
+      "tiles": 21
+    },
+    {
+      "offset": 352256,
+      "score": 21.0,
+      "snes_addr": 712704,
+      "tiles": 21
+    },
+    {
+      "offset": 542112,
+      "score": 21.0,
+      "snes_addr": 1099168,
+      "tiles": 21
+    },
+    {
+      "offset": 549120,
+      "score": 21.0,
+      "snes_addr": 1106176,
+      "tiles": 21
+    },
+    {
+      "offset": 678144,
+      "score": 21.0,
+      "snes_addr": 1366272,
+      "tiles": 21
+    },
+    {
+      "offset": 28640,
+      "score": 20.0,
+      "snes_addr": 61408,
+      "tiles": 20
+    },
+    {
+      "offset": 48768,
+      "score": 20.0,
+      "snes_addr": 114304,
+      "tiles": 20
+    },
+    {
+      "offset": 158784,
+      "score": 20.0,
+      "snes_addr": 322624,
+      "tiles": 20
+    },
+    {
+      "offset": 293024,
+      "score": 20.0,
+      "snes_addr": 587936,
+      "tiles": 20
+    },
+    {
+      "offset": 424768,
+      "score": 20.0,
+      "snes_addr": 850752,
+      "tiles": 20
+    },
+    {
+      "offset": 639072,
+      "score": 20.0,
+      "snes_addr": 1294432,
+      "tiles": 20
+    },
+    {
+      "offset": 784416,
+      "score": 20.0,
+      "snes_addr": 1570848,
+      "tiles": 20
+    },
+    {
+      "offset": 7200,
+      "score": 19.0,
+      "snes_addr": 39968,
+      "tiles": 19
+    },
+    {
+      "offset": 69472,
+      "score": 19.0,
+      "snes_addr": 167776,
+      "tiles": 19
+    },
+    {
+      "offset": 73056,
+      "score": 19.0,
+      "snes_addr": 171360,
+      "tiles": 19
+    },
+    {
+      "offset": 74688,
+      "score": 19.0,
+      "snes_addr": 172992,
+      "tiles": 19
+    },
+    {
+      "offset": 204704,
+      "score": 19.0,
+      "snes_addr": 434080,
+      "tiles": 19
+    },
+    {
+      "offset": 351328,
+      "score": 19.0,
+      "snes_addr": 711776,
+      "tiles": 19
+    },
+    {
+      "offset": 398272,
+      "score": 19.0,
+      "snes_addr": 824256,
+      "tiles": 19
+    },
+    {
+      "offset": 398912,
+      "score": 19.0,
+      "snes_addr": 824896,
+      "tiles": 19
+    },
+    {
+      "offset": 413632,
+      "score": 19.0,
+      "snes_addr": 839616,
+      "tiles": 19
+    },
+    {
+      "offset": 421632,
+      "score": 19.0,
+      "snes_addr": 847616,
+      "tiles": 19
+    },
+    {
+      "offset": 486720,
+      "score": 19.0,
+      "snes_addr": 978240,
+      "tiles": 19
+    },
+    {
+      "offset": 488512,
+      "score": 19.0,
+      "snes_addr": 980032,
+      "tiles": 19
+    },
+    {
+      "offset": 507520,
+      "score": 19.0,
+      "snes_addr": 1031808,
+      "tiles": 19
+    },
+    {
+      "offset": 42528,
+      "score": 18.0,
+      "snes_addr": 108064,
+      "tiles": 18
+    },
+    {
+      "offset": 84032,
+      "score": 18.0,
+      "snes_addr": 182336,
+      "tiles": 18
+    },
+    {
+      "offset": 102848,
+      "score": 18.0,
+      "snes_addr": 233920,
+      "tiles": 18
+    },
+    {
+      "offset": 165920,
+      "score": 18.0,
+      "snes_addr": 362528,
+      "tiles": 18
+    },
+    {
+      "offset": 453792,
+      "score": 18.0,
+      "snes_addr": 912544,
+      "tiles": 18
+    },
+    {
+      "offset": 592576,
+      "score": 18.0,
+      "snes_addr": 1215168,
+      "tiles": 18
+    },
+    {
+      "offset": 820096,
+      "score": 18.0,
+      "snes_addr": 1672064,
+      "tiles": 18
+    },
+    {
+      "offset": 30656,
+      "score": 17.0,
+      "snes_addr": 63424,
+      "tiles": 17
+    },
+    {
+      "offset": 95680,
+      "score": 17.0,
+      "snes_addr": 193984,
+      "tiles": 17
+    },
+    {
+      "offset": 192960,
+      "score": 17.0,
+      "snes_addr": 389568,
+      "tiles": 17
+    },
+    {
+      "offset": 487936,
+      "score": 17.0,
+      "snes_addr": 979456,
+      "tiles": 17
+    },
+    {
+      "offset": 503520,
+      "score": 17.0,
+      "snes_addr": 1027808,
+      "tiles": 17
+    },
+    {
+      "offset": 587840,
+      "score": 17.0,
+      "snes_addr": 1177664,
+      "tiles": 17
+    },
+    {
+      "offset": 750816,
+      "score": 17.0,
+      "snes_addr": 1504480,
+      "tiles": 17
+    },
+    {
+      "offset": 1041280,
+      "score": 17.0,
+      "snes_addr": 2089856,
+      "tiles": 17
+    },
+    {
+      "offset": 15104,
+      "score": 16.0,
+      "snes_addr": 47872,
+      "tiles": 16
+    },
+    {
+      "offset": 48096,
+      "score": 16.0,
+      "snes_addr": 113632,
+      "tiles": 16
+    },
+    {
+      "offset": 57376,
+      "score": 16.0,
+      "snes_addr": 122912,
+      "tiles": 16
+    },
+    {
+      "offset": 86176,
+      "score": 16.0,
+      "snes_addr": 184480,
+      "tiles": 16
+    },
+    {
+      "offset": 453248,
+      "score": 16.0,
+      "snes_addr": 912000,
+      "tiles": 16
+    },
+    {
+      "offset": 491424,
+      "score": 16.0,
+      "snes_addr": 982944,
+      "tiles": 16
+    },
+    {
+      "offset": 501696,
+      "score": 16.0,
+      "snes_addr": 1025984,
+      "tiles": 16
+    },
+    {
+      "offset": 515136,
+      "score": 16.0,
+      "snes_addr": 1039424,
+      "tiles": 16
+    },
+    {
+      "offset": 591776,
+      "score": 16.0,
+      "snes_addr": 1214368,
+      "tiles": 16
+    },
+    {
+      "offset": 596000,
+      "score": 16.0,
+      "snes_addr": 1218592,
+      "tiles": 16
+    },
+    {
+      "offset": 596544,
+      "score": 16.0,
+      "snes_addr": 1219136,
+      "tiles": 16
+    },
+    {
+      "offset": 598880,
+      "score": 16.0,
+      "snes_addr": 1221472,
+      "tiles": 16
+    },
+    {
+      "offset": 601824,
+      "score": 16.0,
+      "snes_addr": 1224416,
+      "tiles": 16
+    },
+    {
+      "offset": 709952,
+      "score": 16.0,
+      "snes_addr": 1430848,
+      "tiles": 16
+    },
+    {
+      "offset": 727808,
+      "score": 16.0,
+      "snes_addr": 1481472,
+      "tiles": 16
+    },
+    {
+      "offset": 757664,
+      "score": 16.0,
+      "snes_addr": 1544096,
+      "tiles": 16
+    },
+    {
+      "offset": 761440,
+      "score": 16.0,
+      "snes_addr": 1547872,
+      "tiles": 16
+    },
+    {
+      "offset": 780064,
+      "score": 16.0,
+      "snes_addr": 1566496,
+      "tiles": 16
+    },
+    {
+      "offset": 1010304,
+      "score": 16.0,
+      "snes_addr": 2026112,
+      "tiles": 16
+    }
+  ],
+  "rom": {
+    "crc32": "5F02A044",
+    "size": 1048576,
+    "version": "DaffyDuckMarvinMissionsUsa"
+  },
+  "tool": "scan_tile_patterns"
+}
