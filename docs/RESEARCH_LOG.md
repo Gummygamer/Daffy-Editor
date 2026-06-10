@@ -6,6 +6,42 @@ docs/reverse-engineering/ when they stabilize.
 
 ---
 
+## 2026-06-10 — Decompressor disassembled (compression scheme IDENTIFIED)
+
+- Built a linear **65816 disassembler** (`src/snes/disasm.rs`, full 256-opcode
+  table + `M`/`X` width tracking via `REP`/`SEP`) and a `disasm` CLI bin, TDD
+  (10 new tests on synthetic opcodes: immediate-width-follows-M/X, REP/SEP
+  toggles mid-stream, long/indirect-long/relative/block-move formatting,
+  inclusive SNES-range helper). Whole suite green.
+- Ran it on the real ROM's decompressor. The routine is `$82:84FD`–`$82:865F`
+  (the earlier `$82:8549` was just the dominant-store window). Disassembly read
+  cleanly once the widths were pinned (entry sets 16-bit `A`, then `SEP #$20` at
+  `$82:8505` → the main loop is 8-bit `A`, 16-bit `X`). Listing committed:
+  `reverse-engineering/reports/disasm_decompressor.json`.
+- **The compression scheme is a custom control-byte RLE** (NOT LZ — no sliding
+  window / back-references). Main loop `$82:850B`: read a command byte through
+  the 24-bit source pointer DP `$16/$17/$18`, `AND #$E0` selects 1 of 7 ops from
+  the top 3 bits, low 5 bits are length−1 (`N = (cmd&0x1F)+1`, 1..32):
+  literal-copy (`$00/$20`), end-of-pass (`$40`), 2-byte pattern fill (`$60`),
+  byte-RLE (`$80`), incrementing run (`$A0`), zero-fill (`$C0`), decrementing
+  run (`$E0`). Output via 24-bit dest pointer DP `$19/$1A/$1B` with **stride 2**,
+  decoded **twice** (pass counter `$1F`=2, `$40` flips dest to base+1) ⇒ SNES
+  2-bitplane interleave. The source pointer's wrap-to-`$8000`-on-bank-carry
+  confirms it streams contiguously across LoROM banks `$92/$93/$95/$96`.
+  Mechanics **decode-confirmed**; the bitplane-interleave intent **likely**.
+  Write-up: `reverse-engineering/compression-codec.md`.
+
+### Next research steps
+
+1. Write the decoder in `src/codecs/` from the command table and **round-trip**
+   it against a Mesen2 `$7F:C000` dump before committing/promoting to confirmed.
+2. Find the loader that sets DP `$16/$17/$18` + dest + `$1F` before calling
+   `$82:84FD` — that is the graphics-id → source-address index.
+3. Disassemble the follow-on routine at `$82:8662` (writes DP `$E4…`); likely
+   the next plane-pair / upload stage.
+
+---
+
 ## 2026-06-10 — Live DMA capture in Mesen2 (graphics pipeline CONFIRMED)
 
 - Got a working emulator: the official Mesen2 2.1.1 Linux binary crashes at

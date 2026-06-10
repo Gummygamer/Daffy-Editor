@@ -38,9 +38,10 @@ within a few bytes (trigger PC), which cross-validates both tools.
 
 ## Next steps
 
-1. Disassemble `$82:8549-$82:8655` to identify the **compression scheme** (the
-   read/write pattern: byte counts suggest a copy/RLE/LZ loop) and its source
-   pointer. Only then write a codec, with a round-trip test.
+1. ~~Disassemble `$82:8549-$82:8655` to identify the compression scheme.~~
+   **Done** — the routine is `$82:84FD-$82:865F`, a custom control-byte RLE.
+   See [compression-codec.md](compression-codec.md). Still to do: write the
+   codec and confirm it with a round-trip test before committing.
 2. Find the **table that maps a graphics id → the `$92-$96` source address**
    (the loader sets the decompressor's source pointer from somewhere); that is
    the index the level/screen loader uses.

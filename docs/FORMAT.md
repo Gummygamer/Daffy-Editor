@@ -45,8 +45,9 @@ reads live in Mesen2. They are decompressed by the routine at **`$82:8549`–
 `$82:8655`** into WRAM `$7F:C000-$7F:CFFF`, then DMA'd to VRAM. Full pipeline:
 [reverse-engineering/graphics-pipeline.md](reverse-engineering/graphics-pipeline.md).
 The `scan_tile_patterns` / `scan_palettes` candidates elsewhere are therefore
-*not* the raw storage, as predicted. The compression scheme itself is still
-**unknown** (disassemble `$82:8549` next); no codec until it is confirmed.
+*not* the raw storage, as predicted. The compression scheme has now been read
+from the routine — a control-byte RLE (see the Compression section below); a
+codec still waits on a round-trip test.
 
 ## DMA uploads — likely
 
@@ -73,13 +74,22 @@ yet**. The editor currently displays synthetic placeholder data, labeled as
 such in the UI. Candidate-hunting tools: `scan_pointers`,
 `scan_repeated_blocks`, `inspect_offset`.
 
-## Compression — present (confirmed), scheme unknown
+## Compression — present (confirmed), scheme identified (decode-confirmed)
 
 **Confirmed**: graphics are decompressed from ROM banks `$92-$96` into WRAM by
-`$82:8549-$82:8655` before being DMA'd (live capture, not inference). The
-decompress-into-RAM-then-DMA pipeline is real. The specific scheme (LZ variant,
-RLE, etc.) is still **unknown** and no codec should be written until the
-routine at `$82:8549` is disassembled and a round-trip is confirmed. Tracking
-notes:
+the routine `$82:84FD-$82:865F` before being DMA'd (live capture, not
+inference). The decompress-into-RAM-then-DMA pipeline is real.
+
+**Scheme — decode-confirmed (round-trip pending):** disassembling the routine
+shows a **custom control-byte RLE** (not LZ — no back-references). A command
+byte's top 3 bits select 1 of 7 operations (literal copy, byte/zero/incrementing/
+decrementing run, 2-byte pattern fill, end-of-pass), the low 5 bits give a run
+length `1..32`; output is written with stride 2 over two passes (SNES 2-bitplane
+interleave). Source is the 24-bit DP pointer `$16/$17/$18` (streams contiguously
+across LoROM banks `$92/$93/$95/$96`); dest is `$19/$1A/$1B`. Full command table:
+[reverse-engineering/compression-codec.md](reverse-engineering/compression-codec.md).
+**No codec is committed yet** — an encoder/decoder ships only after a round-trip
+test against a Mesen2 `$7F:C000` dump passes (then this graduates to *confirmed*).
+Tracking notes:
 [reverse-engineering/graphics-pipeline.md](reverse-engineering/graphics-pipeline.md),
 [reverse-engineering/dma-helper.md](reverse-engineering/dma-helper.md).

@@ -1,0 +1,2099 @@
+{
+  "confidence": "instruction-decode confirmed; interpretation per docs",
+  "count_bytes": 355,
+  "instruction_count": 192,
+  "instructions": [
+    {
+      "addr": "$8284FD",
+      "bytes": [
+        "A5",
+        "19"
+      ],
+      "m8": false,
+      "mnemonic": "LDA",
+      "operand": "$19",
+      "x8": false
+    },
+    {
+      "addr": "$8284FF",
+      "bytes": [
+        "1A"
+      ],
+      "m8": false,
+      "mnemonic": "INC",
+      "operand": "A",
+      "x8": false
+    },
+    {
+      "addr": "$828500",
+      "bytes": [
+        "85",
+        "1C"
+      ],
+      "m8": false,
+      "mnemonic": "STA",
+      "operand": "$1C",
+      "x8": false
+    },
+    {
+      "addr": "$828502",
+      "bytes": [
+        "A9",
+        "00",
+        "00"
+      ],
+      "m8": false,
+      "mnemonic": "LDA",
+      "operand": "#$0000",
+      "x8": false
+    },
+    {
+      "addr": "$828505",
+      "bytes": [
+        "E2",
+        "20"
+      ],
+      "m8": false,
+      "mnemonic": "SEP",
+      "operand": "#$20",
+      "x8": false
+    },
+    {
+      "addr": "$828507",
+      "bytes": [
+        "A9",
+        "02"
+      ],
+      "m8": true,
+      "mnemonic": "LDA",
+      "operand": "#$02",
+      "x8": false
+    },
+    {
+      "addr": "$828509",
+      "bytes": [
+        "85",
+        "1F"
+      ],
+      "m8": true,
+      "mnemonic": "STA",
+      "operand": "$1F",
+      "x8": false
+    },
+    {
+      "addr": "$82850B",
+      "bytes": [
+        "A7",
+        "16"
+      ],
+      "m8": true,
+      "mnemonic": "LDA",
+      "operand": "[$16]",
+      "x8": false
+    },
+    {
+      "addr": "$82850D",
+      "bytes": [
+        "29",
+        "E0"
+      ],
+      "m8": true,
+      "mnemonic": "AND",
+      "operand": "#$E0",
+      "x8": false
+    },
+    {
+      "addr": "$82850F",
+      "bytes": [
+        "C9",
+        "40"
+      ],
+      "m8": true,
+      "mnemonic": "CMP",
+      "operand": "#$40",
+      "x8": false
+    },
+    {
+      "addr": "$828511",
+      "bytes": [
+        "F0",
+        "4D"
+      ],
+      "m8": true,
+      "mnemonic": "BEQ",
+      "operand": "$8560",
+      "x8": false
+    },
+    {
+      "addr": "$828513",
+      "bytes": [
+        "C9",
+        "60"
+      ],
+      "m8": true,
+      "mnemonic": "CMP",
+      "operand": "#$60",
+      "x8": false
+    },
+    {
+      "addr": "$828515",
+      "bytes": [
+        "F0",
+        "61"
+      ],
+      "m8": true,
+      "mnemonic": "BEQ",
+      "operand": "$8578",
+      "x8": false
+    },
+    {
+      "addr": "$828517",
+      "bytes": [
+        "C9",
+        "80"
+      ],
+      "m8": true,
+      "mnemonic": "CMP",
+      "operand": "#$80",
+      "x8": false
+    },
+    {
+      "addr": "$828519",
+      "bytes": [
+        "D0",
+        "03"
+      ],
+      "m8": true,
+      "mnemonic": "BNE",
+      "operand": "$851E",
+      "x8": false
+    },
+    {
+      "addr": "$82851B",
+      "bytes": [
+        "4C",
+        "D6",
+        "85"
+      ],
+      "m8": true,
+      "mnemonic": "JMP",
+      "operand": "$85D6",
+      "x8": false
+    },
+    {
+      "addr": "$82851E",
+      "bytes": [
+        "C9",
+        "C0"
+      ],
+      "m8": true,
+      "mnemonic": "CMP",
+      "operand": "#$C0",
+      "x8": false
+    },
+    {
+      "addr": "$828520",
+      "bytes": [
+        "D0",
+        "03"
+      ],
+      "m8": true,
+      "mnemonic": "BNE",
+      "operand": "$8525",
+      "x8": false
+    },
+    {
+      "addr": "$828522",
+      "bytes": [
+        "4C",
+        "C0",
+        "85"
+      ],
+      "m8": true,
+      "mnemonic": "JMP",
+      "operand": "$85C0",
+      "x8": false
+    },
+    {
+      "addr": "$828525",
+      "bytes": [
+        "C9",
+        "A0"
+      ],
+      "m8": true,
+      "mnemonic": "CMP",
+      "operand": "#$A0",
+      "x8": false
+    },
+    {
+      "addr": "$828527",
+      "bytes": [
+        "D0",
+        "03"
+      ],
+      "m8": true,
+      "mnemonic": "BNE",
+      "operand": "$852C",
+      "x8": false
+    },
+    {
+      "addr": "$828529",
+      "bytes": [
+        "4C",
+        "04",
+        "86"
+      ],
+      "m8": true,
+      "mnemonic": "JMP",
+      "operand": "$8604",
+      "x8": false
+    },
+    {
+      "addr": "$82852C",
+      "bytes": [
+        "C9",
+        "E0"
+      ],
+      "m8": true,
+      "mnemonic": "CMP",
+      "operand": "#$E0",
+      "x8": false
+    },
+    {
+      "addr": "$82852E",
+      "bytes": [
+        "D0",
+        "03"
+      ],
+      "m8": true,
+      "mnemonic": "BNE",
+      "operand": "$8533",
+      "x8": false
+    },
+    {
+      "addr": "$828530",
+      "bytes": [
+        "4C",
+        "33",
+        "86"
+      ],
+      "m8": true,
+      "mnemonic": "JMP",
+      "operand": "$8633",
+      "x8": false
+    },
+    {
+      "addr": "$828533",
+      "bytes": [
+        "A7",
+        "16"
+      ],
+      "m8": true,
+      "mnemonic": "LDA",
+      "operand": "[$16]",
+      "x8": false
+    },
+    {
+      "addr": "$828535",
+      "bytes": [
+        "A4",
+        "16"
+      ],
+      "m8": true,
+      "mnemonic": "LDY",
+      "operand": "$16",
+      "x8": false
+    },
+    {
+      "addr": "$828537",
+      "bytes": [
+        "C8"
+      ],
+      "m8": true,
+      "mnemonic": "INY",
+      "operand": "",
+      "x8": false
+    },
+    {
+      "addr": "$828538",
+      "bytes": [
+        "D0",
+        "05"
+      ],
+      "m8": true,
+      "mnemonic": "BNE",
+      "operand": "$853F",
+      "x8": false
+    },
+    {
+      "addr": "$82853A",
+      "bytes": [
+        "E6",
+        "18"
+      ],
+      "m8": true,
+      "mnemonic": "INC",
+      "operand": "$18",
+      "x8": false
+    },
+    {
+      "addr": "$82853C",
+      "bytes": [
+        "A0",
+        "00",
+        "80"
+      ],
+      "m8": true,
+      "mnemonic": "LDY",
+      "operand": "#$8000",
+      "x8": false
+    },
+    {
+      "addr": "$82853F",
+      "bytes": [
+        "84",
+        "16"
+      ],
+      "m8": true,
+      "mnemonic": "STY",
+      "operand": "$16",
+      "x8": false
+    },
+    {
+      "addr": "$828541",
+      "bytes": [
+        "29",
+        "1F"
+      ],
+      "m8": true,
+      "mnemonic": "AND",
+      "operand": "#$1F",
+      "x8": false
+    },
+    {
+      "addr": "$828543",
+      "bytes": [
+        "1A"
+      ],
+      "m8": true,
+      "mnemonic": "INC",
+      "operand": "A",
+      "x8": false
+    },
+    {
+      "addr": "$828544",
+      "bytes": [
+        "AA"
+      ],
+      "m8": true,
+      "mnemonic": "TAX",
+      "operand": "",
+      "x8": false
+    },
+    {
+      "addr": "$828545",
+      "bytes": [
+        "A7",
+        "16"
+      ],
+      "m8": true,
+      "mnemonic": "LDA",
+      "operand": "[$16]",
+      "x8": false
+    },
+    {
+      "addr": "$828547",
+      "bytes": [
+        "87",
+        "19"
+      ],
+      "m8": true,
+      "mnemonic": "STA",
+      "operand": "[$19]",
+      "x8": false
+    },
+    {
+      "addr": "$828549",
+      "bytes": [
+        "A4",
+        "16"
+      ],
+      "m8": true,
+      "mnemonic": "LDY",
+      "operand": "$16",
+      "x8": false
+    },
+    {
+      "addr": "$82854B",
+      "bytes": [
+        "C8"
+      ],
+      "m8": true,
+      "mnemonic": "INY",
+      "operand": "",
+      "x8": false
+    },
+    {
+      "addr": "$82854C",
+      "bytes": [
+        "D0",
+        "05"
+      ],
+      "m8": true,
+      "mnemonic": "BNE",
+      "operand": "$8553",
+      "x8": false
+    },
+    {
+      "addr": "$82854E",
+      "bytes": [
+        "E6",
+        "18"
+      ],
+      "m8": true,
+      "mnemonic": "INC",
+      "operand": "$18",
+      "x8": false
+    },
+    {
+      "addr": "$828550",
+      "bytes": [
+        "A0",
+        "00",
+        "80"
+      ],
+      "m8": true,
+      "mnemonic": "LDY",
+      "operand": "#$8000",
+      "x8": false
+    },
+    {
+      "addr": "$828553",
+      "bytes": [
+        "84",
+        "16"
+      ],
+      "m8": true,
+      "mnemonic": "STY",
+      "operand": "$16",
+      "x8": false
+    },
+    {
+      "addr": "$828555",
+      "bytes": [
+        "A4",
+        "19"
+      ],
+      "m8": true,
+      "mnemonic": "LDY",
+      "operand": "$19",
+      "x8": false
+    },
+    {
+      "addr": "$828557",
+      "bytes": [
+        "C8"
+      ],
+      "m8": true,
+      "mnemonic": "INY",
+      "operand": "",
+      "x8": false
+    },
+    {
+      "addr": "$828558",
+      "bytes": [
+        "C8"
+      ],
+      "m8": true,
+      "mnemonic": "INY",
+      "operand": "",
+      "x8": false
+    },
+    {
+      "addr": "$828559",
+      "bytes": [
+        "84",
+        "19"
+      ],
+      "m8": true,
+      "mnemonic": "STY",
+      "operand": "$19",
+      "x8": false
+    },
+    {
+      "addr": "$82855B",
+      "bytes": [
+        "CA"
+      ],
+      "m8": true,
+      "mnemonic": "DEX",
+      "operand": "",
+      "x8": false
+    },
+    {
+      "addr": "$82855C",
+      "bytes": [
+        "D0",
+        "E7"
+      ],
+      "m8": true,
+      "mnemonic": "BNE",
+      "operand": "$8545",
+      "x8": false
+    },
+    {
+      "addr": "$82855E",
+      "bytes": [
+        "80",
+        "AB"
+      ],
+      "m8": true,
+      "mnemonic": "BRA",
+      "operand": "$850B",
+      "x8": false
+    },
+    {
+      "addr": "$828560",
+      "bytes": [
+        "A4",
+        "1C"
+      ],
+      "m8": true,
+      "mnemonic": "LDY",
+      "operand": "$1C",
+      "x8": false
+    },
+    {
+      "addr": "$828562",
+      "bytes": [
+        "84",
+        "19"
+      ],
+      "m8": true,
+      "mnemonic": "STY",
+      "operand": "$19",
+      "x8": false
+    },
+    {
+      "addr": "$828564",
+      "bytes": [
+        "A4",
+        "16"
+      ],
+      "m8": true,
+      "mnemonic": "LDY",
+      "operand": "$16",
+      "x8": false
+    },
+    {
+      "addr": "$828566",
+      "bytes": [
+        "C8"
+      ],
+      "m8": true,
+      "mnemonic": "INY",
+      "operand": "",
+      "x8": false
+    },
+    {
+      "addr": "$828567",
+      "bytes": [
+        "D0",
+        "05"
+      ],
+      "m8": true,
+      "mnemonic": "BNE",
+      "operand": "$856E",
+      "x8": false
+    },
+    {
+      "addr": "$828569",
+      "bytes": [
+        "E6",
+        "18"
+      ],
+      "m8": true,
+      "mnemonic": "INC",
+      "operand": "$18",
+      "x8": false
+    },
+    {
+      "addr": "$82856B",
+      "bytes": [
+        "A0",
+        "00",
+        "80"
+      ],
+      "m8": true,
+      "mnemonic": "LDY",
+      "operand": "#$8000",
+      "x8": false
+    },
+    {
+      "addr": "$82856E",
+      "bytes": [
+        "84",
+        "16"
+      ],
+      "m8": true,
+      "mnemonic": "STY",
+      "operand": "$16",
+      "x8": false
+    },
+    {
+      "addr": "$828570",
+      "bytes": [
+        "C6",
+        "1F"
+      ],
+      "m8": true,
+      "mnemonic": "DEC",
+      "operand": "$1F",
+      "x8": false
+    },
+    {
+      "addr": "$828572",
+      "bytes": [
+        "D0",
+        "97"
+      ],
+      "m8": true,
+      "mnemonic": "BNE",
+      "operand": "$850B",
+      "x8": false
+    },
+    {
+      "addr": "$828574",
+      "bytes": [
+        "7A"
+      ],
+      "m8": true,
+      "mnemonic": "PLY",
+      "operand": "",
+      "x8": false
+    },
+    {
+      "addr": "$828575",
+      "bytes": [
+        "FA"
+      ],
+      "m8": true,
+      "mnemonic": "PLX",
+      "operand": "",
+      "x8": false
+    },
+    {
+      "addr": "$828576",
+      "bytes": [
+        "28"
+      ],
+      "m8": true,
+      "mnemonic": "PLP",
+      "operand": "",
+      "x8": false
+    },
+    {
+      "addr": "$828577",
+      "bytes": [
+        "6B"
+      ],
+      "m8": true,
+      "mnemonic": "RTL",
+      "operand": "",
+      "x8": false
+    },
+    {
+      "addr": "$828578",
+      "bytes": [
+        "A7",
+        "16"
+      ],
+      "m8": true,
+      "mnemonic": "LDA",
+      "operand": "[$16]",
+      "x8": false
+    },
+    {
+      "addr": "$82857A",
+      "bytes": [
+        "29",
+        "1F"
+      ],
+      "m8": true,
+      "mnemonic": "AND",
+      "operand": "#$1F",
+      "x8": false
+    },
+    {
+      "addr": "$82857C",
+      "bytes": [
+        "1A"
+      ],
+      "m8": true,
+      "mnemonic": "INC",
+      "operand": "A",
+      "x8": false
+    },
+    {
+      "addr": "$82857D",
+      "bytes": [
+        "AA"
+      ],
+      "m8": true,
+      "mnemonic": "TAX",
+      "operand": "",
+      "x8": false
+    },
+    {
+      "addr": "$82857E",
+      "bytes": [
+        "A4",
+        "16"
+      ],
+      "m8": true,
+      "mnemonic": "LDY",
+      "operand": "$16",
+      "x8": false
+    },
+    {
+      "addr": "$828580",
+      "bytes": [
+        "C8"
+      ],
+      "m8": true,
+      "mnemonic": "INY",
+      "operand": "",
+      "x8": false
+    },
+    {
+      "addr": "$828581",
+      "bytes": [
+        "D0",
+        "05"
+      ],
+      "m8": true,
+      "mnemonic": "BNE",
+      "operand": "$8588",
+      "x8": false
+    },
+    {
+      "addr": "$828583",
+      "bytes": [
+        "E6",
+        "18"
+      ],
+      "m8": true,
+      "mnemonic": "INC",
+      "operand": "$18",
+      "x8": false
+    },
+    {
+      "addr": "$828585",
+      "bytes": [
+        "A0",
+        "00",
+        "80"
+      ],
+      "m8": true,
+      "mnemonic": "LDY",
+      "operand": "#$8000",
+      "x8": false
+    },
+    {
+      "addr": "$828588",
+      "bytes": [
+        "84",
+        "16"
+      ],
+      "m8": true,
+      "mnemonic": "STY",
+      "operand": "$16",
+      "x8": false
+    },
+    {
+      "addr": "$82858A",
+      "bytes": [
+        "A7",
+        "16"
+      ],
+      "m8": true,
+      "mnemonic": "LDA",
+      "operand": "[$16]",
+      "x8": false
+    },
+    {
+      "addr": "$82858C",
+      "bytes": [
+        "85",
+        "00"
+      ],
+      "m8": true,
+      "mnemonic": "STA",
+      "operand": "$00",
+      "x8": false
+    },
+    {
+      "addr": "$82858E",
+      "bytes": [
+        "A4",
+        "16"
+      ],
+      "m8": true,
+      "mnemonic": "LDY",
+      "operand": "$16",
+      "x8": false
+    },
+    {
+      "addr": "$828590",
+      "bytes": [
+        "C8"
+      ],
+      "m8": true,
+      "mnemonic": "INY",
+      "operand": "",
+      "x8": false
+    },
+    {
+      "addr": "$828591",
+      "bytes": [
+        "D0",
+        "05"
+      ],
+      "m8": true,
+      "mnemonic": "BNE",
+      "operand": "$8598",
+      "x8": false
+    },
+    {
+      "addr": "$828593",
+      "bytes": [
+        "E6",
+        "18"
+      ],
+      "m8": true,
+      "mnemonic": "INC",
+      "operand": "$18",
+      "x8": false
+    },
+    {
+      "addr": "$828595",
+      "bytes": [
+        "A0",
+        "00",
+        "80"
+      ],
+      "m8": true,
+      "mnemonic": "LDY",
+      "operand": "#$8000",
+      "x8": false
+    },
+    {
+      "addr": "$828598",
+      "bytes": [
+        "84",
+        "16"
+      ],
+      "m8": true,
+      "mnemonic": "STY",
+      "operand": "$16",
+      "x8": false
+    },
+    {
+      "addr": "$82859A",
+      "bytes": [
+        "A5",
+        "00"
+      ],
+      "m8": true,
+      "mnemonic": "LDA",
+      "operand": "$00",
+      "x8": false
+    },
+    {
+      "addr": "$82859C",
+      "bytes": [
+        "87",
+        "19"
+      ],
+      "m8": true,
+      "mnemonic": "STA",
+      "operand": "[$19]",
+      "x8": false
+    },
+    {
+      "addr": "$82859E",
+      "bytes": [
+        "A4",
+        "19"
+      ],
+      "m8": true,
+      "mnemonic": "LDY",
+      "operand": "$19",
+      "x8": false
+    },
+    {
+      "addr": "$8285A0",
+      "bytes": [
+        "C8"
+      ],
+      "m8": true,
+      "mnemonic": "INY",
+      "operand": "",
+      "x8": false
+    },
+    {
+      "addr": "$8285A1",
+      "bytes": [
+        "C8"
+      ],
+      "m8": true,
+      "mnemonic": "INY",
+      "operand": "",
+      "x8": false
+    },
+    {
+      "addr": "$8285A2",
+      "bytes": [
+        "84",
+        "19"
+      ],
+      "m8": true,
+      "mnemonic": "STY",
+      "operand": "$19",
+      "x8": false
+    },
+    {
+      "addr": "$8285A4",
+      "bytes": [
+        "A7",
+        "16"
+      ],
+      "m8": true,
+      "mnemonic": "LDA",
+      "operand": "[$16]",
+      "x8": false
+    },
+    {
+      "addr": "$8285A6",
+      "bytes": [
+        "87",
+        "19"
+      ],
+      "m8": true,
+      "mnemonic": "STA",
+      "operand": "[$19]",
+      "x8": false
+    },
+    {
+      "addr": "$8285A8",
+      "bytes": [
+        "A4",
+        "19"
+      ],
+      "m8": true,
+      "mnemonic": "LDY",
+      "operand": "$19",
+      "x8": false
+    },
+    {
+      "addr": "$8285AA",
+      "bytes": [
+        "C8"
+      ],
+      "m8": true,
+      "mnemonic": "INY",
+      "operand": "",
+      "x8": false
+    },
+    {
+      "addr": "$8285AB",
+      "bytes": [
+        "C8"
+      ],
+      "m8": true,
+      "mnemonic": "INY",
+      "operand": "",
+      "x8": false
+    },
+    {
+      "addr": "$8285AC",
+      "bytes": [
+        "84",
+        "19"
+      ],
+      "m8": true,
+      "mnemonic": "STY",
+      "operand": "$19",
+      "x8": false
+    },
+    {
+      "addr": "$8285AE",
+      "bytes": [
+        "CA"
+      ],
+      "m8": true,
+      "mnemonic": "DEX",
+      "operand": "",
+      "x8": false
+    },
+    {
+      "addr": "$8285AF",
+      "bytes": [
+        "D0",
+        "E9"
+      ],
+      "m8": true,
+      "mnemonic": "BNE",
+      "operand": "$859A",
+      "x8": false
+    },
+    {
+      "addr": "$8285B1",
+      "bytes": [
+        "A4",
+        "16"
+      ],
+      "m8": true,
+      "mnemonic": "LDY",
+      "operand": "$16",
+      "x8": false
+    },
+    {
+      "addr": "$8285B3",
+      "bytes": [
+        "C8"
+      ],
+      "m8": true,
+      "mnemonic": "INY",
+      "operand": "",
+      "x8": false
+    },
+    {
+      "addr": "$8285B4",
+      "bytes": [
+        "D0",
+        "05"
+      ],
+      "m8": true,
+      "mnemonic": "BNE",
+      "operand": "$85BB",
+      "x8": false
+    },
+    {
+      "addr": "$8285B6",
+      "bytes": [
+        "E6",
+        "18"
+      ],
+      "m8": true,
+      "mnemonic": "INC",
+      "operand": "$18",
+      "x8": false
+    },
+    {
+      "addr": "$8285B8",
+      "bytes": [
+        "A0",
+        "00",
+        "80"
+      ],
+      "m8": true,
+      "mnemonic": "LDY",
+      "operand": "#$8000",
+      "x8": false
+    },
+    {
+      "addr": "$8285BB",
+      "bytes": [
+        "84",
+        "16"
+      ],
+      "m8": true,
+      "mnemonic": "STY",
+      "operand": "$16",
+      "x8": false
+    },
+    {
+      "addr": "$8285BD",
+      "bytes": [
+        "4C",
+        "0B",
+        "85"
+      ],
+      "m8": true,
+      "mnemonic": "JMP",
+      "operand": "$850B",
+      "x8": false
+    },
+    {
+      "addr": "$8285C0",
+      "bytes": [
+        "A7",
+        "16"
+      ],
+      "m8": true,
+      "mnemonic": "LDA",
+      "operand": "[$16]",
+      "x8": false
+    },
+    {
+      "addr": "$8285C2",
+      "bytes": [
+        "29",
+        "1F"
+      ],
+      "m8": true,
+      "mnemonic": "AND",
+      "operand": "#$1F",
+      "x8": false
+    },
+    {
+      "addr": "$8285C4",
+      "bytes": [
+        "1A"
+      ],
+      "m8": true,
+      "mnemonic": "INC",
+      "operand": "A",
+      "x8": false
+    },
+    {
+      "addr": "$8285C5",
+      "bytes": [
+        "AA"
+      ],
+      "m8": true,
+      "mnemonic": "TAX",
+      "operand": "",
+      "x8": false
+    },
+    {
+      "addr": "$8285C6",
+      "bytes": [
+        "A4",
+        "16"
+      ],
+      "m8": true,
+      "mnemonic": "LDY",
+      "operand": "$16",
+      "x8": false
+    },
+    {
+      "addr": "$8285C8",
+      "bytes": [
+        "C8"
+      ],
+      "m8": true,
+      "mnemonic": "INY",
+      "operand": "",
+      "x8": false
+    },
+    {
+      "addr": "$8285C9",
+      "bytes": [
+        "D0",
+        "05"
+      ],
+      "m8": true,
+      "mnemonic": "BNE",
+      "operand": "$85D0",
+      "x8": false
+    },
+    {
+      "addr": "$8285CB",
+      "bytes": [
+        "E6",
+        "18"
+      ],
+      "m8": true,
+      "mnemonic": "INC",
+      "operand": "$18",
+      "x8": false
+    },
+    {
+      "addr": "$8285CD",
+      "bytes": [
+        "A0",
+        "00",
+        "80"
+      ],
+      "m8": true,
+      "mnemonic": "LDY",
+      "operand": "#$8000",
+      "x8": false
+    },
+    {
+      "addr": "$8285D0",
+      "bytes": [
+        "84",
+        "16"
+      ],
+      "m8": true,
+      "mnemonic": "STY",
+      "operand": "$16",
+      "x8": false
+    },
+    {
+      "addr": "$8285D2",
+      "bytes": [
+        "A9",
+        "00"
+      ],
+      "m8": true,
+      "mnemonic": "LDA",
+      "operand": "#$00",
+      "x8": false
+    },
+    {
+      "addr": "$8285D4",
+      "bytes": [
+        "80",
+        "20"
+      ],
+      "m8": true,
+      "mnemonic": "BRA",
+      "operand": "$85F6",
+      "x8": false
+    },
+    {
+      "addr": "$8285D6",
+      "bytes": [
+        "A7",
+        "16"
+      ],
+      "m8": true,
+      "mnemonic": "LDA",
+      "operand": "[$16]",
+      "x8": false
+    },
+    {
+      "addr": "$8285D8",
+      "bytes": [
+        "29",
+        "1F"
+      ],
+      "m8": true,
+      "mnemonic": "AND",
+      "operand": "#$1F",
+      "x8": false
+    },
+    {
+      "addr": "$8285DA",
+      "bytes": [
+        "1A"
+      ],
+      "m8": true,
+      "mnemonic": "INC",
+      "operand": "A",
+      "x8": false
+    },
+    {
+      "addr": "$8285DB",
+      "bytes": [
+        "AA"
+      ],
+      "m8": true,
+      "mnemonic": "TAX",
+      "operand": "",
+      "x8": false
+    },
+    {
+      "addr": "$8285DC",
+      "bytes": [
+        "A4",
+        "16"
+      ],
+      "m8": true,
+      "mnemonic": "LDY",
+      "operand": "$16",
+      "x8": false
+    },
+    {
+      "addr": "$8285DE",
+      "bytes": [
+        "C8"
+      ],
+      "m8": true,
+      "mnemonic": "INY",
+      "operand": "",
+      "x8": false
+    },
+    {
+      "addr": "$8285DF",
+      "bytes": [
+        "D0",
+        "05"
+      ],
+      "m8": true,
+      "mnemonic": "BNE",
+      "operand": "$85E6",
+      "x8": false
+    },
+    {
+      "addr": "$8285E1",
+      "bytes": [
+        "E6",
+        "18"
+      ],
+      "m8": true,
+      "mnemonic": "INC",
+      "operand": "$18",
+      "x8": false
+    },
+    {
+      "addr": "$8285E3",
+      "bytes": [
+        "A0",
+        "00",
+        "80"
+      ],
+      "m8": true,
+      "mnemonic": "LDY",
+      "operand": "#$8000",
+      "x8": false
+    },
+    {
+      "addr": "$8285E6",
+      "bytes": [
+        "84",
+        "16"
+      ],
+      "m8": true,
+      "mnemonic": "STY",
+      "operand": "$16",
+      "x8": false
+    },
+    {
+      "addr": "$8285E8",
+      "bytes": [
+        "A7",
+        "16"
+      ],
+      "m8": true,
+      "mnemonic": "LDA",
+      "operand": "[$16]",
+      "x8": false
+    },
+    {
+      "addr": "$8285EA",
+      "bytes": [
+        "A4",
+        "16"
+      ],
+      "m8": true,
+      "mnemonic": "LDY",
+      "operand": "$16",
+      "x8": false
+    },
+    {
+      "addr": "$8285EC",
+      "bytes": [
+        "C8"
+      ],
+      "m8": true,
+      "mnemonic": "INY",
+      "operand": "",
+      "x8": false
+    },
+    {
+      "addr": "$8285ED",
+      "bytes": [
+        "D0",
+        "05"
+      ],
+      "m8": true,
+      "mnemonic": "BNE",
+      "operand": "$85F4",
+      "x8": false
+    },
+    {
+      "addr": "$8285EF",
+      "bytes": [
+        "E6",
+        "18"
+      ],
+      "m8": true,
+      "mnemonic": "INC",
+      "operand": "$18",
+      "x8": false
+    },
+    {
+      "addr": "$8285F1",
+      "bytes": [
+        "A0",
+        "00",
+        "80"
+      ],
+      "m8": true,
+      "mnemonic": "LDY",
+      "operand": "#$8000",
+      "x8": false
+    },
+    {
+      "addr": "$8285F4",
+      "bytes": [
+        "84",
+        "16"
+      ],
+      "m8": true,
+      "mnemonic": "STY",
+      "operand": "$16",
+      "x8": false
+    },
+    {
+      "addr": "$8285F6",
+      "bytes": [
+        "87",
+        "19"
+      ],
+      "m8": true,
+      "mnemonic": "STA",
+      "operand": "[$19]",
+      "x8": false
+    },
+    {
+      "addr": "$8285F8",
+      "bytes": [
+        "A4",
+        "19"
+      ],
+      "m8": true,
+      "mnemonic": "LDY",
+      "operand": "$19",
+      "x8": false
+    },
+    {
+      "addr": "$8285FA",
+      "bytes": [
+        "C8"
+      ],
+      "m8": true,
+      "mnemonic": "INY",
+      "operand": "",
+      "x8": false
+    },
+    {
+      "addr": "$8285FB",
+      "bytes": [
+        "C8"
+      ],
+      "m8": true,
+      "mnemonic": "INY",
+      "operand": "",
+      "x8": false
+    },
+    {
+      "addr": "$8285FC",
+      "bytes": [
+        "84",
+        "19"
+      ],
+      "m8": true,
+      "mnemonic": "STY",
+      "operand": "$19",
+      "x8": false
+    },
+    {
+      "addr": "$8285FE",
+      "bytes": [
+        "CA"
+      ],
+      "m8": true,
+      "mnemonic": "DEX",
+      "operand": "",
+      "x8": false
+    },
+    {
+      "addr": "$8285FF",
+      "bytes": [
+        "D0",
+        "F5"
+      ],
+      "m8": true,
+      "mnemonic": "BNE",
+      "operand": "$85F6",
+      "x8": false
+    },
+    {
+      "addr": "$828601",
+      "bytes": [
+        "4C",
+        "0B",
+        "85"
+      ],
+      "m8": true,
+      "mnemonic": "JMP",
+      "operand": "$850B",
+      "x8": false
+    },
+    {
+      "addr": "$828604",
+      "bytes": [
+        "A7",
+        "16"
+      ],
+      "m8": true,
+      "mnemonic": "LDA",
+      "operand": "[$16]",
+      "x8": false
+    },
+    {
+      "addr": "$828606",
+      "bytes": [
+        "29",
+        "1F"
+      ],
+      "m8": true,
+      "mnemonic": "AND",
+      "operand": "#$1F",
+      "x8": false
+    },
+    {
+      "addr": "$828608",
+      "bytes": [
+        "1A"
+      ],
+      "m8": true,
+      "mnemonic": "INC",
+      "operand": "A",
+      "x8": false
+    },
+    {
+      "addr": "$828609",
+      "bytes": [
+        "AA"
+      ],
+      "m8": true,
+      "mnemonic": "TAX",
+      "operand": "",
+      "x8": false
+    },
+    {
+      "addr": "$82860A",
+      "bytes": [
+        "A4",
+        "16"
+      ],
+      "m8": true,
+      "mnemonic": "LDY",
+      "operand": "$16",
+      "x8": false
+    },
+    {
+      "addr": "$82860C",
+      "bytes": [
+        "C8"
+      ],
+      "m8": true,
+      "mnemonic": "INY",
+      "operand": "",
+      "x8": false
+    },
+    {
+      "addr": "$82860D",
+      "bytes": [
+        "D0",
+        "05"
+      ],
+      "m8": true,
+      "mnemonic": "BNE",
+      "operand": "$8614",
+      "x8": false
+    },
+    {
+      "addr": "$82860F",
+      "bytes": [
+        "E6",
+        "18"
+      ],
+      "m8": true,
+      "mnemonic": "INC",
+      "operand": "$18",
+      "x8": false
+    },
+    {
+      "addr": "$828611",
+      "bytes": [
+        "A0",
+        "00",
+        "80"
+      ],
+      "m8": true,
+      "mnemonic": "LDY",
+      "operand": "#$8000",
+      "x8": false
+    },
+    {
+      "addr": "$828614",
+      "bytes": [
+        "84",
+        "16"
+      ],
+      "m8": true,
+      "mnemonic": "STY",
+      "operand": "$16",
+      "x8": false
+    },
+    {
+      "addr": "$828616",
+      "bytes": [
+        "A7",
+        "16"
+      ],
+      "m8": true,
+      "mnemonic": "LDA",
+      "operand": "[$16]",
+      "x8": false
+    },
+    {
+      "addr": "$828618",
+      "bytes": [
+        "A4",
+        "16"
+      ],
+      "m8": true,
+      "mnemonic": "LDY",
+      "operand": "$16",
+      "x8": false
+    },
+    {
+      "addr": "$82861A",
+      "bytes": [
+        "C8"
+      ],
+      "m8": true,
+      "mnemonic": "INY",
+      "operand": "",
+      "x8": false
+    },
+    {
+      "addr": "$82861B",
+      "bytes": [
+        "D0",
+        "05"
+      ],
+      "m8": true,
+      "mnemonic": "BNE",
+      "operand": "$8622",
+      "x8": false
+    },
+    {
+      "addr": "$82861D",
+      "bytes": [
+        "E6",
+        "18"
+      ],
+      "m8": true,
+      "mnemonic": "INC",
+      "operand": "$18",
+      "x8": false
+    },
+    {
+      "addr": "$82861F",
+      "bytes": [
+        "A0",
+        "00",
+        "80"
+      ],
+      "m8": true,
+      "mnemonic": "LDY",
+      "operand": "#$8000",
+      "x8": false
+    },
+    {
+      "addr": "$828622",
+      "bytes": [
+        "84",
+        "16"
+      ],
+      "m8": true,
+      "mnemonic": "STY",
+      "operand": "$16",
+      "x8": false
+    },
+    {
+      "addr": "$828624",
+      "bytes": [
+        "87",
+        "19"
+      ],
+      "m8": true,
+      "mnemonic": "STA",
+      "operand": "[$19]",
+      "x8": false
+    },
+    {
+      "addr": "$828626",
+      "bytes": [
+        "1A"
+      ],
+      "m8": true,
+      "mnemonic": "INC",
+      "operand": "A",
+      "x8": false
+    },
+    {
+      "addr": "$828627",
+      "bytes": [
+        "A4",
+        "19"
+      ],
+      "m8": true,
+      "mnemonic": "LDY",
+      "operand": "$19",
+      "x8": false
+    },
+    {
+      "addr": "$828629",
+      "bytes": [
+        "C8"
+      ],
+      "m8": true,
+      "mnemonic": "INY",
+      "operand": "",
+      "x8": false
+    },
+    {
+      "addr": "$82862A",
+      "bytes": [
+        "C8"
+      ],
+      "m8": true,
+      "mnemonic": "INY",
+      "operand": "",
+      "x8": false
+    },
+    {
+      "addr": "$82862B",
+      "bytes": [
+        "84",
+        "19"
+      ],
+      "m8": true,
+      "mnemonic": "STY",
+      "operand": "$19",
+      "x8": false
+    },
+    {
+      "addr": "$82862D",
+      "bytes": [
+        "CA"
+      ],
+      "m8": true,
+      "mnemonic": "DEX",
+      "operand": "",
+      "x8": false
+    },
+    {
+      "addr": "$82862E",
+      "bytes": [
+        "D0",
+        "F4"
+      ],
+      "m8": true,
+      "mnemonic": "BNE",
+      "operand": "$8624",
+      "x8": false
+    },
+    {
+      "addr": "$828630",
+      "bytes": [
+        "4C",
+        "0B",
+        "85"
+      ],
+      "m8": true,
+      "mnemonic": "JMP",
+      "operand": "$850B",
+      "x8": false
+    },
+    {
+      "addr": "$828633",
+      "bytes": [
+        "A7",
+        "16"
+      ],
+      "m8": true,
+      "mnemonic": "LDA",
+      "operand": "[$16]",
+      "x8": false
+    },
+    {
+      "addr": "$828635",
+      "bytes": [
+        "29",
+        "1F"
+      ],
+      "m8": true,
+      "mnemonic": "AND",
+      "operand": "#$1F",
+      "x8": false
+    },
+    {
+      "addr": "$828637",
+      "bytes": [
+        "1A"
+      ],
+      "m8": true,
+      "mnemonic": "INC",
+      "operand": "A",
+      "x8": false
+    },
+    {
+      "addr": "$828638",
+      "bytes": [
+        "AA"
+      ],
+      "m8": true,
+      "mnemonic": "TAX",
+      "operand": "",
+      "x8": false
+    },
+    {
+      "addr": "$828639",
+      "bytes": [
+        "A4",
+        "16"
+      ],
+      "m8": true,
+      "mnemonic": "LDY",
+      "operand": "$16",
+      "x8": false
+    },
+    {
+      "addr": "$82863B",
+      "bytes": [
+        "C8"
+      ],
+      "m8": true,
+      "mnemonic": "INY",
+      "operand": "",
+      "x8": false
+    },
+    {
+      "addr": "$82863C",
+      "bytes": [
+        "D0",
+        "05"
+      ],
+      "m8": true,
+      "mnemonic": "BNE",
+      "operand": "$8643",
+      "x8": false
+    },
+    {
+      "addr": "$82863E",
+      "bytes": [
+        "E6",
+        "18"
+      ],
+      "m8": true,
+      "mnemonic": "INC",
+      "operand": "$18",
+      "x8": false
+    },
+    {
+      "addr": "$828640",
+      "bytes": [
+        "A0",
+        "00",
+        "80"
+      ],
+      "m8": true,
+      "mnemonic": "LDY",
+      "operand": "#$8000",
+      "x8": false
+    },
+    {
+      "addr": "$828643",
+      "bytes": [
+        "84",
+        "16"
+      ],
+      "m8": true,
+      "mnemonic": "STY",
+      "operand": "$16",
+      "x8": false
+    },
+    {
+      "addr": "$828645",
+      "bytes": [
+        "A7",
+        "16"
+      ],
+      "m8": true,
+      "mnemonic": "LDA",
+      "operand": "[$16]",
+      "x8": false
+    },
+    {
+      "addr": "$828647",
+      "bytes": [
+        "A4",
+        "16"
+      ],
+      "m8": true,
+      "mnemonic": "LDY",
+      "operand": "$16",
+      "x8": false
+    },
+    {
+      "addr": "$828649",
+      "bytes": [
+        "C8"
+      ],
+      "m8": true,
+      "mnemonic": "INY",
+      "operand": "",
+      "x8": false
+    },
+    {
+      "addr": "$82864A",
+      "bytes": [
+        "D0",
+        "05"
+      ],
+      "m8": true,
+      "mnemonic": "BNE",
+      "operand": "$8651",
+      "x8": false
+    },
+    {
+      "addr": "$82864C",
+      "bytes": [
+        "E6",
+        "18"
+      ],
+      "m8": true,
+      "mnemonic": "INC",
+      "operand": "$18",
+      "x8": false
+    },
+    {
+      "addr": "$82864E",
+      "bytes": [
+        "A0",
+        "00",
+        "80"
+      ],
+      "m8": true,
+      "mnemonic": "LDY",
+      "operand": "#$8000",
+      "x8": false
+    },
+    {
+      "addr": "$828651",
+      "bytes": [
+        "84",
+        "16"
+      ],
+      "m8": true,
+      "mnemonic": "STY",
+      "operand": "$16",
+      "x8": false
+    },
+    {
+      "addr": "$828653",
+      "bytes": [
+        "87",
+        "19"
+      ],
+      "m8": true,
+      "mnemonic": "STA",
+      "operand": "[$19]",
+      "x8": false
+    },
+    {
+      "addr": "$828655",
+      "bytes": [
+        "3A"
+      ],
+      "m8": true,
+      "mnemonic": "DEC",
+      "operand": "A",
+      "x8": false
+    },
+    {
+      "addr": "$828656",
+      "bytes": [
+        "A4",
+        "19"
+      ],
+      "m8": true,
+      "mnemonic": "LDY",
+      "operand": "$19",
+      "x8": false
+    },
+    {
+      "addr": "$828658",
+      "bytes": [
+        "C8"
+      ],
+      "m8": true,
+      "mnemonic": "INY",
+      "operand": "",
+      "x8": false
+    },
+    {
+      "addr": "$828659",
+      "bytes": [
+        "C8"
+      ],
+      "m8": true,
+      "mnemonic": "INY",
+      "operand": "",
+      "x8": false
+    },
+    {
+      "addr": "$82865A",
+      "bytes": [
+        "84",
+        "19"
+      ],
+      "m8": true,
+      "mnemonic": "STY",
+      "operand": "$19",
+      "x8": false
+    },
+    {
+      "addr": "$82865C",
+      "bytes": [
+        "CA"
+      ],
+      "m8": true,
+      "mnemonic": "DEX",
+      "operand": "",
+      "x8": false
+    },
+    {
+      "addr": "$82865D",
+      "bytes": [
+        "D0",
+        "F4"
+      ],
+      "m8": true,
+      "mnemonic": "BNE",
+      "operand": "$8653",
+      "x8": false
+    },
+    {
+      "addr": "$82865F",
+      "bytes": [
+        "4C",
+        "0B",
+        "85"
+      ],
+      "m8": true,
+      "mnemonic": "JMP",
+      "operand": "$850B",
+      "x8": false
+    }
+  ],
+  "rom": {
+    "crc32": "5F02A044",
+    "size": 1048576,
+    "version": "DaffyDuckMarvinMissionsUsa"
+  },
+  "start": "$8284FD",
+  "tool": "disasm"
+}
