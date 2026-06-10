@@ -25,10 +25,16 @@ cargo run --bin scan_pointers        -- path/to/rom.sfc --min-entries 8
 cargo run --bin scan_palettes        -- path/to/rom.sfc --min-rows 2
 cargo run --bin scan_tile_patterns   -- path/to/rom.sfc --min-tiles 16
 cargo run --bin scan_repeated_blocks -- path/to/rom.sfc --block-len 32 --min-count 4
+cargo run --bin scan_dma             -- path/to/rom.sfc
 cargo run --bin inspect_offset       -- path/to/rom.sfc --snes 0x008000 --len 64
 cargo run --bin inspect_offset       -- path/to/rom.sfc --pc 0x7FC0 --len 32
 ```
 
+`scan_dma` disassembles just enough 65816 to reconstruct general-purpose DMA
+transfers (source address + VRAM/CGRAM/OAM destination) from their setup code.
+Unlike the pattern scanners it yields a small, high-signal list.
+
 ## Index
 
 - [rom-identity.md](rom-identity.md) — supported ROM identification (confirmed)
+- [dma-transfers.md](dma-transfers.md) — DMA upload sources/destinations (likely)

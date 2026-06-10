@@ -21,8 +21,9 @@ The game's level format is **not yet reverse engineered**. What works today:
   undo/redo, dirty tracking, and validation.
 - JSON project save/load (stores ROM *hashes*, never ROM bytes).
 - IPS and BPS patch export (changed bytes only; BPS carries checksums).
-- Five CLI scanners for hunting pointer tables, palettes, tile graphics and
-  repeated structures — all output labeled *speculative*.
+- Six CLI scanners for hunting pointer tables, palettes, tile graphics,
+  repeated structures, and DMA upload sources (`scan_dma`, the highest-signal
+  one — it reconstructs transfers from the game's own setup code).
 
 ## Quick start
 

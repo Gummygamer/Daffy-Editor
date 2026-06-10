@@ -59,8 +59,9 @@ CRC32, and an "unsaved" dot when there are unsaved edits.
 
 ## Reverse-engineering CLI tools
 
-See docs/reverse-engineering/README.md for the five scanner/inspector tools
-and how to record findings.
+See docs/reverse-engineering/README.md for the six scanner/inspector tools
+and how to record findings. `scan_dma` is the highest-signal of them — it
+reconstructs DMA upload sources/destinations from the game's own code.
 
 ## Troubleshooting
 

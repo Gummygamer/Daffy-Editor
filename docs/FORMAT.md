@@ -38,8 +38,18 @@ Field values for the real USA ROM should be recorded in
 The SNES PPU dictates 4bpp planar tiles (32 bytes/tile) and BGR555 palettes;
 decoding helpers are in `src/snes/tiles.rs` / `src/snes/palette.rs`
 (confirmed as formats, since they are hardware-defined). *Where* this game
-stores tiles/palettes, and whether they are compressed, is **unknown**.
-Use `scan_tile_patterns` / `scan_palettes` to gather candidates.
+stores tiles/palettes is **unknown**; see the compression note below for why
+the `scan_tile_patterns` / `scan_palettes` candidates are probably *not* the
+raw ROM storage locations.
+
+## DMA uploads — likely
+
+`scan_dma` reconstructs four immediate-fed DMA transfers (the fixed
+init/HUD uploads). All of them source from **RAM** (`$7F` WRAM / `$00` low
+RAM), never directly from ROM, and one is a textbook 544-byte OAM upload.
+Details and emulator-confirmation steps:
+[reverse-engineering/dma-transfers.md](reverse-engineering/dma-transfers.md).
+Most uploads run through a parameterized DMA helper the scanner cannot follow.
 
 ## Level data — unknown
 
@@ -48,6 +58,13 @@ yet**. The editor currently displays synthetic placeholder data, labeled as
 such in the UI. Candidate-hunting tools: `scan_pointers`,
 `scan_repeated_blocks`, `inspect_offset`.
 
-## Compression — unknown
+## Compression — likely (present), scheme unknown
 
-No compression scheme has been identified or ruled out.
+The graphics/palette DMA transfers found by `scan_dma` all upload from WRAM,
+not from ROM (see DMA uploads above). A decompress-into-RAM-then-DMA pipeline
+is the usual reason for that, so the ROM **likely** stores tiles/palettes in a
+compressed form rather than raw at the addresses the pattern scanners flag.
+The specific scheme (LZ variant, RLE, etc.) is still **unknown** and no codec
+should be written until the decompressor is located and confirmed in an
+emulator. Tracking note:
+[reverse-engineering/dma-transfers.md](reverse-engineering/dma-transfers.md).

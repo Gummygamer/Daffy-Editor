@@ -1,0 +1,56 @@
+{
+  "confidence": "speculative",
+  "rom": {
+    "crc32": "5F02A044",
+    "size": 1048576,
+    "version": "DaffyDuckMarvinMissionsUsa"
+  },
+  "tool": "scan_dma",
+  "transfer_count": 4,
+  "transfers": [
+    {
+      "b_bus_reg": 34,
+      "channel": 1,
+      "code_offset": 31965,
+      "code_snes_addr": 64733,
+      "kind": "cgram",
+      "mask_confirmed": true,
+      "size": null,
+      "source_addr": 8372224,
+      "source_pc": null
+    },
+    {
+      "b_bus_reg": 4,
+      "channel": 2,
+      "code_offset": 4777,
+      "code_snes_addr": 37545,
+      "kind": "oam",
+      "mask_confirmed": true,
+      "size": 544,
+      "source_addr": 7274,
+      "source_pc": null
+    },
+    {
+      "b_bus_reg": 24,
+      "channel": 1,
+      "code_offset": 31891,
+      "code_snes_addr": 64659,
+      "kind": "vram",
+      "mask_confirmed": true,
+      "size": null,
+      "source_addr": 8372224,
+      "source_pc": null
+    },
+    {
+      "b_bus_reg": 24,
+      "channel": 1,
+      "code_offset": 72415,
+      "code_snes_addr": 170719,
+      "kind": "vram",
+      "mask_confirmed": true,
+      "size": 2048,
+      "source_addr": 8376320,
+      "source_pc": null
+    }
+  ]
+}
