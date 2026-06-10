@@ -1,11 +1,13 @@
-# Graphics compression codec — control-byte RLE (decode-confirmed)
+# Graphics compression codec — control-byte RLE (confirmed)
 
-**Confidence: the disassembly and per-command mechanics are decode-confirmed**
-(read directly from the routine's bytes with `cargo run --bin disasm`); the
-*intent* of the two-pass/stride-2 layout (SNES bitplane interleave) is **likely**
-but not yet round-trip-verified. **No codec is committed yet** — per the project
-rule, an encoder/decoder lands only after a round-trip test against real ROM data
-passes. Raw listing: [reports/disasm_decompressor.json](reports/disasm_decompressor.json).
+**Confidence: confirmed.** The per-command mechanics were read directly from the
+routine's bytes (`cargo run --bin disasm`), and the whole codec — including the
+two-pass/stride-2 bitplane-interleave layout — is now **round-trip-verified**
+against real ROM data: a Mesen2 capture of a live decompress call (source
+`$93:B9C9`, 6208-byte WRAM staging output) is reproduced byte-for-byte by the
+committed decoder. The decoder lives at `src/codecs/gfx_rle.rs` (synthetic-fixture
+unit tests); reproduce the live check with `tools/roundtrip.sh`. Raw listing:
+[reports/disasm_decompressor.json](reports/disasm_decompressor.json).
 
 This is the routine the [graphics pipeline](graphics-pipeline.md) identified as
 the decompressor (`$82:8549` was the dominant-store window; the full routine is
@@ -68,12 +70,10 @@ cargo run --bin disasm -- <rom> --snes 0x82850B --end 0x82865F --m8 --x16
 
 ## Next steps
 
-1. **Write the decoder** in `src/codecs/` against this table, then a
-   **round-trip test**: find a compressed blob start in `$92`, decode it, and
-   confirm the output matches a Mesen2 dump of `$7F:C000…` after the
-   decompressor runs (the pipeline trace already gives a capture point). Only
-   then promote compression to *confirmed* in [FORMAT.md](../FORMAT.md) and ship
-   the codec.
+1. ~~Write the decoder + round-trip test.~~ **Done** — `src/codecs/gfx_rle.rs`
+   decodes, and `tools/roundtrip.sh` confirmed it reproduces a live Mesen2
+   `$7F:C000` staging dump (source `$93:B9C9`) byte-for-byte. Compression is now
+   *confirmed* in [FORMAT.md](../FORMAT.md).
 2. Find the **graphics-id → source-pointer table**: locate the loader that sets
    DP `$16/$17/$18` (and the dest/`$1F`) before calling `$82:84FD`. That index is
    what a level/screen loader uses — the bridge from "a screen" to "these tiles".

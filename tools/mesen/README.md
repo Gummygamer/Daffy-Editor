@@ -42,6 +42,12 @@ capture in-level data.
   area (`$7F:C000-CFFF`) — the **decompressor** — and which ROM banks it reads
   (the compressed-graphics source). Do **not** add `emu.getState()` to its ROM
   read callback (fires per opcode fetch → crash).
+- **`roundtrip_decompressor.lua`** — captures the decompressor's source pointer
+  (`$16/$17/$18`) at entry (`$82:84FD`) and the staging bytes it produced at the
+  RTL (`$82:8577`), for the first call sourcing from the gfx banks `$92/93/95/96`.
+  Drives the codec round-trip via `../roundtrip.sh`. Its dump contains decoded
+  ROM graphics, so (unlike the other scripts) its output is **local-only and
+  never committed** — `roundtrip.sh` writes it to a temp file.
 
 ## Confirmed result (USA ROM, see `../../docs/reverse-engineering/graphics-pipeline.md`)
 

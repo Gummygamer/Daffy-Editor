@@ -54,6 +54,12 @@ pub enum PatchError {
     Malformed(String),
 }
 
+#[derive(Debug, Error, PartialEq, Eq)]
+pub enum CodecError {
+    #[error("compressed stream ended unexpectedly while reading {what} (offset {offset})")]
+    UnexpectedEnd { what: &'static str, offset: usize },
+}
+
 #[derive(Debug, Error)]
 pub enum EditError {
     #[error("room index {0} out of range")]
