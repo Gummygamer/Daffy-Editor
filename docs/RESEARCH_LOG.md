@@ -6,6 +6,40 @@ docs/reverse-engineering/ when they stabilize.
 
 ---
 
+## 2026-06-11 — LEVEL FORMAT: scene pointer block + per-level tilemap (CONFIRMED)
+
+- The bridge from a level to its data is **code, not a table**. New tool
+  `tools/mesen/trace_scene.lua` hooks the per-scene sound-upload `$80:99AD` and
+  dumps the data-pointer block the setup routine just wrote. Caught three scenes
+  live, each with a consistent block: a **primary bank** + tileset (`$D5=$8000`)
+  + per-level map (`$D9`) + attr (`$DB`), **map width×height** (`$DD/$DF`), and a
+  **secondary bank** (`$1EF8`, = the routine's own bank) + entity list (`$1EF4`)
+  + handler table (`$1EFA`). Scene #3's live values matched the static immediates
+  of the setup routine `$81:800F` exactly.
+- Static scanner `src/level/scan.rs` (`scan_levels`, TDD +6 synthetic tests)
+  recovers the block from every scene routine — anchored on the distinctive
+  `STA $1EF8` (`8D F8 1E`), rejecting the one non-scene site — giving the game's
+  **21-level table** (bin `scan_levels`, report `reports/scan_levels.json`).
+  Levels group by "world" bank (`$88/$89/$8B/$83/$8D`); each world shares its
+  tileset/attr bank.
+- **Per-level tilemap format CONFIRMED** = `width*height` 16-bit cells,
+  row-major, **uncompressed**. Proof: in the `$88` world the four levels' `$D9`
+  offsets are exactly `prev + width*height*2` apart
+  (`$A86B→$B76B→$CB6B→$EB6B` for 80×24, 64×40, 64×64) — only closes for raw
+  two-byte cells packed back-to-back. (Aside: `$80:99AD`/`$80:FB48` turned out to
+  be the **SPC700 sound uploader** — `$BBAA` handshake + APU `$2140-3` — not level
+  data; corrected.)
+
+### Next research steps
+
+1. Decode the 16-bit **cell layout** (metatile index vs. flags) + the `$D5`
+   tileset/metatile expansion — disassemble the column renderer reading `$D9/$D5`.
+2. Decode the **entity/object spawn list** (`$1EF4`) and the **attr/collision
+   map** (`$DB`).
+3. Wire `level::scan` + the tilemap into the editor's renderer.
+
+---
+
 ## 2026-06-11 — Graphics loader wrapper `$80:FC26` (mode byte + params CONFIRMED)
 
 - The descriptor table's `mode`/`params` were the last "likely" piece of the

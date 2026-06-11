@@ -83,12 +83,29 @@ read from a ROM immediate. The graphics lead is therefore the code that writes
 those pointers (the loader/decompressor). See
 [reverse-engineering/dma-helper.md](reverse-engineering/dma-helper.md).
 
-## Level data — unknown
+## Level data — table + tilemap confirmed; cell/object formats in progress
 
-Level/tilemap/metatile/object/enemy/exit/collision formats: **no findings
-yet**. The editor currently displays synthetic placeholder data, labeled as
-such in the UI. Candidate-hunting tools: `scan_pointers`,
-`scan_repeated_blocks`, `inspect_offset`.
+There is **no flat level table**: each of the **21 levels** is set up by a
+dedicated routine (banks `$81/$82/$8A/$8C/$8D/$8E/$8F/$91`) that loads its
+graphics inline and then writes a fixed block of data pointers + map size into
+direct page / low RAM (`$D3/$D5/$D9/$DB`, dims `$DD/$DF`, secondary
+`$1EF8/$1EF4/$1EFA`). `scan_levels` (`src/level/scan.rs`) recovers that block
+from all 21; three were caught live in Mesen2 with the exact same values.
+
+The **per-level tilemap** (`$D9`) is **confirmed**: `width * height` cells,
+**2 bytes each, row-major, uncompressed**. Proven by contiguous packing — in the
+`$88` world each level's `$D9` is exactly `previous + width*height*2`
+(`$A86B → $B76B → $CB6B → $EB6B` for 80×24, 64×40, 64×64). Levels group by
+"world" bank that holds a shared tileset (`$D5` = `:$8000`) and attribute map
+(`$DB` = `:$A600`/`:$C000`).
+
+Still **likely / in progress**: the 16-bit cell bit-layout (metatile index vs.
+flags), the `$D5` tileset/metatile expansion, the entity/object spawn list
+(`$1EF4`), and the attribute/collision map (`$DB`). Full write-up:
+[reverse-engineering/level-format.md](reverse-engineering/level-format.md);
+report [reports/scan_levels.json](reverse-engineering/reports/scan_levels.json).
+The editor still displays synthetic placeholder data until the cell format and
+tileset are wired in.
 
 ## Compression — confirmed (codec round-trips against real ROM)
 

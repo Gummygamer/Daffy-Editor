@@ -13,6 +13,7 @@ pub mod codecs;
 pub mod editor;
 pub mod gfx;
 pub mod error;
+pub mod level;
 pub mod model;
 pub mod patch;
 pub mod rendering;

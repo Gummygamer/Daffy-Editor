@@ -19,3 +19,9 @@ Scanner JSON reports (offsets and hashes only - never ROM bytes).
 - `gfx_table_trace.json` — `trace_gfx_loader.lua` live capture cross-validating
   the table's source/dest pointers against 36 distinct decompress calls
   (**confirmed**).
+- `scan_levels.json` — the **21-level table**: each scene-setup routine's
+  recovered data-pointer block (primary bank + tileset/map/attr offsets, map
+  width×height, secondary bank + entity/handler offsets), from
+  `cargo run --bin scan_levels`. Pointer block + dimensions + per-level tilemap
+  format **confirmed** (live trace + contiguous packing); region semantics
+  **likely**. See `../level-format.md`.
