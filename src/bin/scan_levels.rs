@@ -35,6 +35,7 @@ fn main() -> Result<()> {
                 "index": i,
                 "setup_routine": format!("{:06X}", l.anchor_snes),
                 "primary_bank": format!("{:02X}", l.primary_bank),
+                "map_bank": format!("{:02X}", l.map_bank),
                 "map": format!("{:06X}", l.map_ptr()),
                 "tileset": format!("{:06X}", l.tileset_ptr()),
                 "attr_map": format!("{:06X}", l.attr_ptr()),
@@ -45,6 +46,7 @@ fn main() -> Result<()> {
                 "tileset_metatiles": l.tileset_metatile_count(),
                 "secondary_bank": format!("{:02X}", l.secondary_bank),
                 "entity_list": format!("{:06X}", l.entity_ptr()),
+                "entity_count": l.entity_count,
                 "handler_table": format!("{:02X}{:04X}", l.secondary_bank, l.handler_off),
             })
         })
@@ -65,7 +67,7 @@ fn main() -> Result<()> {
 
     let report = serde_json::json!({
         "tool": "scan_levels",
-        "confidence": "pointer block + dimensions + tilemap confirmed (live trace + contiguous packing); master order table + region semantics likely",
+        "confidence": "pointer block + dimensions + tilemap confirmed (live trace + contiguous packing; map bank = $D7 makes all 20 levels decode with 0 out-of-range metatile indices); master order table + region semantics likely",
         "rom": {
             "crc32": format!("{:08X}", info.crc32),
             "size": info.size,

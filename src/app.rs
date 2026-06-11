@@ -9,6 +9,7 @@ use serde::{Deserialize, Serialize};
 use crate::editor::history::EditorHistory;
 use crate::editor::selection::Selection;
 use crate::editor::tools::Tool;
+use crate::level::{level_count, load_rom_level};
 use crate::model::level::{synthetic_level, Level};
 use crate::model::project::{Project, RomIdentity};
 use crate::model::validation::{validate_project, ValidationIssue};
@@ -59,6 +60,10 @@ pub struct DaffyApp {
     pub tool: Tool,
     pub active_metatile: u16,
     pub active_room: usize,
+    /// Index of the ROM level currently loaded into `project.levels[0]`.
+    pub active_level: usize,
+    /// Number of levels the loaded ROM exposes (0 when no ROM / unrecognized).
+    pub rom_level_count: usize,
     pub prefs: Prefs,
     pub status: String,
     pub hovered_tile: Option<(u32, u32)>,
@@ -83,6 +88,8 @@ impl DaffyApp {
             tool: Tool::Select,
             active_metatile: 0,
             active_room: 0,
+            active_level: 0,
+            rom_level_count: 0,
             prefs,
             status: "Ready. Open a legally obtained ROM via File > Open ROM…".to_string(),
             hovered_tile: None,
@@ -126,9 +133,48 @@ impl DaffyApp {
                     info,
                     path: Some(path),
                 });
+                self.load_real_levels();
                 self.revalidate();
             }
             Err(e) => self.status = format!("Failed to open ROM: {e}"),
+        }
+    }
+
+    /// Replace the placeholder synthetic level with real level 0 decoded from the
+    /// loaded ROM. Only runs for the recognized USA ROM (offsets are specific to
+    /// it); unknown ROMs keep the synthetic prototype and a warning.
+    pub fn load_real_levels(&mut self) {
+        let Some(rom) = &self.rom else { return };
+        if rom.info.version == RomVersion::Unknown {
+            self.rom_level_count = 0;
+            return;
+        }
+        let bytes = rom.image.original().to_vec();
+        self.rom_level_count = level_count(&bytes);
+        self.load_rom_level_into_project(0, &bytes);
+    }
+
+    /// Switch the editor to ROM level `n` (decoding it fresh). Discards unsaved
+    /// per-level edits — switching is a navigation action, not an edit.
+    pub fn set_active_level(&mut self, n: usize) {
+        let Some(rom) = &self.rom else { return };
+        let bytes = rom.image.original().to_vec();
+        self.load_rom_level_into_project(n, &bytes);
+    }
+
+    fn load_rom_level_into_project(&mut self, n: usize, bytes: &[u8]) {
+        match load_rom_level(bytes, n) {
+            Ok(level) => {
+                self.active_level = n;
+                self.project.levels = vec![level];
+                self.history = EditorHistory::new();
+                self.selection = Selection::None;
+                self.active_room = 0;
+                self.active_metatile = 0;
+                self.status = format!("Loaded ROM level {n} of {}.", self.rom_level_count);
+                self.revalidate();
+            }
+            Err(e) => self.status = format!("Could not decode ROM level {n}: {e}"),
         }
     }
 

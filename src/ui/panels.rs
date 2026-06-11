@@ -127,6 +127,21 @@ fn level_section(app: &mut DaffyApp, ui: &mut egui::Ui) {
         ui.selectable_value(&mut app.tool, Tool::Select, Tool::Select.label());
         ui.selectable_value(&mut app.tool, Tool::Paint, Tool::Paint.label());
     });
+
+    // ROM-level navigator (only when a recognized ROM exposes real levels).
+    if app.rom_level_count > 0 {
+        let mut sel = app.active_level;
+        egui::ComboBox::from_label("ROM level")
+            .selected_text(format!("Level {sel} / {}", app.rom_level_count - 1))
+            .show_ui(ui, |ui| {
+                for n in 0..app.rom_level_count {
+                    ui.selectable_value(&mut sel, n, format!("Level {n}"));
+                }
+            });
+        if sel != app.active_level {
+            app.set_active_level(sel);
+        }
+    }
 }
 
 fn metatile_picker(app: &mut DaffyApp, ui: &mut egui::Ui) {

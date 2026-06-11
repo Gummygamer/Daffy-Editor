@@ -9,16 +9,26 @@ stack.
 
 ## Status
 
-The game's level format is **not yet reverse engineered**. What works today:
+The game's level format is **reverse engineered and the editor reads real
+levels from the ROM** — opening the supported USA ROM loads all 20 levels (no
+more synthetic placeholder). See
+[docs/reverse-engineering/level-format.md](docs/reverse-engineering/level-format.md).
+What works today:
 
 - ROM loading with copier-header detection/stripping, CRC32 + SHA-1 hashing,
   and identification of the supported USA ROM (LoROM, 1 MiB, CRC32
   `5F02A044`) — with a prominent warning for unknown ROMs.
 - ROM info panel (hashes, internal SNES header, mapping).
 - LoROM ↔ PC address conversion, bounds-checked ROM access.
-- A synthetic, clearly-labeled placeholder level rendered in the editor
-  canvas with zoom/pan, tile painting, object overlay/moving, selection,
-  undo/redo, dirty tracking, and validation.
+- **Real level loading** (`level::load_rom_level`): master level table →
+  per-scene setup routine → tilemap (`$D7:$D9`), tileset/metatiles (`$D3:$D5`),
+  and palette (reconstructed from the scene's CGRAM graphics loads). A level
+  picker switches between all 20 levels; verify with
+  `cargo run --bin load_level -- <rom> all`.
+- Editor canvas with zoom/pan, tile painting, object overlay/moving, selection,
+  undo/redo, dirty tracking, and validation (a synthetic level is still used as
+  a fallback when no recognized ROM is open). Metatiles currently render as flat
+  palette colors; real tile-pixel graphics are the next step.
 - JSON project save/load (stores ROM *hashes*, never ROM bytes).
 - IPS and BPS patch export (changed bytes only; BPS carries checksums).
 - CLI scanners for hunting pointer tables, palettes, tile graphics, repeated

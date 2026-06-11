@@ -36,8 +36,10 @@ pub struct Tile {
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Metatile {
     pub id: u16,
-    /// The four 8x8 hardware tile indices (TL, TR, BL, BR).
-    pub tiles: [u16; 4],
+    /// SNES tilemap words composing this metatile, row-major. ROM-backed
+    /// metatiles are a 4x4 block of 8x8 tiles (16 words, see
+    /// [`crate::level::cell`]); the synthetic prototype uses 4 (2x2).
+    pub tiles: Vec<u16>,
     pub palette_row: u8,
     /// Collision class (meaning TBD by reverse engineering).
     pub collision: u8,
@@ -194,7 +196,7 @@ pub fn synthetic_level() -> Level {
     let metatiles = (0u16..16)
         .map(|id| Metatile {
             id,
-            tiles: [id * 4, id * 4 + 1, id * 4 + 2, id * 4 + 3],
+            tiles: vec![id * 4, id * 4 + 1, id * 4 + 2, id * 4 + 3],
             palette_row: 0,
             collision: u8::from(id >= 8), // upper half are "solid" in the prototype
         })

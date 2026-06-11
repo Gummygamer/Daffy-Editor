@@ -10,9 +10,10 @@
 //!
 //! | var | meaning | confidence |
 //! |-----|---------|------------|
-//! | `$D3` | primary data **bank** (low byte) | confirmed (live + 21× consistent) |
+//! | `$D3` | **tileset** data **bank** (low byte) | confirmed (live + 21× consistent) |
 //! | `$D5` | shared per-world **tileset / metatile** offset (always `$8000`) | likely |
-//! | `$D9` | **per-level tilemap** offset (`width*height` 16-bit cells) | **confirmed** |
+//! | `$D7` | **tilemap bank** (low byte) — equals `$D3` for in-bank maps, differs when the map lives in a separate bank | confirmed (every routine sets it; disasm `LDA #bank : STA $D7`) |
+//! | `$D9` | **per-level tilemap** offset (`width*height` 16-bit cells), in bank `$D7` | **confirmed** |
 //! | `$DB` | shared **per-tile-char attribute** table (`$A600`/`$C000`): one byte indexed by `tile_word & 0x3FF`, read by the renderer at `$80:F5F1` | likely |
 //! | `$DD` | map **width** in cells | confirmed |
 //! | `$DF` | map **height** in cells | confirmed |
@@ -66,12 +67,16 @@ pub struct LevelData {
     pub anchor_pc: usize,
     /// SNES address of the anchor, in the game's `$80+` (FastROM) banks.
     pub anchor_snes: u32,
-    /// Primary data bank (`$D3` low byte).
+    /// Tileset data bank (`$D3` low byte).
     pub primary_bank: u8,
     /// Shared per-world tileset/metatile offset in the primary bank (`$D5`,
     /// always `$8000`).
     pub tileset_off: u16,
-    /// **Per-level tilemap** offset in the primary bank (`$D9`): `width*height`
+    /// Tilemap bank (`$D7` low byte). Equals [`Self::primary_bank`] for maps that
+    /// share the tileset's bank, but differs for scenes whose map lives in a
+    /// separate bank (e.g. tileset `$89:8000`, map `$8A:8000`).
+    pub map_bank: u8,
+    /// **Per-level tilemap** offset in the tilemap bank (`$D9`): `width*height`
     /// 16-bit cells, packed contiguously across the world's levels.
     pub map_off: u16,
     /// Shared per-tile-char attribute table offset (`$DB`): one byte per SNES
@@ -87,12 +92,16 @@ pub struct LevelData {
     pub entity_off: u16,
     /// Handler / pointer-table offset in the secondary bank (`$1EFA`).
     pub handler_off: u16,
+    /// Number of object/entity records in the spawn list (`$1EE8`), as the
+    /// iterator at `$80:E9A8` uses for its loop count. `0` if the routine does
+    /// not set it with an immediate (then the list length is unknown).
+    pub entity_count: u16,
 }
 
 impl LevelData {
-    /// 24-bit SNES pointer to the per-level tilemap (`primary_bank:map_off`).
+    /// 24-bit SNES pointer to the per-level tilemap (`map_bank:map_off`).
     pub fn map_ptr(&self) -> u32 {
-        ((self.primary_bank as u32) << 16) | self.map_off as u32
+        ((self.map_bank as u32) << 16) | self.map_off as u32
     }
     /// 24-bit SNES pointer to the shared per-world tileset (`:tileset_off`).
     pub fn tileset_ptr(&self) -> u32 {
@@ -165,9 +174,11 @@ fn extract(rom: &[u8], anchor_pc: usize) -> Option<LevelData> {
     let ef8 = nearest_imm(rom, anchor_pc, &sta_abs(0xF8, 0x1E))?;
     let ef4 = nearest_imm(rom, anchor_pc, &sta_abs(0xF4, 0x1E))?;
     // Optional fields — present in every real scene but not required to qualify.
+    let d7 = nearest_imm(rom, anchor_pc, &sta(0xD7));
     let d9 = nearest_imm(rom, anchor_pc, &sta(0xD9)).unwrap_or(0);
     let db = nearest_imm(rom, anchor_pc, &sta(0xDB)).unwrap_or(0);
     let efa = nearest_imm(rom, anchor_pc, &sta_abs(0xFA, 0x1E)).unwrap_or(0);
+    let ee8 = nearest_imm(rom, anchor_pc, &sta_abs(0xE8, 0x1E)).unwrap_or(0);
 
     // Plausibility: a real scene's primary layout pointer is always $8000, the
     // banks are real ROM banks ($80..=$9F on this 1 MiB cart) and the map has
@@ -184,6 +195,9 @@ fn extract(rom: &[u8], anchor_pc: usize) -> Option<LevelData> {
         anchor_snes: pc_to_snes(anchor_pc).map(|s| s | 0x80_0000).unwrap_or(0),
         primary_bank,
         tileset_off: d5,
+        // Map lives in bank $D7; fall back to the tileset bank when a routine
+        // doesn't set it with an immediate (in-bank maps set $D7 == $D3 anyway).
+        map_bank: d7.map(|v| (v & 0xFF) as u8).unwrap_or(primary_bank),
         map_off: d9,
         attr_off: db,
         width: dd,
@@ -191,6 +205,7 @@ fn extract(rom: &[u8], anchor_pc: usize) -> Option<LevelData> {
         secondary_bank,
         entity_off: ef4,
         handler_off: efa,
+        entity_count: ee8,
     })
 }
 
@@ -226,9 +241,19 @@ mod tests {
     /// Build a synthetic scene-setup routine body with the given block values.
     /// (Invented bytes — no ROM data.)
     fn synth_scene(d3: u16, d5: u16, d9: u16, db: u16, dd: u16, df: u16, ef8: u16, ef4: u16, efa: u16) -> Vec<u8> {
+        // Maps that share the tileset bank set $D7 == $D3; pass that by default.
+        synth_scene_xbank(d3, d5, d3, d9, db, dd, df, ef8, ef4, efa)
+    }
+
+    /// Like [`synth_scene`] but with an explicit tilemap bank (`$D7`).
+    #[allow(clippy::too_many_arguments)]
+    fn synth_scene_xbank(
+        d3: u16, d5: u16, d7: u16, d9: u16, db: u16, dd: u16, df: u16, ef8: u16, ef4: u16, efa: u16,
+    ) -> Vec<u8> {
         let mut b = Vec::new();
         lda_sta(&mut b, d3, &[0x85, 0xD3]);
         lda_sta(&mut b, d5, &[0x85, 0xD5]);
+        lda_sta(&mut b, d7, &[0x85, 0xD7]);
         lda_sta(&mut b, d9, &[0x85, 0xD9]);
         lda_sta(&mut b, db, &[0x85, 0xDB]);
         lda_sta(&mut b, dd, &[0x85, 0xDD]);
@@ -263,6 +288,7 @@ mod tests {
         assert_eq!(l.secondary_bank, 0x81);
         assert_eq!(l.entity_off, 0x8DAE);
         assert_eq!(l.handler_off, 0x83B0);
+        assert_eq!(l.map_bank, 0x88);
         assert_eq!(l.map_ptr(), 0x88_A86B);
         assert_eq!(l.tileset_ptr(), 0x88_8000);
         assert_eq!(l.attr_ptr(), 0x88_A600);
@@ -305,6 +331,39 @@ mod tests {
         assert_eq!(levels[0].primary_bank, 0x88);
         assert_eq!(levels[1].primary_bank, 0x8B);
         assert_eq!(levels[1].height, 0x5A);
+    }
+
+    #[test]
+    fn tilemap_bank_comes_from_d7_not_d3() {
+        // Mirrors level 6: tileset bank $89 ($D3), but the map lives in bank $8A
+        // ($D7) at offset $8000. map_ptr() must use $D7, not $D3.
+        let body =
+            synth_scene_xbank(0x0089, 0x8000, 0x008A, 0x8000, 0xC000, 0x40, 0x40, 0x008A, 0xD043, 0xC529);
+        let rom = rom_with(&body, 0x100);
+        let l = scan_levels(&rom)[0];
+        assert_eq!(l.primary_bank, 0x89); // tileset bank
+        assert_eq!(l.map_bank, 0x8A); // map bank ($D7)
+        assert_eq!(l.tileset_ptr(), 0x89_8000);
+        assert_eq!(l.map_ptr(), 0x8A_8000);
+    }
+
+    #[test]
+    fn captures_entity_count_when_routine_sets_it() {
+        // Append a `LDA #imm16 : STA $1EE8` (object count) to a full scene.
+        let mut body =
+            synth_scene(0x0088, 0x8000, 0xA86B, 0xA600, 0x0050, 0x0018, 0x0081, 0x8DAE, 0x83B0);
+        lda_sta(&mut body, 0x000C, &[0x8D, 0xE8, 0x1E]);
+        let rom = rom_with(&body, 0x100);
+        let l = scan_levels(&rom)[0];
+        assert_eq!(l.entity_count, 0x0C);
+    }
+
+    #[test]
+    fn entity_count_zero_when_absent() {
+        let body =
+            synth_scene(0x0088, 0x8000, 0xA86B, 0xA600, 0x0050, 0x0018, 0x0081, 0x8DAE, 0x83B0);
+        let rom = rom_with(&body, 0x100);
+        assert_eq!(scan_levels(&rom)[0].entity_count, 0);
     }
 
     #[test]

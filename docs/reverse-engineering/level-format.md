@@ -44,15 +44,28 @@ Each scene-setup routine (21 of them, scattered across banks `$81`, `$82`, `$8A`
 
 | var | role | confidence |
 |-----|------|------------|
-| `$D3` | primary data **bank** | confirmed |
+| `$D3` | **tileset** data **bank** | confirmed |
 | `$D5` | shared per-world **tileset / metatile** offset (always `$8000`) | likely |
-| `$D9` | **per-level tilemap** offset (`width*height` 16-bit cells) | **confirmed** |
+| `$D7` | **tilemap bank** (often `== $D3`, but distinct when the map is in another bank) | **confirmed** |
+| `$D9` | **per-level tilemap** offset (`width*height` 16-bit cells), in bank `$D7` | **confirmed** |
 | `$DB` | shared **attribute / collision** offset (`$A600` or `$C000`) | likely |
 | `$DD` | map **width** in cells | confirmed |
 | `$DF` | map **height** in cells | confirmed |
 | `$1EF8` | secondary data **bank** (= the routine's own bank) | confirmed |
 | `$1EF4` | **entity / object spawn list** offset | likely |
+| `$1EE8` | **object count** for the spawn-list iterator (`$80:E9A8`) | likely |
 | `$1EFA` | handler / pointer-table offset | likely |
+
+> **The tilemap bank is `$D7`, not `$D3`.** Every setup routine writes
+> `LDA #bank : STA $D7` right beside `$D5`/`$D9`. For most worlds `$D7 == $D3`
+> (tileset and map share a bank), which originally hid the distinction — but
+> several scenes put the map in a *separate* bank, e.g. tileset `$89:8000` with
+> map **`$8A:8000`** (level 6), or tileset `$83:8000` with map `$83:8000` vs a
+> neighbour at a different bank. Using `$D3` for the map there decodes the
+> *tileset* as a map and yields wildly out-of-range metatile indices. With `$D7`
+> as the map bank, **all 20 levels** decode with their max metatile index inside
+> the tileset capacity (0 out-of-range cells) — the same invariant that confirms
+> the cell format, now holding game-wide.
 
 3. Sound-bank upload via `JSL $80:99AD` (the SPC700 uploader at `$80:FB48` — the
    `$BBAA` handshake + APU ports `$2140-$2143`; **not** level data), then hands
@@ -151,23 +164,45 @@ interprets the fields (`$80:E9CB`+):
 | `$0E` | **object type** — dispatched via `JSR $80:F1FD` | likely |
 | others | per-type parameters (7 more words) | unknown |
 
+## Editor integration — the level loader
+
+[`src/level/loader.rs`](../../src/level/loader.rs) (`load_rom_level`) walks the
+whole chain and builds the editor's [`Level`](../../src/model/level.rs) from ROM
+bytes — **the editor now reads real levels instead of the synthetic placeholder**:
+
+1. `parse_game_index` → pick the level's setup routine; `scan_levels` → recover
+   its pointer block (matched to the routine by bank + nearest anchor).
+2. **Tilemap** ← `width*height` 16-bit cells at `$D7:$D9` (cell → metatile index).
+3. **Metatiles** ← the tileset at `$D3:$D5`, `(attr-$8000)/$20` defs of 16 words.
+4. **Palette** ← replay the routine's inline `LDA #id : JSL $80:FC26` loads;
+   every **mode-1** entry ([`gfx::table`](../../src/gfx/table.rs)) decompresses
+   ([`codecs::gfx_rle`](../../src/codecs/gfx_rle.rs)) to BGR555 CGRAM colors.
+5. **Objects** ← `$1EE8` records of 22 bytes at `$1EF8:$1EF4` (positions
+   best-effort, see above).
+
+Validation over the shipping ROM: `cargo run --bin load_level -- <rom> all`
+decodes all 20 levels with **0 out-of-range metatile indices** (see
+[reports/load_level.json](reports/load_level.json)).
+
 ## Status of the level format
 
-The end-to-end chain is mapped and the rendering decode is confirmed:
-**`$1EEA` (level number) → master order table (`$80:E8D8`/`$80:E900`) → per-level
-setup routine → data-pointer block → tilemap (`$D9`, `index<<5|flag` cells) →
-tileset (`$D5`, `$20`-byte 4×4 metatiles) → SNES tile words → per-tile attributes
-(`$DB`)**, plus a 22-byte object record list (`$1EF4`). Confirmed live in Mesen2:
-driving input into level 0 produced exactly the scanned pointer block
-(`D9=$A86B`, `DB=$A600`, 80×24, obj=`$8DAE`).
+The end-to-end chain is mapped, the rendering decode is confirmed, and it is
+**wired into the editor**: **`$1EEA` (level number) → master order table
+(`$80:E8D8`/`$80:E900`) → per-level setup routine → data-pointer block → tilemap
+(`$D7:$D9`, `index<<5|flag` cells) → tileset (`$D3:$D5`, `$20`-byte 4×4 metatiles)
+→ SNES tile words → per-tile attributes (`$DB`)**, plus a 22-byte object record
+list (`$1EE8` count at `$1EF4`). Confirmed live in Mesen2 (level 0 pointer block)
+and statically game-wide (the `$D7` map-bank fix makes every level's indices fit).
 
-Remaining (smaller) gaps: bit 15's exact meaning, the object record's per-type
-parameter words, and wiring `level::*` + the tileset into the editor's renderer.
+Remaining (smaller) gaps: bit 15's exact meaning; the object record's position
+packing + per-type parameter words; and rendering **real tile pixels** (the
+metatile tile-words → 4bpp graphics need the scene's VRAM gfx reconstruction —
+the editor currently shows metatiles as flat palette colors).
 
 ## Next steps
 
-1. Wire `level::scan` + `level::cell` + the tileset into the editor to render a
-   real level (cell → metatile def → 4×4 tile words → 4bpp tiles via
-   [`crate::snes::tiles`], palette via [`crate::snes::palette`]).
-2. Pin bit 15's meaning and the object per-type parameter words (live observation
-   of a known object, e.g. toggle the flag and watch the screen/collision).
+1. Reconstruct each scene's VRAM from its mode-0 graphics loads so the tileset's
+   tile-words resolve to real 4bpp pixels ([`crate::snes::tiles`]) instead of flat
+   colors — the last step to a pixel-accurate level view.
+2. Pin bit 15's meaning and the object record's position/parameter words (live
+   observation of a known object).

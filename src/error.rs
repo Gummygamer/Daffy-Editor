@@ -60,6 +60,24 @@ pub enum CodecError {
     UnexpectedEnd { what: &'static str, offset: usize },
 }
 
+#[derive(Debug, Error, PartialEq, Eq)]
+pub enum LevelError {
+    #[error("master level table could not be read (ROM too small or wrong file)")]
+    MasterTableUnreadable,
+
+    #[error("level number {level} is out of range (game has {count} levels)")]
+    LevelOutOfRange { level: usize, count: usize },
+
+    #[error("no scene-setup routine found for level {level} (routine at {routine:#08X})")]
+    SceneNotFound { level: usize, routine: u32 },
+
+    #[error("level pointer ${addr:06X} is not addressable: {reason}")]
+    BadPointer { addr: u32, reason: &'static str },
+
+    #[error("level data for {what} runs past the end of the ROM")]
+    Truncated { what: &'static str },
+}
+
 #[derive(Debug, Error)]
 pub enum EditError {
     #[error("room index {0} out of range")]
