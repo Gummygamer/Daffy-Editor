@@ -10,6 +10,8 @@
 //! See `docs/reverse-engineering/level-format.md`.
 
 pub mod cell;
+pub mod index;
 pub mod scan;
 
+pub use index::{parse_game_index, LevelEntry};
 pub use scan::{scan_levels, LevelData};

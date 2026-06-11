@@ -11,6 +11,28 @@ Scanner: [`src/level/scan.rs`](../../src/level/scan.rs) (`scan_levels`). Dumper:
 [reports/scan_levels.json](reports/scan_levels.json). Live capture:
 [`tools/mesen/trace_scene.lua`](../../tools/mesen/trace_scene.lua).
 
+## How a level is selected — the master order table
+
+The engine holds the **current level number in `$1EEA`**. To start a level
+(`$80:E8A9`) it doubles that and indexes two **parallel word tables** in bank
+`$80`, then far-calls the level's setup routine:
+
+```
+LDA $1EEA / ASL A / TAY
+LDA $E8D8,Y -> $1EF6      ; per-level routine OFFSET table  ($80:E8D8)
+LDA $E900,Y -> $1EF8      ; per-level routine BANK   table  ($80:E900)
+... far-call $1EF8:($1EF6 + 6)   ; the level's setup routine
+```
+
+The two tables are **adjacent and exactly 20 entries** (`$E900 - $E8D8 = 0x28`
+= 20 words; the bank table ends at `$E928` where code resumes) — so the game has
+**20 ordered levels**. The 20 routine banks
+(`81×5, 8A×2, 8C×5, 8D×2, 8E, 8F×4, 91`) match the per-level setup-routine banks
+recovered independently below — multiset-identical except the one non-level
+`$82` screen. Parser: [`src/level/index.rs`](../../src/level/index.rs)
+(`parse_game_index`); the `scan_levels` report carries it under
+`master_order_table`. **Confidence: likely.**
+
 ## How a level is set up
 
 Each scene-setup routine (21 of them, scattered across banks `$81`, `$82`, `$8A`,
@@ -98,6 +120,15 @@ definitions** (16 SNES tilemap words = a 4×4 block of 8×8 tiles, a 32×32-px
 metatile — *likely* the exact shape). The `$DB` region (`$88:A600`, ~619 bytes ≈
 304 metatiles × 2) is therefore a **per-metatile** attribute/collision table
 (one entry per metatile, shared per world), not a per-cell map.
+
+## Status of the level format
+
+The end-to-end chain is mapped: **`$1EEA` (level number) → master order table
+(`$80:E8D8`/`$80:E900`) → per-level setup routine → data-pointer block → tilemap
+(`$D9`, `index<<5|flag` cells) + tileset (`$D5`, `$20`-byte metatiles) + objects
+(`$1EF4`) + attributes (`$DB`)**. The pointer plumbing, the level count (20), the
+tilemap layout and the cell index decode are confirmed; the object/attribute
+*record* formats and the metatile pixel shape remain to be decoded.
 
 ## Next steps
 

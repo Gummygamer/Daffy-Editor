@@ -85,12 +85,15 @@ those pointers (the loader/decompressor). See
 
 ## Level data — table + tilemap confirmed; cell/object formats in progress
 
-There is **no flat level table**: each of the **21 levels** is set up by a
-dedicated routine (banks `$81/$82/$8A/$8C/$8D/$8E/$8F/$91`) that loads its
-graphics inline and then writes a fixed block of data pointers + map size into
-direct page / low RAM (`$D3/$D5/$D9/$DB`, dims `$DD/$DF`, secondary
-`$1EF8/$1EF4/$1EFA`). `scan_levels` (`src/level/scan.rs`) recovers that block
-from all 21; three were caught live in Mesen2 with the exact same values.
+The current level number lives in `$1EEA`. A **master order table** (`$80:E8A9`
+indexes routine offsets at `$80:E8D8` + banks at `$80:E900`, exactly **20
+entries**) far-calls each level's **setup routine**. Each setup routine (banks
+`$81/$82/$8A/$8C/$8D/$8E/$8F/$91`) loads its graphics inline and then writes a
+fixed block of data pointers + map size into direct page / low RAM
+(`$D3/$D5/$D9/$DB`, dims `$DD/$DF`, secondary `$1EF8/$1EF4/$1EFA`). `scan_levels`
+(`src/level/scan.rs`) recovers that block from all 21 scene routines (`level::index`
+parses the order table); three were caught live in Mesen2 with the exact same
+values.
 
 The **per-level tilemap** (`$D9`) is **confirmed**: `width * height` cells,
 **2 bytes each, row-major, uncompressed**. Proven by contiguous packing — in the

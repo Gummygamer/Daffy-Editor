@@ -30,6 +30,19 @@ docs/reverse-engineering/ when they stabilize.
   be the **SPC700 sound uploader** — `$BBAA` handshake + APU `$2140-3` — not level
   data; corrected.)
 
+### Master order table (same day) — level number → setup routine
+
+- Found the level-selection index: `$80:E8A9` reads the current level number
+  `$1EEA`, doubles it, and indexes two adjacent word tables — `$80:E8D8`
+  (routine offsets) + `$80:E900` (routine banks) — then far-calls the level's
+  setup routine. The tables are exactly **20 words** each (`$E900-$E8D8 = 0x28`;
+  bank table ends at `$E928`), so the game has **20 ordered levels**. The 20
+  banks match the per-level setup-routine banks recovered via the `$1EF8` anchor
+  (multiset-identical bar the one non-level `$82` screen). Parser
+  `src/level/index.rs` (TDD +3 tests); emitted under `master_order_table` in the
+  `scan_levels` report. The full chain `$1EEA → table → setup routine → pointer
+  block → tilemap/tileset/objects` is now mapped. **likely.**
+
 ### Cell format (same day) — index decode CONFIRMED
 
 - Statistically decoded the 16-bit map cell (read-only analysis, `src/level/cell.rs`,

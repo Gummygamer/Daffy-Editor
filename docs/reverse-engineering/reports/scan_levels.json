@@ -1,8 +1,138 @@
 {
   "anchor": "STA $1EF8 (8D F8 1E) inside each scene-setup routine",
-  "confidence": "pointer block + dimensions confirmed (live trace + 21x consistent); region semantics likely",
-  "level_count": 21,
-  "levels": [
+  "confidence": "pointer block + dimensions + tilemap confirmed (live trace + contiguous packing); master order table + region semantics likely",
+  "master_order_table": {
+    "levels": [
+      {
+        "bank": "81",
+        "level": 0,
+        "offset": "7FFF",
+        "setup_routine": "818005"
+      },
+      {
+        "bank": "81",
+        "level": 1,
+        "offset": "A6EF",
+        "setup_routine": "81A6F5"
+      },
+      {
+        "bank": "81",
+        "level": 2,
+        "offset": "BFBA",
+        "setup_routine": "81BFC0"
+      },
+      {
+        "bank": "81",
+        "level": 3,
+        "offset": "C9C6",
+        "setup_routine": "81C9CC"
+      },
+      {
+        "bank": "81",
+        "level": 4,
+        "offset": "E514",
+        "setup_routine": "81E51A"
+      },
+      {
+        "bank": "8F",
+        "level": 5,
+        "offset": "7FFF",
+        "setup_routine": "8F8005"
+      },
+      {
+        "bank": "8A",
+        "level": 6,
+        "offset": "C1D1",
+        "setup_routine": "8AC1D7"
+      },
+      {
+        "bank": "8A",
+        "level": 7,
+        "offset": "DD1E",
+        "setup_routine": "8ADD24"
+      },
+      {
+        "bank": "8C",
+        "level": 8,
+        "offset": "7FFF",
+        "setup_routine": "8C8005"
+      },
+      {
+        "bank": "8C",
+        "level": 9,
+        "offset": "9C4A",
+        "setup_routine": "8C9C50"
+      },
+      {
+        "bank": "8C",
+        "level": 10,
+        "offset": "B3F1",
+        "setup_routine": "8CB3F7"
+      },
+      {
+        "bank": "8C",
+        "level": 11,
+        "offset": "C0B5",
+        "setup_routine": "8CC0BB"
+      },
+      {
+        "bank": "8C",
+        "level": 12,
+        "offset": "D54D",
+        "setup_routine": "8CD553"
+      },
+      {
+        "bank": "8E",
+        "level": 13,
+        "offset": "E07F",
+        "setup_routine": "8EE085"
+      },
+      {
+        "bank": "8D",
+        "level": 14,
+        "offset": "E076",
+        "setup_routine": "8DE07C"
+      },
+      {
+        "bank": "8D",
+        "level": 15,
+        "offset": "EDDA",
+        "setup_routine": "8DEDE0"
+      },
+      {
+        "bank": "8F",
+        "level": 16,
+        "offset": "AF4D",
+        "setup_routine": "8FAF53"
+      },
+      {
+        "bank": "8F",
+        "level": 17,
+        "offset": "D04F",
+        "setup_routine": "8FD055"
+      },
+      {
+        "bank": "8F",
+        "level": 18,
+        "offset": "DFDF",
+        "setup_routine": "8FDFE5"
+      },
+      {
+        "bank": "91",
+        "level": 19,
+        "offset": "EBF3",
+        "setup_routine": "91EBF9"
+      }
+    ],
+    "note": "level number ($1EEA) -> setup routine; offsets at $80:E8D8, banks at $80:E900, 20 entries"
+  },
+  "rom": {
+    "crc32": "5F02A044",
+    "size": 1048576,
+    "version": "DaffyDuckMarvinMissionsUsa"
+  },
+  "scene_routine_count": 21,
+  "scenes": [
     {
       "attr_map": "88A600",
       "cells": 1920,
@@ -340,10 +470,5 @@
       "width": 16
     }
   ],
-  "rom": {
-    "crc32": "5F02A044",
-    "size": 1048576,
-    "version": "DaffyDuckMarvinMissionsUsa"
-  },
   "tool": "scan_levels"
 }

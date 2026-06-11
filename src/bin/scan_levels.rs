@@ -13,7 +13,7 @@
 //! Usage: cargo run --bin scan_levels -- <rom-path>
 
 use anyhow::{bail, Result};
-use daffy_editor::level::scan_levels;
+use daffy_editor::level::{parse_game_index, scan_levels};
 use daffy_editor::rom::info::analyze_rom;
 use daffy_editor::rom::loader::load_rom_file;
 
@@ -50,17 +50,34 @@ fn main() -> Result<()> {
         })
         .collect();
 
+    let order: Vec<_> = parse_game_index(&rom.data)
+        .unwrap_or_default()
+        .iter()
+        .map(|e| {
+            serde_json::json!({
+                "level": e.level,
+                "setup_routine": format!("{:06X}", e.routine_ptr()),
+                "bank": format!("{:02X}", e.bank),
+                "offset": format!("{:04X}", e.offset),
+            })
+        })
+        .collect();
+
     let report = serde_json::json!({
         "tool": "scan_levels",
-        "confidence": "pointer block + dimensions confirmed (live trace + 21x consistent); region semantics likely",
+        "confidence": "pointer block + dimensions + tilemap confirmed (live trace + contiguous packing); master order table + region semantics likely",
         "rom": {
             "crc32": format!("{:08X}", info.crc32),
             "size": info.size,
             "version": format!("{:?}", info.version),
         },
         "anchor": "STA $1EF8 (8D F8 1E) inside each scene-setup routine",
-        "level_count": levels.len(),
-        "levels": entries,
+        "scene_routine_count": levels.len(),
+        "scenes": entries,
+        "master_order_table": {
+            "note": "level number ($1EEA) -> setup routine; offsets at $80:E8D8, banks at $80:E900, 20 entries",
+            "levels": order,
+        },
     });
     println!("{}", serde_json::to_string_pretty(&report)?);
     Ok(())
