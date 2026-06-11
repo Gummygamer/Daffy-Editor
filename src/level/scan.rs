@@ -102,6 +102,15 @@ impl LevelData {
     pub fn map_bytes(&self) -> u32 {
         self.width as u32 * self.height as u32 * 2
     }
+
+    /// Number of metatile definitions the world's tileset can hold: the bytes
+    /// between the tileset (`$D5`) and the attribute table (`$DB`), divided by
+    /// the `$20`-byte metatile stride. Every map index seen fits under this.
+    pub fn tileset_metatile_count(&self) -> u32 {
+        self.attr_off
+            .saturating_sub(self.tileset_off)
+            .wrapping_div(crate::level::cell::METATILE_BYTES as u16) as u32
+    }
 }
 
 /// The 16-bit operand of an `LDA #imm16` (`A9 lo hi`) sitting immediately before

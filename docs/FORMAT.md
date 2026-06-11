@@ -99,9 +99,16 @@ The **per-level tilemap** (`$D9`) is **confirmed**: `width * height` cells,
 "world" bank that holds a shared tileset (`$D5` = `:$8000`) and attribute map
 (`$DB` = `:$A600`/`:$C000`).
 
-Still **likely / in progress**: the 16-bit cell bit-layout (metatile index vs.
-flags), the `$D5` tileset/metatile expansion, the entity/object spawn list
-(`$1EF4`), and the attribute/collision map (`$DB`). Full write-up:
+The **cell format** is decoded (`src/level/cell.rs`): a cell is
+`(metatile_index << 5) | (flag << 15)` — its low 5 bits are always zero (verified
+across thousands of cells in three worlds), so the value is the metatile's byte
+offset into the tileset (`$20` bytes each = 16 tilemap words, a 4×4-tile
+metatile). Every map's max index fits its world's tileset capacity. Bit 15 is a
+per-cell flag.
+
+Still **likely / in progress**: bit 15's exact meaning + the 4×4 metatile shape,
+the entity/object spawn list (`$1EF4`), and the per-metatile attribute/collision
+table (`$DB`). Full write-up:
 [reverse-engineering/level-format.md](reverse-engineering/level-format.md);
 report [reports/scan_levels.json](reverse-engineering/reports/scan_levels.json).
 The editor still displays synthetic placeholder data until the cell format and

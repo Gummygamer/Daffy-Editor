@@ -30,13 +30,24 @@ docs/reverse-engineering/ when they stabilize.
   be the **SPC700 sound uploader** — `$BBAA` handshake + APU `$2140-3` — not level
   data; corrected.)
 
+### Cell format (same day) — index decode CONFIRMED
+
+- Statistically decoded the 16-bit map cell (read-only analysis, `src/level/cell.rs`,
+  TDD +3 tests). **Every** cell in the `$88`/`$8B`/`$83` worlds has its low 5 bits
+  clear, so a cell is `(metatile_index << 5) | (flag << 15)`: the value is the
+  metatile's **byte offset into the tileset** (`$D5`), which is a flat array of
+  `$20`-byte metatile defs (16 tilemap words = 4×4 tiles). Each world's max map
+  index fits its tileset capacity `(attr_off-$8000)/$20` (`$88` 298<304, `$8B`
+  276<512, `$83` 378<512) — independent corroboration. Bit 15 = per-cell flag
+  (meaning likely). The `$DB` region (~619 B ≈ 304×2) is a per-**metatile** attr
+  table, not a per-cell map.
+
 ### Next research steps
 
-1. Decode the 16-bit **cell layout** (metatile index vs. flags) + the `$D5`
-   tileset/metatile expansion — disassemble the column renderer reading `$D9/$D5`.
-2. Decode the **entity/object spawn list** (`$1EF4`) and the **attr/collision
-   map** (`$DB`).
-3. Wire `level::scan` + the tilemap into the editor's renderer.
+1. Confirm bit 15 + 4×4 metatile shape via the column renderer reading `$D9/$D5`.
+2. Decode the **entity/object spawn list** (`$1EF4`) and per-metatile
+   **attr/collision** table (`$DB`).
+3. Wire `level::scan` + `level::cell` + the tileset into the editor's renderer.
 
 ---
 

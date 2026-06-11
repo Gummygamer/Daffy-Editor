@@ -9,6 +9,7 @@
 //!
 //! See `docs/reverse-engineering/level-format.md`.
 
+pub mod cell;
 pub mod scan;
 
 pub use scan::{scan_levels, LevelData};

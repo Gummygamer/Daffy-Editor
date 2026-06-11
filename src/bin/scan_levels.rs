@@ -42,6 +42,7 @@ fn main() -> Result<()> {
                 "height": l.height,
                 "cells": l.width as u32 * l.height as u32,
                 "map_bytes": l.map_bytes(),
+                "tileset_metatiles": l.tileset_metatile_count(),
                 "secondary_bank": format!("{:02X}", l.secondary_bank),
                 "entity_list": format!("{:06X}", l.entity_ptr()),
                 "handler_table": format!("{:02X}{:04X}", l.secondary_bank, l.handler_off),

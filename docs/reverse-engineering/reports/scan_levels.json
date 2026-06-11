@@ -16,6 +16,7 @@
       "secondary_bank": "81",
       "setup_routine": "818065",
       "tileset": "888000",
+      "tileset_metatiles": 304,
       "width": 80
     },
     {
@@ -31,6 +32,7 @@
       "secondary_bank": "81",
       "setup_routine": "81A755",
       "tileset": "888000",
+      "tileset_metatiles": 304,
       "width": 64
     },
     {
@@ -46,6 +48,7 @@
       "secondary_bank": "81",
       "setup_routine": "81C027",
       "tileset": "888000",
+      "tileset_metatiles": 304,
       "width": 64
     },
     {
@@ -61,6 +64,7 @@
       "secondary_bank": "81",
       "setup_routine": "81CA25",
       "tileset": "888000",
+      "tileset_metatiles": 304,
       "width": 16
     },
     {
@@ -76,6 +80,7 @@
       "secondary_bank": "81",
       "setup_routine": "81E55E",
       "tileset": "898000",
+      "tileset_metatiles": 512,
       "width": 128
     },
     {
@@ -91,6 +96,7 @@
       "secondary_bank": "82",
       "setup_routine": "82E591",
       "tileset": "8D8000",
+      "tileset_metatiles": 512,
       "width": 8
     },
     {
@@ -106,6 +112,7 @@
       "secondary_bank": "8A",
       "setup_routine": "8AC21C",
       "tileset": "898000",
+      "tileset_metatiles": 512,
       "width": 64
     },
     {
@@ -121,6 +128,7 @@
       "secondary_bank": "8A",
       "setup_routine": "8ADD77",
       "tileset": "898000",
+      "tileset_metatiles": 512,
       "width": 8
     },
     {
@@ -136,6 +144,7 @@
       "secondary_bank": "8C",
       "setup_routine": "8C8049",
       "tileset": "8B8000",
+      "tileset_metatiles": 512,
       "width": 24
     },
     {
@@ -151,6 +160,7 @@
       "secondary_bank": "8C",
       "setup_routine": "8C9CA3",
       "tileset": "8B8000",
+      "tileset_metatiles": 512,
       "width": 88
     },
     {
@@ -166,6 +176,7 @@
       "secondary_bank": "8C",
       "setup_routine": "8CB44A",
       "tileset": "8B8000",
+      "tileset_metatiles": 512,
       "width": 64
     },
     {
@@ -181,6 +192,7 @@
       "secondary_bank": "8C",
       "setup_routine": "8CC10E",
       "tileset": "8B8000",
+      "tileset_metatiles": 512,
       "width": 13
     },
     {
@@ -196,6 +208,7 @@
       "secondary_bank": "8C",
       "setup_routine": "8CD5A6",
       "tileset": "838000",
+      "tileset_metatiles": 512,
       "width": 120
     },
     {
@@ -211,6 +224,7 @@
       "secondary_bank": "8D",
       "setup_routine": "8DE0C8",
       "tileset": "838000",
+      "tileset_metatiles": 512,
       "width": 104
     },
     {
@@ -226,6 +240,7 @@
       "secondary_bank": "8D",
       "setup_routine": "8DEE2C",
       "tileset": "838000",
+      "tileset_metatiles": 512,
       "width": 16
     },
     {
@@ -241,6 +256,7 @@
       "secondary_bank": "8E",
       "setup_routine": "8EE0D1",
       "tileset": "838000",
+      "tileset_metatiles": 512,
       "width": 208
     },
     {
@@ -256,6 +272,7 @@
       "secondary_bank": "8F",
       "setup_routine": "8F805E",
       "tileset": "898000",
+      "tileset_metatiles": 512,
       "width": 128
     },
     {
@@ -271,6 +288,7 @@
       "secondary_bank": "8F",
       "setup_routine": "8FAFB4",
       "tileset": "8D8000",
+      "tileset_metatiles": 512,
       "width": 120
     },
     {
@@ -286,6 +304,7 @@
       "secondary_bank": "8F",
       "setup_routine": "8FD0B6",
       "tileset": "8D8000",
+      "tileset_metatiles": 512,
       "width": 112
     },
     {
@@ -301,6 +320,7 @@
       "secondary_bank": "8F",
       "setup_routine": "8FE046",
       "tileset": "8D8000",
+      "tileset_metatiles": 512,
       "width": 120
     },
     {
@@ -316,6 +336,7 @@
       "secondary_bank": "91",
       "setup_routine": "91EC63",
       "tileset": "8D8000",
+      "tileset_metatiles": 512,
       "width": 16
     }
   ],

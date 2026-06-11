@@ -69,17 +69,41 @@ L3 $88:EB6B  16×8         (bonus room)
 
 This only closes if each map is `width*height` two-byte cells stored back-to-back
 — so the maps are **raw 16-bit metatile grids** (no compression; the
-[graphics RLE](compression-codec.md) is not used here). A cell value of `$8000`
-dominates the upper rows (empty/sky); content (platforms, etc.) sits in the lower
-rows — consistent with a side-scrolling platformer. The exact cell bit layout
-(metatile index + flags/palette) and the `$D5` tileset → metatile expansion are
-the next thing to pin down (disassemble the map-rendering consumer of `$D9`/`$D5`).
+[graphics RLE](compression-codec.md) is not used here).
+
+## Cell format — index decode confirmed
+
+A cell is a reference into the per-world tileset (`$D5`), decoded by
+[`src/level/cell.rs`](../../src/level/cell.rs):
+
+```text
+ 15        5 4    0
++-+----------+-----+
+|F|  index   |  0  |    value = (index << 5) | (F << 15)
++-+----------+-----+
+```
+
+- **bits 0..5 are always zero** — confirmed across the `$88`/`$8B`/`$83` worlds,
+  *every* cell (thousands) has its low five bits clear. So the value is exactly
+  `index * $20`, i.e. the **byte offset of the metatile** inside the tileset.
+- **bits 5..15 = metatile index.** The largest index each world's maps use fits
+  inside that world's tileset capacity (`(attr_off - $8000)/$20`):
+  `$88` max 298 < 304, `$8B` max 276 < 512, `$83` max 378 < 512 — independent
+  corroboration that the cell is a tileset offset.
+- **bit 15 = a per-cell flag** (orientation/solidity — *likely*). `$8000`
+  (index 0, flag set) is the dominant empty/sky cell of the upper rows.
+
+So the **tileset** at `$D5` is a flat array of fixed **`$20`-byte metatile
+definitions** (16 SNES tilemap words = a 4×4 block of 8×8 tiles, a 32×32-px
+metatile — *likely* the exact shape). The `$DB` region (`$88:A600`, ~619 bytes ≈
+304 metatiles × 2) is therefore a **per-metatile** attribute/collision table
+(one entry per metatile, shared per world), not a per-cell map.
 
 ## Next steps
 
-1. Decode the 16-bit **cell format** (metatile index vs. flags) and the `$D5`
-   tileset/metatile structure, by disassembling the column renderer that reads
-   `$D9`/`$D5`, or by editing a cell live in Mesen2 and observing the screen.
+1. Confirm bit 15's meaning and the 4×4 metatile shape by disassembling the
+   column renderer that reads `$D9`/`$D5`, or by editing a cell live in Mesen2.
 2. Decode the **entity / object spawn list** at `$1EF4` (record stride + fields).
-3. Decode the **attribute / collision map** at `$DB`.
-4. Wire `level::scan` + the tilemap into the editor to render a real level.
+3. Decode the per-metatile **attribute / collision** table at `$DB`.
+4. Wire `level::scan` + `level::cell` + the tileset into the editor to render a
+   real level (metatile expand → 4bpp tiles via [`crate::snes::tiles`]).
