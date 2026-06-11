@@ -13,7 +13,7 @@
 //! | `$D3` | primary data **bank** (low byte) | confirmed (live + 21× consistent) |
 //! | `$D5` | shared per-world **tileset / metatile** offset (always `$8000`) | likely |
 //! | `$D9` | **per-level tilemap** offset (`width*height` 16-bit cells) | **confirmed** |
-//! | `$DB` | shared attribute / collision-map offset (`$A600` or `$C000`) | likely |
+//! | `$DB` | shared **per-tile-char attribute** table (`$A600`/`$C000`): one byte indexed by `tile_word & 0x3FF`, read by the renderer at `$80:F5F1` | likely |
 //! | `$DD` | map **width** in cells | confirmed |
 //! | `$DF` | map **height** in cells | confirmed |
 //! | `$1EF8` | secondary data **bank** (= the routine's own bank) | confirmed |
@@ -74,7 +74,8 @@ pub struct LevelData {
     /// **Per-level tilemap** offset in the primary bank (`$D9`): `width*height`
     /// 16-bit cells, packed contiguously across the world's levels.
     pub map_off: u16,
-    /// Shared attribute / collision-map offset (`$DB`).
+    /// Shared per-tile-char attribute table offset (`$DB`): one byte per SNES
+    /// tile character (`tile_word & 0x3FF`), read by the renderer at `$80:F5F1`.
     pub attr_off: u16,
     /// Map width in cells (`$DD`).
     pub width: u16,

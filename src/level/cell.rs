@@ -22,17 +22,39 @@
 //! - **bits 5..15** are the metatile **index**. The largest index used by each
 //!   world's maps fits inside that world's tileset capacity
 //!   (`$88`: max 298 < 304; `$83`: max 378 < 512) — independent corroboration.
-//! - **bit 15** is a per-cell **flag** (orientation/solidity — *likely*, not yet
-//!   pinned down). `$8000` (index 0, flag set) is the dominant "empty/sky" cell.
+//! - **bit 15** is a per-cell **flag**. The metatile renderer at `$80:F5B9`
+//!   explicitly `AND #$7FFF`s it away before using the cell as a tileset offset,
+//!   so bit 15 does **not** affect tile selection — it is a separate flag
+//!   (collision/priority — *likely*). `$8000` (index 0, flag set) is the dominant
+//!   "empty/sky" cell.
 //!
-//! Confidence: the stride/index decode is **confirmed**; the flag meaning and the
-//! 4×4 metatile shape are **likely** pending the renderer disassembly. See
+//! ## Metatile layout — confirmed
+//!
+//! The renderer (`$80:F5A8`–`$80:F5F7`) computes the metatile definition address
+//! as `tileset($D5) + (cell & 0x7FFF)`, then indexes a **4×4 grid of 16-bit tile
+//! words**: word offset `= (subrow & 3) * 8 + (subcol & 3) * 2` (see
+//! [`metatile_word_offset`]). So a metatile is a **4×4 block of 8×8 tiles
+//! (32×32 px)**, [`METATILE_WORDS`] words, row stride 8 bytes — **confirmed**.
+//! Each tile word is a standard SNES tilemap entry (char index = `word & 0x3FF`),
+//! and that char index keys the per-tile attribute byte in the `$DB` table.
+//!
+//! Confidence: the stride/index decode **and** the 4×4 metatile shape are now
+//! **confirmed** from the renderer; only bit 15's exact meaning is *likely*. See
 //! `docs/reverse-engineering/level-format.md`.
 
 /// Bytes per metatile definition in the tileset (16 tilemap words).
 pub const METATILE_BYTES: usize = 0x20;
 /// SNES tilemap words per metatile (a 4×4 block of 8×8 tiles).
 pub const METATILE_WORDS: usize = METATILE_BYTES / 2;
+/// A metatile is a `DIM × DIM` block of 8×8 tiles (confirmed 4×4 by `$80:F5A8`).
+pub const METATILE_DIM: usize = 4;
+
+/// Byte offset of a metatile's `(subcol, subrow)` tile word within its `$20`-byte
+/// definition: `(subrow & 3) * 8 + (subcol & 3) * 2` — the exact arithmetic the
+/// renderer at `$80:F5C2`/`$80:F5CF` performs (row stride 8 bytes, col stride 2).
+pub fn metatile_word_offset(subcol: usize, subrow: usize) -> usize {
+    (subrow & 3) * (METATILE_DIM * 2) + (subcol & 3) * 2
+}
 
 /// The metatile index a cell selects (`(cell & 0x7FFF) >> 5`).
 pub fn metatile_index(cell: u16) -> u16 {
@@ -83,6 +105,24 @@ mod tests {
         assert!(is_aligned(0x0040));
         assert!(!is_aligned(0x0041));
         assert!(!is_aligned(0x001F));
+    }
+
+    #[test]
+    fn metatile_word_offsets_cover_the_4x4_grid() {
+        // The 16 (subcol,subrow) positions map 1:1 onto the 16 words ($00..$1E).
+        let mut seen = std::collections::BTreeSet::new();
+        for subrow in 0..METATILE_DIM {
+            for subcol in 0..METATILE_DIM {
+                seen.insert(metatile_word_offset(subcol, subrow));
+            }
+        }
+        assert_eq!(seen.len(), METATILE_WORDS);
+        assert_eq!(*seen.iter().min().unwrap(), 0);
+        assert_eq!(*seen.iter().max().unwrap(), METATILE_BYTES - 2);
+        // row stride 8, col stride 2 (renderer's ASL pattern).
+        assert_eq!(metatile_word_offset(1, 0), 2);
+        assert_eq!(metatile_word_offset(0, 1), 8);
+        assert_eq!(metatile_word_offset(3, 3), 30);
     }
 
     #[test]

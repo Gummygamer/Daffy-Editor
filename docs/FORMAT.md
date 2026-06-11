@@ -102,16 +102,17 @@ The **per-level tilemap** (`$D9`) is **confirmed**: `width * height` cells,
 "world" bank that holds a shared tileset (`$D5` = `:$8000`) and attribute map
 (`$DB` = `:$A600`/`:$C000`).
 
-The **cell format** is decoded (`src/level/cell.rs`): a cell is
-`(metatile_index << 5) | (flag << 15)` — its low 5 bits are always zero (verified
-across thousands of cells in three worlds), so the value is the metatile's byte
-offset into the tileset (`$20` bytes each = 16 tilemap words, a 4×4-tile
-metatile). Every map's max index fits its world's tileset capacity. Bit 15 is a
-per-cell flag.
+The **rendering pipeline** is decoded and confirmed (live read-watch in level 0 +
+the renderer `$80:F5A8`–`$80:F5F7`): a cell is `(metatile_index << 5) | (flag <<
+15)`; the renderer masks bit 15 (`AND #$7FFF`) and uses the rest as a byte offset
+into the tileset (`$D5`). A metatile is a **4×4 block of 8×8 tiles** (16 tile
+words, offset `(subrow&3)*8 + (subcol&3)*2`); each tile word's char index
+(`& 0x3FF`) keys the **`$DB` per-tile-character attribute byte**. The object list
+(`$1EF4`) is 22-byte records (offset `$04`/`$06` = packed Y/X, `$0C` = map column,
+`$0E` = object type via `JSR $80:F1FD`). See `src/level/cell.rs`.
 
-Still **likely / in progress**: bit 15's exact meaning + the 4×4 metatile shape,
-the entity/object spawn list (`$1EF4`), and the per-metatile attribute/collision
-table (`$DB`). Full write-up:
+Still **likely**: bit 15's exact meaning and the object record's per-type
+parameter words. Full write-up:
 [reverse-engineering/level-format.md](reverse-engineering/level-format.md);
 report [reports/scan_levels.json](reverse-engineering/reports/scan_levels.json).
 The editor still displays synthetic placeholder data until the cell format and

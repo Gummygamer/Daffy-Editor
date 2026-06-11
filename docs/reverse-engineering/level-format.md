@@ -116,30 +116,58 @@ A cell is a reference into the per-world tileset (`$D5`), decoded by
   (index 0, flag set) is the dominant empty/sky cell of the upper rows.
 
 So the **tileset** at `$D5` is a flat array of fixed **`$20`-byte metatile
-definitions** (16 SNES tilemap words = a 4×4 block of 8×8 tiles, a 32×32-px
-metatile — *likely* the exact shape). The `$DB` region (`$88:A600`, ~619 bytes ≈
-304 metatiles × 2) is therefore a **per-metatile** attribute/collision table
-(one entry per metatile, shared per world), not a per-cell map.
+definitions**.
+
+## Rendering pipeline — confirmed (`$80:F5A8`–`$80:F5F7`)
+
+A live read-watch (`tools/mesen/trace_fields.lua`, driven into level 0) caught
+the metatile renderer; disassembled, it nails the whole expansion:
+
+```
+metatile_def = $D5 (tileset) + (cell & 0x7FFF)        ; bit 15 masked off here
+tile_word    = metatile_def[(subrow&3)*8 + (subcol&3)*2]   ; 4×4 grid, 16 words
+char_index   = tile_word & 0x03FF                     ; SNES tilemap char
+attr_byte    = $DB[char_index]                        ; 1 byte per tile char
+```
+
+This **confirms**: (a) the cell is a tileset byte offset with **bit 15 a flag the
+renderer ignores** for tile selection (collision/priority — likely); (b) a
+metatile is a **4×4 block of 8×8 tiles (32×32 px)**, row stride 8 bytes
+([`metatile_word_offset`](../../src/level/cell.rs)); (c) the **`$DB` table is a
+per-tile-character attribute byte** (indexed by `char & 0x3FF`), *not* per-cell
+or per-metatile. Readers: map cell `$80:F5B9`, attribute `$80:F5F1`.
+
+## Object / entity records — confirmed stride + partial fields
+
+The spawn list (`$1EF4`) is read by the object processor `$80:E99D`: it copies a
+**22-byte record** (`($16),Y` loop, `$80:E9BF`) into direct page `$3B..$50`, then
+interprets the fields (`$80:E9CB`+):
+
+| record offset | use | confidence |
+|---|---|---|
+| `$04` | packed **Y position** (`AND #$01E0 >> 3`) | likely |
+| `$06` | packed **X position** (`AND #$00E0 << 2`, low byte `>> 5`) | likely |
+| `$0C` | **map column** (added to map base `$D9`) | likely |
+| `$0E` | **object type** — dispatched via `JSR $80:F1FD` | likely |
+| others | per-type parameters (7 more words) | unknown |
 
 ## Status of the level format
 
-The end-to-end chain is mapped: **`$1EEA` (level number) → master order table
-(`$80:E8D8`/`$80:E900`) → per-level setup routine → data-pointer block → tilemap
-(`$D9`, `index<<5|flag` cells) + tileset (`$D5`, `$20`-byte metatiles) + objects
-(`$1EF4`) + attributes (`$DB`)**. The pointer plumbing, the level count (20), the
-tilemap layout and the cell index decode are confirmed; the object/attribute
-*record* formats and the metatile pixel shape remain to be decoded.
+The end-to-end chain is mapped and the rendering decode is confirmed:
+**`$1EEA` (level number) → master order table (`$80:E8D8`/`$80:E900`) → per-level
+setup routine → data-pointer block → tilemap (`$D9`, `index<<5|flag` cells) →
+tileset (`$D5`, `$20`-byte 4×4 metatiles) → SNES tile words → per-tile attributes
+(`$DB`)**, plus a 22-byte object record list (`$1EF4`). Confirmed live in Mesen2:
+driving input into level 0 produced exactly the scanned pointer block
+(`D9=$A86B`, `DB=$A600`, 80×24, obj=`$8DAE`).
+
+Remaining (smaller) gaps: bit 15's exact meaning, the object record's per-type
+parameter words, and wiring `level::*` + the tileset into the editor's renderer.
 
 ## Next steps
 
-1. Confirm bit 15's meaning and the 4×4 metatile shape by disassembling the
-   column renderer that reads `$D9`/`$D5`, or by editing a cell live in Mesen2.
-2. Decode the **entity / object spawn list** at `$1EF4`. The record **stride is
-   confirmed 22 bytes** (`$0016`): the iterator at `$80:E9A8` random-accesses the
-   list by `LDA $1EF4 → $16` then advancing `$16` by `#$0016` per object,
-   `$1EE8` times (`ENTITY_RECORD_BYTES` in `src/level/scan.rs`). The per-field
-   layout inside the 22 bytes is still undecoded — needs the field reader's
-   disassembly or a live spawn observation.
-3. Decode the per-metatile **attribute / collision** table at `$DB`.
-4. Wire `level::scan` + `level::cell` + the tileset into the editor to render a
-   real level (metatile expand → 4bpp tiles via [`crate::snes::tiles`]).
+1. Wire `level::scan` + `level::cell` + the tileset into the editor to render a
+   real level (cell → metatile def → 4×4 tile words → 4bpp tiles via
+   [`crate::snes::tiles`], palette via [`crate::snes::palette`]).
+2. Pin bit 15's meaning and the object per-type parameter words (live observation
+   of a known object, e.g. toggle the flag and watch the screen/collision).

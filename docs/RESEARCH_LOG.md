@@ -6,6 +6,32 @@ docs/reverse-engineering/ when they stabilize.
 
 ---
 
+## 2026-06-11 — LEVEL RENDERING PIPELINE + object fields (live, CONFIRMED)
+
+- Built input automation: `tools/mesen/trace_play.lua` pulses START (then A/RIGHT)
+  to reach gameplay, detecting it via the in-level object iterator `$80:E9A8`.
+  Reached **level 0** (`$1EEA=0`) and the live data-pointer block matched
+  `scan_levels` exactly (`D9=$A86B`, `DB=$A600`, 80×24, obj=`$8DAE`) — a full live
+  confirmation of the scanned table.
+- `tools/mesen/trace_fields.lua` then set ROM **read-watches** on the level's
+  object list / attribute table / tilemap and logged which PC reads which byte
+  offset. Disassembling the caught readers nailed the **rendering pipeline**
+  (`$80:F5A8`–`$80:F5F7`), all **confirmed**:
+  - `metatile_def = $D5 + (cell & 0x7FFF)` — bit 15 is `AND`-masked here, so it is
+    a flag the renderer ignores for tile selection (collision/priority, likely);
+  - `tile_word = metatile_def[(subrow&3)*8 + (subcol&3)*2]` — a **4×4 grid** of 16
+    tile words ⇒ metatile = 4×4 8×8 tiles (32×32 px), row stride 8;
+  - `char = tile_word & 0x3FF`; `attr = $DB[char]` ⇒ the `$DB` table is **one byte
+    per SNES tile character** (not per-cell/metatile). Readers: cell `$80:F5B9`,
+    attr `$80:F5F1`.
+- Object processor `$80:E99D`: copies a 22-byte record into DP `$3B..$50`
+  (`($16),Y` loop) then interprets fields — offset `$04` packed Y, `$06` packed X,
+  `$0C` map column (added to `$D9`), `$0E` object type (`JSR $80:F1FD`), rest =
+  per-type params. Code: `src/level/cell.rs` gains `metatile_word_offset` +
+  `METATILE_DIM` (+2 tests); doc `level-format.md`, report `trace_fields.json`.
+
+---
+
 ## 2026-06-11 — LEVEL FORMAT: scene pointer block + per-level tilemap (CONFIRMED)
 
 - The bridge from a level to its data is **code, not a table**. New tool

@@ -1,0 +1,37 @@
+{
+  "tool": "trace_fields.lua",
+  "confidence": "confirmed (live read-watch in level 0 + disassembly of the caught reader PCs)",
+  "rom": { "crc32": "5F02A044", "size": 1048576 },
+  "method": "Drove controller input (trace_play.lua plan) into level 0 (verified $1EEA=0 with the scanned pointer block live: D9=$A86B DB=$A600 80x24 obj=$8DAE), then set ROM read callbacks on the level's object list / attribute table / tilemap and recorded which PC reads which byte offset.",
+  "readers": {
+    "tilemap_cell": {
+      "region": "$88:A86B ($D9), 80x24 16-bit cells",
+      "reader_pc": "80F5B9",
+      "note": "LDA ($16) loads the cell, then AND #$7FFF masks bit 15 before using it as a tileset byte offset"
+    },
+    "tile_attribute": {
+      "region": "$88:A600 ($DB)",
+      "reader_pc": "80F5F1",
+      "note": "indexed by (tile_word & 0x3FF) -> 1 byte per SNES tile character (collision/property)"
+    },
+    "object_record": {
+      "region": "$81:8DAE ($1EF4), 22-byte records",
+      "iterator_pc": "80E9A8",
+      "field_copy_pc": "80E9BF",
+      "note": "copies the 22-byte record into DP $3B..$50 via ($16),Y, then interprets fields at $80:E9CB+"
+    }
+  },
+  "rendering_pipeline": [
+    "metatile_def = $D5 + (cell & 0x7FFF)",
+    "tile_word    = metatile_def[(subrow&3)*8 + (subcol&3)*2]   (4x4 grid, 16 words)",
+    "char_index   = tile_word & 0x03FF",
+    "attr_byte    = $DB[char_index]"
+  ],
+  "object_fields": {
+    "0x04": "packed Y position (AND #$01E0 >> 3)",
+    "0x06": "packed X position (AND #$00E0 << 2; low byte >> 5)",
+    "0x0C": "map column (added to map base $D9)",
+    "0x0E": "object type (dispatched via JSR $80:F1FD)",
+    "others": "per-type parameter words (unknown)"
+  }
+}

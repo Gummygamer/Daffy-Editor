@@ -28,4 +28,4 @@ fi
 export DISPLAY="${DISPLAY:-:0}"
 
 timeout "$TIMEOUT" "$MESEN_BIN" --testRunner "$ROM" "$SCRIPT" 2>/dev/null \
-  | grep -E '^(DMACAP|DTRACE|STRACE|GLOAD|GDISP|SCENE)'
+  | grep -E '^(DMACAP|DTRACE|STRACE|GLOAD|GDISP|SCENE|PLAY|FIELD)'

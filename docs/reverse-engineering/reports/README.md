@@ -25,3 +25,7 @@ Scanner JSON reports (offsets and hashes only - never ROM bytes).
   `cargo run --bin scan_levels`. Pointer block + dimensions + per-level tilemap
   format **confirmed** (live trace + contiguous packing); region semantics
   **likely**. See `../level-format.md`.
+- `trace_fields.json` — `trace_fields.lua` live read-watch (driven into level 0)
+  + disassembly of the caught reader PCs: the metatile **rendering pipeline**
+  (cell → `$D5` tileset → 4×4 tile words → `$DB` per-tile-char attribute) and the
+  22-byte **object record** fields, all **confirmed**. See `../level-format.md`.
