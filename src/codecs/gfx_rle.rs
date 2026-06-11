@@ -9,8 +9,9 @@
 //! (`tools/mesen/roundtrip_decompressor.lua` + `tools/roundtrip.sh`) confirms
 //! the decoder reproduces a Mesen2 `$7F:C000` staging dump byte-for-byte.
 //!
-//! The original routine streams compressed bytes from ROM banks
-//! `$92/$93/$95/$96` (24-bit DP source pointer `$16/$17/$18`, which resets the
+//! The original routine streams compressed bytes from ROM banks `$92`–`$9F`
+//! (the source address comes from the graphics descriptor table — see
+//! [`crate::gfx::table`]; 24-bit DP source pointer `$16/$17/$18`, which resets the
 //! offset to `$8000` on a 16-bit wrap so it traverses LoROM banks contiguously)
 //! and writes decoded bytes into WRAM `$7F:C000…` via a 24-bit destination
 //! pointer (`$19/$1A/$1B`) advanced by **2** after every byte. This decoder

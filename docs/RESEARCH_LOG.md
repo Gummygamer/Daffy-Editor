@@ -6,6 +6,44 @@ docs/reverse-engineering/ when they stabilize.
 
 ---
 
+## 2026-06-10 — Graphics descriptor table FOUND (id → compressed source)
+
+- The decompressor `$82:84FD` has **no immediate `JSL` caller** anywhere in the
+  ROM (checked statically in bank `$82`, its `$02` LoROM mirror, and as a 3-byte
+  pointer in any table). It is reached by **fall-through**: a loader preamble at
+  `$82:84F8` (`PHP / REP #$30 / PHX / PHY`) runs straight into the entry.
+- New dynamic tool `tools/mesen/trace_gfx_loader.lua` hooks the entry and reads
+  the live source/dest pointers + `X`/`Y`/`A` per call. Boot → title: **39 calls,
+  36 distinct ids**. The index is `Y = id * 8`; the same id always yields the
+  same source regardless of `X`/`A`.
+- That `*8` stride led straight to a **159-entry, 8-byte-record descriptor table
+  at `$82:8000`** (PC `0x10000`), running right up to the loader code at
+  `$82:84F8`. Record = `mode(1) source24(3) params(4)`. **Every** live call's
+  source pointer matched `source(id)` exactly, and every `mode 2` call's live
+  destination matched the record's `params` dest. — source pointers **confirmed**.
+- Built `src/gfx/table.rs` (parser, TDD, 7 synthetic-fixture tests) + two bins:
+  `scan_gfx_table` (committable id→source report) and `decode_gfx_table`
+  (end-to-end check). `decode_gfx_table` runs the committed `gfx_rle` decoder on
+  **all 159** sources: every one decodes cleanly (910,276 bytes total). Record 2
+  (`$93:B9C9`) is the exact blob the earlier byte-for-byte round-trip verified.
+- Sources span banks **`$92`–`$9F`** (plus one `$87`), wider than the
+  `$92/$93/$95/$96` the boot→title trace happened to touch — `FORMAT.md` and
+  `graphics-pipeline.md` corrected. Write-up:
+  `reverse-engineering/graphics-table.md`; reports `scan_gfx_table.json`,
+  `gfx_table_trace.json`.
+
+### Next research steps
+
+1. Decode the `mode` byte and `mode 0/1` `params` (suspected VRAM word + size)
+   by tracing the upload stage that drains `$7F:C000` after each call.
+2. Find what selects the **id** — a per-screen/per-level list of gfx ids (the
+   loader's `X`/`A` likely index a higher-level scene table). That is the bridge
+   from a level to its graphics.
+3. Wire `gfx::table` + `gfx_rle` into the editor's tile renderer (replace the
+   synthetic placeholder with real decoded tiles for a chosen id).
+
+---
+
 ## 2026-06-10 — Decompressor disassembled (compression scheme IDENTIFIED)
 
 - Built a linear **65816 disassembler** (`src/snes/disasm.rs`, full 256-opcode

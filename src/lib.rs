@@ -11,6 +11,7 @@
 pub mod app;
 pub mod codecs;
 pub mod editor;
+pub mod gfx;
 pub mod error;
 pub mod model;
 pub mod patch;

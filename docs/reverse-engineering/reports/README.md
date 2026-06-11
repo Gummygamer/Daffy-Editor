@@ -13,3 +13,9 @@ Scanner JSON reports (offsets and hashes only - never ROM bytes).
   (`$82:84FD`-`$82:865F`) from `cargo run --bin disasm` (instruction-decode
   **confirmed**); the codec it implements is documented in
   `../compression-codec.md`.
+- `scan_gfx_table.json` — the 159-entry graphics descriptor table at `$82:8000`
+  (id → compressed source), from `cargo run --bin scan_gfx_table`; source
+  pointers **confirmed**. See `../graphics-table.md`.
+- `gfx_table_trace.json` — `trace_gfx_loader.lua` live capture cross-validating
+  the table's source/dest pointers against 36 distinct decompress calls
+  (**confirmed**).

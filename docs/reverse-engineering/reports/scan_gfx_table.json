@@ -1,0 +1,1469 @@
+{
+  "confidence": "source pointers confirmed (live trace + round-trip); modes/params likely",
+  "entries": [
+    {
+      "dest_wram": null,
+      "index": 0,
+      "mode": 0,
+      "params": "00000010",
+      "source": "92AED7",
+      "source_pc": "092ED7",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": null,
+      "index": 1,
+      "mode": 1,
+      "params": "01001E00",
+      "source": "928000",
+      "source_pc": "090000",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": null,
+      "index": 2,
+      "mode": 0,
+      "params": "00200040",
+      "source": "93B9C9",
+      "source_pc": "09B9C9",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": null,
+      "index": 3,
+      "mode": 1,
+      "params": "00000001",
+      "source": "9287BC",
+      "source_pc": "0907BC",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": null,
+      "index": 4,
+      "mode": 0,
+      "params": "00080008",
+      "source": "93CB7D",
+      "source_pc": "09CB7D",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": null,
+      "index": 5,
+      "mode": 0,
+      "params": "00600020",
+      "source": "968316",
+      "source_pc": "0B0316",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": null,
+      "index": 6,
+      "mode": 1,
+      "params": "80000001",
+      "source": "9287F1",
+      "source_pc": "0907F1",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": null,
+      "index": 7,
+      "mode": 1,
+      "params": "80000001",
+      "source": "9288DD",
+      "source_pc": "0908DD",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": null,
+      "index": 8,
+      "mode": 1,
+      "params": "80000001",
+      "source": "9289DC",
+      "source_pc": "0909DC",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": null,
+      "index": 9,
+      "mode": 0,
+      "params": "00200060",
+      "source": "96E05A",
+      "source_pc": "0B605A",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": null,
+      "index": 10,
+      "mode": 1,
+      "params": "00000001",
+      "source": "92A791",
+      "source_pc": "092791",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": null,
+      "index": 11,
+      "mode": 0,
+      "params": "00600020",
+      "source": "969CEC",
+      "source_pc": "0B1CEC",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": null,
+      "index": 12,
+      "mode": 1,
+      "params": "80000001",
+      "source": "928AD9",
+      "source_pc": "090AD9",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": null,
+      "index": 13,
+      "mode": 0,
+      "params": "404D8025",
+      "source": "98F724",
+      "source_pc": "0C7724",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": "7FA000",
+      "index": 14,
+      "mode": 2,
+      "params": "00A07F00",
+      "source": "999167",
+      "source_pc": "0C9167",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": "7FA000",
+      "index": 15,
+      "mode": 2,
+      "params": "00A07F00",
+      "source": "999167",
+      "source_pc": "0C9167",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": "7E2000",
+      "index": 16,
+      "mode": 2,
+      "params": "00207E00",
+      "source": "96A885",
+      "source_pc": "0B2885",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": "7E4000",
+      "index": 17,
+      "mode": 2,
+      "params": "00407E00",
+      "source": "9B9240",
+      "source_pc": "0D9240",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": "7E6000",
+      "index": 18,
+      "mode": 2,
+      "params": "00607E00",
+      "source": "9BA4FC",
+      "source_pc": "0DA4FC",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": "7E8000",
+      "index": 19,
+      "mode": 2,
+      "params": "00807E00",
+      "source": "9BB7E6",
+      "source_pc": "0DB7E6",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": "7EA000",
+      "index": 20,
+      "mode": 2,
+      "params": "00A07E00",
+      "source": "9BCDD5",
+      "source_pc": "0DCDD5",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": null,
+      "index": 21,
+      "mode": 1,
+      "params": "80000001",
+      "source": "928D07",
+      "source_pc": "090D07",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": null,
+      "index": 22,
+      "mode": 0,
+      "params": "006C0008",
+      "source": "9BF667",
+      "source_pc": "0DF667",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": null,
+      "index": 23,
+      "mode": 0,
+      "params": "00700020",
+      "source": "9BFB89",
+      "source_pc": "0DFB89",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": null,
+      "index": 24,
+      "mode": 0,
+      "params": "00200060",
+      "source": "97A033",
+      "source_pc": "0BA033",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": null,
+      "index": 25,
+      "mode": 1,
+      "params": "00000001",
+      "source": "92A89C",
+      "source_pc": "09289C",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": null,
+      "index": 26,
+      "mode": 0,
+      "params": "00700020",
+      "source": "96B5C4",
+      "source_pc": "0B35C4",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": null,
+      "index": 27,
+      "mode": 0,
+      "params": "00480030",
+      "source": "99A668",
+      "source_pc": "0CA668",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": "7FA000",
+      "index": 28,
+      "mode": 2,
+      "params": "00A07F00",
+      "source": "99B581",
+      "source_pc": "0CB581",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": null,
+      "index": 29,
+      "mode": 0,
+      "params": "00480030",
+      "source": "99DA23",
+      "source_pc": "0CDA23",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": "7FA000",
+      "index": 30,
+      "mode": 2,
+      "params": "00A07F00",
+      "source": "99EDF8",
+      "source_pc": "0CEDF8",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": "7F4800",
+      "index": 31,
+      "mode": 2,
+      "params": "00487F00",
+      "source": "96B5C4",
+      "source_pc": "0B35C4",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": "7F0000",
+      "index": 32,
+      "mode": 2,
+      "params": "00007F00",
+      "source": "9C8F0A",
+      "source_pc": "0E0F0A",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": null,
+      "index": 33,
+      "mode": 0,
+      "params": "00200028",
+      "source": "95BCEF",
+      "source_pc": "0ABCEF",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": "7FC000",
+      "index": 34,
+      "mode": 2,
+      "params": "00C07F00",
+      "source": "95D91D",
+      "source_pc": "0AD91D",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": null,
+      "index": 35,
+      "mode": 1,
+      "params": "00000001",
+      "source": "92AC72",
+      "source_pc": "092C72",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": null,
+      "index": 36,
+      "mode": 0,
+      "params": "00340058",
+      "source": "95DDC0",
+      "source_pc": "0ADDC0",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": null,
+      "index": 37,
+      "mode": 0,
+      "params": "00100010",
+      "source": "968132",
+      "source_pc": "0B0132",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": "7F2000",
+      "index": 38,
+      "mode": 2,
+      "params": "00207F00",
+      "source": "9C98C0",
+      "source_pc": "0E18C0",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": null,
+      "index": 39,
+      "mode": 1,
+      "params": "80000001",
+      "source": "928F31",
+      "source_pc": "090F31",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": null,
+      "index": 40,
+      "mode": 0,
+      "params": "006A000C",
+      "source": "9CA44C",
+      "source_pc": "0E244C",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": null,
+      "index": 41,
+      "mode": 0,
+      "params": "00700020",
+      "source": "9CAB25",
+      "source_pc": "0E2B25",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": null,
+      "index": 42,
+      "mode": 0,
+      "params": "004B0030",
+      "source": "99F5D9",
+      "source_pc": "0CF5D9",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": "7FA000",
+      "index": 43,
+      "mode": 2,
+      "params": "00A07F00",
+      "source": "9A94D0",
+      "source_pc": "0D14D0",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": null,
+      "index": 44,
+      "mode": 0,
+      "params": "00200060",
+      "source": "97DC0C",
+      "source_pc": "0BDC0C",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": null,
+      "index": 45,
+      "mode": 1,
+      "params": "00000001",
+      "source": "92A997",
+      "source_pc": "092997",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": null,
+      "index": 46,
+      "mode": 0,
+      "params": "006A000C",
+      "source": "9CC05C",
+      "source_pc": "0E405C",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": null,
+      "index": 47,
+      "mode": 0,
+      "params": "00700020",
+      "source": "9CC8CD",
+      "source_pc": "0E48CD",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": null,
+      "index": 48,
+      "mode": 1,
+      "params": "80000001",
+      "source": "929158",
+      "source_pc": "091158",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": "7F0000",
+      "index": 49,
+      "mode": 2,
+      "params": "00007F00",
+      "source": "93CBE3",
+      "source_pc": "09CBE3",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": "7F1000",
+      "index": 50,
+      "mode": 2,
+      "params": "00107F00",
+      "source": "93D40B",
+      "source_pc": "09D40B",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": "7F1800",
+      "index": 51,
+      "mode": 2,
+      "params": "00187F00",
+      "source": "93D40B",
+      "source_pc": "09D40B",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": "7F0000",
+      "index": 52,
+      "mode": 2,
+      "params": "00007F00",
+      "source": "9CDA0C",
+      "source_pc": "0E5A0C",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": null,
+      "index": 53,
+      "mode": 0,
+      "params": "006A000C",
+      "source": "9CE546",
+      "source_pc": "0E6546",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": null,
+      "index": 54,
+      "mode": 0,
+      "params": "00700020",
+      "source": "9CEA27",
+      "source_pc": "0E6A27",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": null,
+      "index": 55,
+      "mode": 1,
+      "params": "80000001",
+      "source": "929380",
+      "source_pc": "091380",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": null,
+      "index": 56,
+      "mode": 0,
+      "params": "00470032",
+      "source": "9AA9DE",
+      "source_pc": "0D29DE",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": "7FA000",
+      "index": 57,
+      "mode": 2,
+      "params": "00A07F00",
+      "source": "9ACFF9",
+      "source_pc": "0D4FF9",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": null,
+      "index": 58,
+      "mode": 0,
+      "params": "00200060",
+      "source": "98805F",
+      "source_pc": "0C005F",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": null,
+      "index": 59,
+      "mode": 1,
+      "params": "00000001",
+      "source": "92AA86",
+      "source_pc": "092A86",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": null,
+      "index": 60,
+      "mode": 0,
+      "params": "006A000C",
+      "source": "9D9856",
+      "source_pc": "0E9856",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": "7EC000",
+      "index": 61,
+      "mode": 2,
+      "params": "00C07E00",
+      "source": "9BE1AA",
+      "source_pc": "0DE1AA",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": null,
+      "index": 62,
+      "mode": 1,
+      "params": "80000001",
+      "source": "9295D3",
+      "source_pc": "0915D3",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": "7F0000",
+      "index": 63,
+      "mode": 2,
+      "params": "00007F00",
+      "source": "9CFAF7",
+      "source_pc": "0E7AF7",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": "7F1000",
+      "index": 64,
+      "mode": 2,
+      "params": "00107F00",
+      "source": "9CFF86",
+      "source_pc": "0E7F86",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": null,
+      "index": 65,
+      "mode": 0,
+      "params": "006A0008",
+      "source": "9CFAF7",
+      "source_pc": "0E7AF7",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": null,
+      "index": 66,
+      "mode": 0,
+      "params": "0074000C",
+      "source": "9CFF86",
+      "source_pc": "0E7F86",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": null,
+      "index": 67,
+      "mode": 0,
+      "params": "007A000C",
+      "source": "9DA085",
+      "source_pc": "0EA085",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": null,
+      "index": 68,
+      "mode": 0,
+      "params": "006A000C",
+      "source": "9DA978",
+      "source_pc": "0EA978",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": null,
+      "index": 69,
+      "mode": 0,
+      "params": "00700020",
+      "source": "9DB2C8",
+      "source_pc": "0EB2C8",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": null,
+      "index": 70,
+      "mode": 1,
+      "params": "80000001",
+      "source": "9297FB",
+      "source_pc": "0917FB",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": "7F3000",
+      "index": 71,
+      "mode": 2,
+      "params": "00307F00",
+      "source": "9CEA27",
+      "source_pc": "0E6A27",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": "7F5000",
+      "index": 72,
+      "mode": 2,
+      "params": "00507F00",
+      "source": "9D8CDB",
+      "source_pc": "0E8CDB",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": "7F0000",
+      "index": 73,
+      "mode": 2,
+      "params": "00007F00",
+      "source": "9DD53A",
+      "source_pc": "0ED53A",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": "7F0C00",
+      "index": 74,
+      "mode": 2,
+      "params": "000C7F00",
+      "source": "9DDDC0",
+      "source_pc": "0EDDC0",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": null,
+      "index": 75,
+      "mode": 0,
+      "params": "006A000C",
+      "source": "9DD53A",
+      "source_pc": "0ED53A",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": null,
+      "index": 76,
+      "mode": 0,
+      "params": "00700020",
+      "source": "9DDDC0",
+      "source_pc": "0EDDC0",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": "7F0000",
+      "index": 77,
+      "mode": 2,
+      "params": "00007F00",
+      "source": "9DC4C1",
+      "source_pc": "0EC4C1",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": "7F3000",
+      "index": 78,
+      "mode": 2,
+      "params": "00307F00",
+      "source": "9DB2C8",
+      "source_pc": "0EB2C8",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": null,
+      "index": 79,
+      "mode": 0,
+      "params": "004B0030",
+      "source": "9AEB49",
+      "source_pc": "0D6B49",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": "7FA000",
+      "index": 80,
+      "mode": 2,
+      "params": "00A07F00",
+      "source": "9B84FE",
+      "source_pc": "0D84FE",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": null,
+      "index": 81,
+      "mode": 0,
+      "params": "00200060",
+      "source": "98BB3D",
+      "source_pc": "0C3B3D",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": null,
+      "index": 82,
+      "mode": 1,
+      "params": "00000001",
+      "source": "92AB7C",
+      "source_pc": "092B7C",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": null,
+      "index": 83,
+      "mode": 1,
+      "params": "80000001",
+      "source": "929A24",
+      "source_pc": "091A24",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": null,
+      "index": 84,
+      "mode": 0,
+      "params": "00700020",
+      "source": "9DF568",
+      "source_pc": "0EF568",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": null,
+      "index": 85,
+      "mode": 1,
+      "params": "80000001",
+      "source": "929C44",
+      "source_pc": "091C44",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": null,
+      "index": 86,
+      "mode": 0,
+      "params": "006A000C",
+      "source": "9E8B97",
+      "source_pc": "0F0B97",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": null,
+      "index": 87,
+      "mode": 0,
+      "params": "00700020",
+      "source": "9E93DD",
+      "source_pc": "0F13DD",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": "7F0000",
+      "index": 88,
+      "mode": 2,
+      "params": "00007F00",
+      "source": "9EA879",
+      "source_pc": "0F2879",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": "7F2000",
+      "index": 89,
+      "mode": 2,
+      "params": "00207F00",
+      "source": "9EC0AF",
+      "source_pc": "0F40AF",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": "7F2000",
+      "index": 90,
+      "mode": 2,
+      "params": "00207F00",
+      "source": "9ECB8D",
+      "source_pc": "0F4B8D",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": "7F2000",
+      "index": 91,
+      "mode": 2,
+      "params": "00207F00",
+      "source": "9EB321",
+      "source_pc": "0F3321",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": "7F4000",
+      "index": 92,
+      "mode": 2,
+      "params": "00407F00",
+      "source": "9E93DD",
+      "source_pc": "0F13DD",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": null,
+      "index": 93,
+      "mode": 1,
+      "params": "80000001",
+      "source": "92A090",
+      "source_pc": "092090",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": null,
+      "index": 94,
+      "mode": 1,
+      "params": "00000001",
+      "source": "92AD77",
+      "source_pc": "092D77",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": null,
+      "index": 95,
+      "mode": 0,
+      "params": "00700020",
+      "source": "9EFCF9",
+      "source_pc": "0F7CF9",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": "7F2000",
+      "index": 96,
+      "mode": 2,
+      "params": "00207F00",
+      "source": "93D671",
+      "source_pc": "09D671",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": "7F5800",
+      "index": 97,
+      "mode": 2,
+      "params": "00587F00",
+      "source": "93FF7C",
+      "source_pc": "09FF7C",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": "7F6000",
+      "index": 98,
+      "mode": 2,
+      "params": "00607F00",
+      "source": "92F6BC",
+      "source_pc": "0976BC",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": "7FA000",
+      "index": 99,
+      "mode": 2,
+      "params": "00A07F00",
+      "source": "93894C",
+      "source_pc": "09894C",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": "7F6000",
+      "index": 100,
+      "mode": 2,
+      "params": "00607F00",
+      "source": "9389B6",
+      "source_pc": "0989B6",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": "7FA000",
+      "index": 101,
+      "mode": 2,
+      "params": "00A07F00",
+      "source": "93B61B",
+      "source_pc": "09B61B",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": "7FB000",
+      "index": 102,
+      "mode": 2,
+      "params": "00B07F00",
+      "source": "92B833",
+      "source_pc": "093833",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": "7FB800",
+      "index": 103,
+      "mode": 2,
+      "params": "00B87F00",
+      "source": "928025",
+      "source_pc": "090025",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": null,
+      "index": 104,
+      "mode": 0,
+      "params": "00200040",
+      "source": "9598E0",
+      "source_pc": "0A98E0",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": "7F0000",
+      "index": 105,
+      "mode": 2,
+      "params": "00007F00",
+      "source": "9EFCF9",
+      "source_pc": "0F7CF9",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": "7F3000",
+      "index": 106,
+      "mode": 2,
+      "params": "00307F00",
+      "source": "9EE5EF",
+      "source_pc": "0F65EF",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": "7F3C00",
+      "index": 107,
+      "mode": 2,
+      "params": "003C7F00",
+      "source": "9EEC5B",
+      "source_pc": "0F6C5B",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": "7F6000",
+      "index": 108,
+      "mode": 2,
+      "params": "00607F00",
+      "source": "96C9C7",
+      "source_pc": "0B49C7",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": null,
+      "index": 109,
+      "mode": 1,
+      "params": "80000001",
+      "source": "92A342",
+      "source_pc": "092342",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": null,
+      "index": 110,
+      "mode": 0,
+      "params": "006A000C",
+      "source": "9EE5EF",
+      "source_pc": "0F65EF",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": null,
+      "index": 111,
+      "mode": 0,
+      "params": "00700020",
+      "source": "9EEC5B",
+      "source_pc": "0F6C5B",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": "7F0000",
+      "index": 112,
+      "mode": 2,
+      "params": "00007F00",
+      "source": "9F9AAD",
+      "source_pc": "0F9AAD",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": "7F1000",
+      "index": 113,
+      "mode": 2,
+      "params": "00107F00",
+      "source": "9FA275",
+      "source_pc": "0FA275",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": "7F8000",
+      "index": 114,
+      "mode": 2,
+      "params": "00807F00",
+      "source": "9F9036",
+      "source_pc": "0F9036",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": "7F0000",
+      "index": 115,
+      "mode": 2,
+      "params": "00007F00",
+      "source": "9FB1FA",
+      "source_pc": "0FB1FA",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": "7F2000",
+      "index": 116,
+      "mode": 2,
+      "params": "00207F00",
+      "source": "9FC9F3",
+      "source_pc": "0FC9F3",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": null,
+      "index": 117,
+      "mode": 1,
+      "params": "80000001",
+      "source": "929E69",
+      "source_pc": "091E69",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": null,
+      "index": 118,
+      "mode": 0,
+      "params": "00700020",
+      "source": "9ED760",
+      "source_pc": "0F5760",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": null,
+      "index": 119,
+      "mode": 1,
+      "params": "80000001",
+      "source": "92A56A",
+      "source_pc": "09256A",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": null,
+      "index": 120,
+      "mode": 0,
+      "params": "006A000C",
+      "source": "9FCCEC",
+      "source_pc": "0FCCEC",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": null,
+      "index": 121,
+      "mode": 0,
+      "params": "00700020",
+      "source": "9FD21C",
+      "source_pc": "0FD21C",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": null,
+      "index": 122,
+      "mode": 1,
+      "params": "01001E00",
+      "source": "928035",
+      "source_pc": "090035",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": null,
+      "index": 123,
+      "mode": 0,
+      "params": "00000008",
+      "source": "92BA4B",
+      "source_pc": "093A4B",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": null,
+      "index": 124,
+      "mode": 1,
+      "params": "80000001",
+      "source": "928056",
+      "source_pc": "090056",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": null,
+      "index": 125,
+      "mode": 0,
+      "params": "006A000C",
+      "source": "92BDA0",
+      "source_pc": "093DA0",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": null,
+      "index": 126,
+      "mode": 0,
+      "params": "00080008",
+      "source": "95B906",
+      "source_pc": "0AB906",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": "7F0000",
+      "index": 127,
+      "mode": 2,
+      "params": "00007F00",
+      "source": "95B906",
+      "source_pc": "0AB906",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": null,
+      "index": 128,
+      "mode": 0,
+      "params": "00200008",
+      "source": "93B697",
+      "source_pc": "09B697",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": null,
+      "index": 129,
+      "mode": 1,
+      "params": "00000001",
+      "source": "9286CA",
+      "source_pc": "0906CA",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": null,
+      "index": 130,
+      "mode": 0,
+      "params": "00080010",
+      "source": "93B733",
+      "source_pc": "09B733",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": null,
+      "index": 131,
+      "mode": 0,
+      "params": "00080010",
+      "source": "93B87D",
+      "source_pc": "09B87D",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": null,
+      "index": 132,
+      "mode": 0,
+      "params": "006A000C",
+      "source": "9DEFD1",
+      "source_pc": "0EEFD1",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": null,
+      "index": 133,
+      "mode": 1,
+      "params": "80000001",
+      "source": "928280",
+      "source_pc": "090280",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": null,
+      "index": 134,
+      "mode": 0,
+      "params": "00700020",
+      "source": "92C025",
+      "source_pc": "094025",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": null,
+      "index": 135,
+      "mode": 0,
+      "params": "00600020",
+      "source": "92D6CB",
+      "source_pc": "0956CB",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": "7F0000",
+      "index": 136,
+      "mode": 2,
+      "params": "00007F00",
+      "source": "9CB6FF",
+      "source_pc": "0E36FF",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": "7F2000",
+      "index": 137,
+      "mode": 2,
+      "params": "00207F00",
+      "source": "94805A",
+      "source_pc": "0A005A",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": "7F5800",
+      "index": 138,
+      "mode": 2,
+      "params": "00587F00",
+      "source": "94B1CD",
+      "source_pc": "0A31CD",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": "7F2000",
+      "index": 139,
+      "mode": 2,
+      "params": "00207F00",
+      "source": "94B239",
+      "source_pc": "0A3239",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": "7F5800",
+      "index": 140,
+      "mode": 2,
+      "params": "00587F00",
+      "source": "94D945",
+      "source_pc": "0A5945",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": "7F2000",
+      "index": 141,
+      "mode": 2,
+      "params": "00207F00",
+      "source": "94DA80",
+      "source_pc": "0A5A80",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": "7F5800",
+      "index": 142,
+      "mode": 2,
+      "params": "00587F00",
+      "source": "94F3FD",
+      "source_pc": "0A73FD",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": "7F2000",
+      "index": 143,
+      "mode": 2,
+      "params": "00207F00",
+      "source": "94F587",
+      "source_pc": "0A7587",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": "7F5800",
+      "index": 144,
+      "mode": 2,
+      "params": "00587F00",
+      "source": "95980B",
+      "source_pc": "0A980B",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": "7F0000",
+      "index": 145,
+      "mode": 2,
+      "params": "00007F00",
+      "source": "9FED35",
+      "source_pc": "0FED35",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": "7F2000",
+      "index": 146,
+      "mode": 2,
+      "params": "00207F00",
+      "source": "9FE3BD",
+      "source_pc": "0FE3BD",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": null,
+      "index": 147,
+      "mode": 1,
+      "params": "00000001",
+      "source": "92AE76",
+      "source_pc": "092E76",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": null,
+      "index": 148,
+      "mode": 0,
+      "params": "00000080",
+      "source": "92E342",
+      "source_pc": "096342",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": null,
+      "index": 149,
+      "mode": 1,
+      "params": "80002000",
+      "source": "92AEB8",
+      "source_pc": "092EB8",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": null,
+      "index": 150,
+      "mode": 0,
+      "params": "00600008",
+      "source": "92F4E3",
+      "source_pc": "0974E3",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": "7F4000",
+      "index": 151,
+      "mode": 2,
+      "params": "00407F00",
+      "source": "9C83A5",
+      "source_pc": "0E03A5",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": "7F4800",
+      "index": 152,
+      "mode": 2,
+      "params": "00487F00",
+      "source": "9C86A0",
+      "source_pc": "0E06A0",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": null,
+      "index": 153,
+      "mode": 0,
+      "params": "00700020",
+      "source": "87D8D7",
+      "source_pc": "03D8D7",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": null,
+      "index": 154,
+      "mode": 1,
+      "params": "80008000",
+      "source": "92849A",
+      "source_pc": "09049A",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": null,
+      "index": 155,
+      "mode": 0,
+      "params": "00000008",
+      "source": "92B833",
+      "source_pc": "093833",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": null,
+      "index": 156,
+      "mode": 1,
+      "params": "01001E00",
+      "source": "928025",
+      "source_pc": "090025",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": "7F2000",
+      "index": 157,
+      "mode": 2,
+      "params": "00207F00",
+      "source": "9FD21C",
+      "source_pc": "0FD21C",
+      "source_plausible": true
+    },
+    {
+      "dest_wram": "7F6800",
+      "index": 158,
+      "mode": 2,
+      "params": "00687F00",
+      "source": "9FED35",
+      "source_pc": "0FED35",
+      "source_plausible": true
+    }
+  ],
+  "entry_count": 159,
+  "implausible_source_indices": [],
+  "mode_histogram": {
+    "0": 59,
+    "1": 33,
+    "2": 67
+  },
+  "record_size": 8,
+  "rom": {
+    "crc32": "5F02A044",
+    "size": 1048576,
+    "version": "DaffyDuckMarvinMissionsUsa"
+  },
+  "source_bank_histogram": {
+    "87": 1,
+    "92": 44,
+    "93": 13,
+    "94": 7,
+    "95": 7,
+    "96": 8,
+    "97": 2,
+    "98": 3,
+    "99": 7,
+    "9A": 4,
+    "9B": 8,
+    "9C": 17,
+    "9D": 13,
+    "9E": 14,
+    "9F": 11
+  },
+  "table_pc": "010000",
+  "table_snes": "828000",
+  "tool": "scan_gfx_table"
+}

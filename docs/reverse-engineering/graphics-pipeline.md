@@ -16,7 +16,7 @@ ROM banks $92,$93,$95,$96  ──decompress──▶  WRAM $7F:C000-$7F:CFFF (+ 
 
 | Stage | Where | Evidence |
 |---|---|---|
-| Compressed graphics in ROM | banks **$92, $93, $95, $96** (reads up to `$96:986D`; PC ≈ `0x90000`–`0xB7FFF`) | `trace_decompressor.lua` — ROM reads while the staging area is being filled |
+| Compressed graphics in ROM | banks **$92–$9F** (boot→title touched only `$92/$93/$95/$96`; the [descriptor table](graphics-table.md) sources all of `$92`–`$9F`; PC ≈ `0x90000`–`0xFFFFF`) | `trace_decompressor.lua` + `scan_gfx_table` |
 | Decompressor routine | **`$82:8549`–`$82:8655`** (PC ≈ `0x10549`); dominant store `$82:85F8` (25.7k writes) | PCs that write `$7F:C000-CFFF` |
 | WRAM tile staging | **`$7F:C000`–`$7F:CFFF`** (4 KB tiles) and **`$7F:D000`** (2 KB) | DMA source addresses |
 | VRAM upload loop | **`$82:9BBE`** — 64 transfers of 64 bytes, `$7F:C080`→`$7F:CFC0` | `dma_log.lua` live capture |
@@ -42,9 +42,10 @@ within a few bytes (trigger PC), which cross-validates both tools.
    **Done** — the routine is `$82:84FD-$82:865F`, a custom control-byte RLE.
    See [compression-codec.md](compression-codec.md). Still to do: write the
    codec and confirm it with a round-trip test before committing.
-2. Find the **table that maps a graphics id → the `$92-$96` source address**
-   (the loader sets the decompressor's source pointer from somewhere); that is
-   the index the level/screen loader uses.
+2. ~~Find the **table that maps a graphics id → source address**.~~ **Done** —
+   the 159-entry descriptor table at `$82:8000`; see
+   [graphics-table.md](graphics-table.md). The loader falls through into the
+   decompressor and indexes the table with `Y = id*8`.
 3. Re-run `trace_decompressor.lua` after reaching **level 1** (drive the GUI, or
    script input via `emu.setInput`) to capture the in-level graphics sources and
    confirm they also live in `$92-$96` (or find additional banks).

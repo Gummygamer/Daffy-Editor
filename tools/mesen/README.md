@@ -42,6 +42,12 @@ capture in-level data.
   area (`$7F:C000-CFFF`) — the **decompressor** — and which ROM banks it reads
   (the compressed-graphics source). Do **not** add `emu.getState()` to its ROM
   read callback (fires per opcode fetch → crash).
+- **`trace_gfx_loader.lua`** — hooks the decompressor entry (`$82:84FD`) and, per
+  call, reads the CALLER state off the stack plus the source/dest pointers and
+  `X`/`Y`/`A`. Revealed that the loader falls through into the decompressor and
+  indexes the **graphics descriptor table** at `$82:8000` with `Y = id*8`. Emits
+  addresses/registers only (safe to commit) → `reports/gfx_table_trace.json`. See
+  `../../docs/reverse-engineering/graphics-table.md`.
 - **`roundtrip_decompressor.lua`** — captures the decompressor's source pointer
   (`$16/$17/$18`) at entry (`$82:84FD`) and the staging bytes it produced at the
   RTL (`$82:8577`), for the first call sourcing from the gfx banks `$92/93/95/96`.

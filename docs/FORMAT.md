@@ -39,15 +39,25 @@ The SNES PPU dictates 4bpp planar tiles (32 bytes/tile) and BGR555 palettes;
 decoding helpers are in `src/snes/tiles.rs` / `src/snes/palette.rs`
 (confirmed as formats, since they are hardware-defined).
 
-**Compressed graphics are stored in ROM banks `$92`, `$93`, `$95`, `$96`**
-(PC ≈ `0x90000`–`0xB7FFF`) — **confirmed** by tracing the decompressor's ROM
-reads live in Mesen2. They are decompressed by the routine at **`$82:8549`–
-`$82:8655`** into WRAM `$7F:C000-$7F:CFFF`, then DMA'd to VRAM. Full pipeline:
+**Compressed graphics are stored in ROM banks `$92`–`$9F`** (PC ≈ `0x90000`–
+`0xFFFFF`) — **confirmed**. The boot→title Mesen2 trace touched only
+`$92/$93/$95/$96`, but the graphics descriptor table (below) sources every bank
+from `$92` to `$9F` (plus one `$87`). They are decompressed by the routine at
+**`$82:84FD`–`$82:865F`** into WRAM `$7F:C000-$7F:CFFF`, then DMA'd to VRAM. Full
+pipeline:
 [reverse-engineering/graphics-pipeline.md](reverse-engineering/graphics-pipeline.md).
 The `scan_tile_patterns` / `scan_palettes` candidates elsewhere are therefore
-*not* the raw storage, as predicted. The compression scheme has now been read
-from the routine — a control-byte RLE (see the Compression section below); a
-codec still waits on a round-trip test.
+*not* the raw storage, as predicted.
+
+### Graphics descriptor table — confirmed (id → source)
+
+A flat array of **159 fixed 8-byte records at `$82:8000`** (PC `0x10000`) maps a
+graphics id to its compressed source: `mode(1) source24(3) params(4)`. The
+loader (which falls through into the decompressor at `$82:84FD`) indexes it with
+`Y = id*8`. The **24-bit source pointer is confirmed** — a live loader trace
+matched 36 distinct ids and all 159 sources decode cleanly through the codec.
+Parser `src/gfx/table.rs`; dumpers `scan_gfx_table` / `decode_gfx_table`. See
+[reverse-engineering/graphics-table.md](reverse-engineering/graphics-table.md).
 
 ## DMA uploads — likely
 
