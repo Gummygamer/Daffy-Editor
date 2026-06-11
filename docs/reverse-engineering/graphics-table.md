@@ -28,13 +28,31 @@ Record (little-endian):
 
 | bytes | field | meaning | confidence |
 |---|---|---|---|
-| `0` | `mode` | upload mode: `0` (59×), `1` (33×), `2` (67×) | likely |
+| `0` | `mode` | upload mode: `0` (59×) VRAM, `1` (33×) CGRAM, `2` (67×) WRAM | **confirmed** |
 | `1..4` | `source` | 24-bit SNES pointer to the compressed blob | **confirmed** |
-| `4..8` | `params` | `mode 2`: low 3 bytes = 24-bit WRAM dest (**confirmed**); `mode 0/1`: VRAM target/size for the upload (likely) | mixed |
+| `4..8` | `params` | mode-dependent upload target (see below) | **confirmed** |
 
 The loader passes the id in **`Y`** as `id * 8` (the records' byte stride). The
 id alone selects the source — the same id yields the same source regardless of
 the loader's other (`X`/`A`) parameters.
+
+### Mode byte & params — confirmed from the loader wrapper `$80:FC26`
+
+Every id is loaded by `LDA #id : JSL $80:FC26` (302 such call sites in the ROM;
+no data table of ids — graphics selection is **inline in each scene's setup
+code**). The wrapper computes `Y = id*8`, sets `DB = $82`, copies the 24-bit
+`source` into the decompressor's DP pointer `$16/$17/$18`, then dispatches on
+`mode`:
+
+| mode | dest of decompress | then | `params` meaning |
+|---|---|---|---|
+| `0` | `$7F:C000` | DMA → **VRAM** | `params[0..2]` = `$2116` VRAM **word** address; `params[2..4]` = DMA **byte size** |
+| `1` | `$7F:C000` | DMA → **CGRAM** (palette) | `params[0]` = `$2121` CGRAM byte address; `params[2..4]` = DMA byte size |
+| `2` | `params[0..3]` (24-bit WRAM) | — (no DMA) | the WRAM destination itself |
+
+Decoded by [`GfxEntry::upload`](../../src/gfx/table.rs) → [`UploadTarget`]; the
+`scan_gfx_table` report carries the decoded `upload` per entry. Disassembly of
+the wrapper: `disasm <rom> --snes 0x80FC26 --end 0x80FD20 --m8 --x16`.
 
 ## How the loader was found
 
@@ -72,10 +90,11 @@ exact blob the earlier byte-for-byte Mesen2 round-trip already verified.
 
 ## Next steps
 
-1. Pin down the `mode` byte and the `mode 0/1` `params` (VRAM word + size?) by
-   tracing the upload stage that consumes `$7F:C000` after these calls.
-2. Find what selects the **id** itself — a per-screen / per-level list of gfx ids
-   (the loader's `X`/`A` likely index a higher-level scene table). That is the
-   bridge from "a level" to "these graphics".
+1. ~~Pin down the `mode` byte and the `mode 0/1` `params`~~ — **done** (loader
+   wrapper `$80:FC26`, above): mode 0 = VRAM, 1 = CGRAM, 2 = WRAM, params decoded.
+2. The id is selected **inline in scene-setup code** (302 `JSL $80:FC26` sites,
+   not a data table), so the bridge from "a level" to "its graphics" is a code
+   path, not a table — pursue the **level data** path separately (tilemap /
+   object / enemy data). See `docs/reverse-engineering/level-format.md`.
 3. Wire `gfx::table` + `gfx_rle` into the editor's tile renderer so a chosen id
    shows real decoded tiles (replacing the synthetic placeholder).

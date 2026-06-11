@@ -25,8 +25,15 @@
 //!   pointer (see [`crate::codecs::gfx_rle`]).
 //! - The **mode-2 WRAM destination** (params low 3 bytes) is **confirmed by the
 //!   same trace**: every mode-2 sample's live destination pointer matched.
-//! - The **mode byte's full meaning** and the **mode-0/1 params** are **likely**
-//!   (a VRAM target word + size for the upload stage) — not yet round-tripped.
+//! - The **mode byte and mode-0/1 params** are now **confirmed** from the loader
+//!   wrapper at `$80:FC26` (the routine that does `LDA #id` callers reach by
+//!   `JSL $80:FC26`). It computes `Y = id*8`, sets `DB = $82`, then on the mode:
+//!   - `mode 0`: decompress to `$7F:C000`, then DMA to **VRAM** — `params[0..2]`
+//!     is the `$2116` VRAM word address, `params[2..4]` the DMA byte size.
+//!   - `mode 1`: decompress, then DMA to **CGRAM** (palette) — `params[0]` is the
+//!     `$2121` CGRAM address, `params[2..4]` the byte size.
+//!   - `mode 2`: decompress straight to the WRAM address in `params[0..3]`.
+//!   See [`GfxEntry::upload`] / [`UploadTarget`].
 //!
 //! See `docs/reverse-engineering/graphics-table.md`.
 
@@ -44,6 +51,30 @@ pub const RECORD_SIZE: usize = 8;
 /// `(0x84F8 - 0x8000) / 8 == 159`; record 158 ends exactly where the loader's
 /// `PHP / REP #$30 / PHX / PHY` preamble begins.
 pub const ENTRY_COUNT: usize = 159;
+
+/// Where the loader wrapper (`$80:FC26`) sends a decoded blob, decoded from the
+/// record's `mode` byte and `params`. Confirmed from the wrapper disassembly.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum UploadTarget {
+    /// `mode 0`: decompress to `$7F:C000`, then DMA to VRAM.
+    Vram {
+        /// `$2116` VRAM word address (`params[0..2]`).
+        word_addr: u16,
+        /// DMA transfer size in bytes (`params[2..4]`).
+        size: u16,
+    },
+    /// `mode 1`: decompress to `$7F:C000`, then DMA to CGRAM (palette).
+    Cgram {
+        /// `$2121` CGRAM byte address (`params[0]`).
+        addr: u8,
+        /// DMA transfer size in bytes (`params[2..4]`).
+        size: u16,
+    },
+    /// `mode 2`: decompress straight to this 24-bit WRAM address (`params[0..3]`).
+    Wram { dest: u32 },
+    /// A mode byte the wrapper does not handle (it falls through to no upload).
+    Unknown { mode: u8 },
+}
 
 /// One parsed descriptor-table record.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -95,6 +126,28 @@ impl GfxEntry {
             )
         } else {
             None
+        }
+    }
+
+    /// Decode the `mode` byte + `params` into the loader wrapper's upload target
+    /// (`$80:FC26`). Confirmed against the wrapper disassembly.
+    pub fn upload(&self) -> UploadTarget {
+        let lo16 = |a: usize, b: usize| (self.params[a] as u16) | ((self.params[b] as u16) << 8);
+        match self.mode {
+            0 => UploadTarget::Vram {
+                word_addr: lo16(0, 1),
+                size: lo16(2, 3),
+            },
+            1 => UploadTarget::Cgram {
+                addr: self.params[0],
+                size: lo16(2, 3),
+            },
+            2 => UploadTarget::Wram {
+                dest: (self.params[0] as u32)
+                    | ((self.params[1] as u32) << 8)
+                    | ((self.params[2] as u32) << 16),
+            },
+            m => UploadTarget::Unknown { mode: m },
         }
     }
 
@@ -190,6 +243,42 @@ mod tests {
         let rom = rom_with_records(&[[0x00, 0x67, 0x91, 0x99, 0x00, 0xA0, 0x7F, 0x00]]);
         let e = parse_table(&rom, TABLE_PC, 1).unwrap()[0];
         assert_eq!(e.dest_wram(), None);
+    }
+
+    #[test]
+    fn mode0_decodes_vram_upload_target() {
+        // mode 0, VRAM word $2000, size $0040 (params 00 20 40 00).
+        let rom = rom_with_records(&[[0x00, 0xC9, 0xB9, 0x93, 0x00, 0x20, 0x40, 0x00]]);
+        let e = parse_table(&rom, TABLE_PC, 1).unwrap()[0];
+        assert_eq!(
+            e.upload(),
+            UploadTarget::Vram {
+                word_addr: 0x2000,
+                size: 0x0040
+            }
+        );
+    }
+
+    #[test]
+    fn mode1_decodes_cgram_upload_target() {
+        // mode 1, CGRAM addr $01, size $001E (params 01 00 1E 00).
+        let rom = rom_with_records(&[[0x01, 0x00, 0x80, 0x92, 0x01, 0x00, 0x1E, 0x00]]);
+        let e = parse_table(&rom, TABLE_PC, 1).unwrap()[0];
+        assert_eq!(
+            e.upload(),
+            UploadTarget::Cgram {
+                addr: 0x01,
+                size: 0x001E
+            }
+        );
+    }
+
+    #[test]
+    fn mode2_upload_target_matches_dest_wram() {
+        let rom = rom_with_records(&[[0x02, 0x67, 0x91, 0x99, 0x00, 0xA0, 0x7F, 0x00]]);
+        let e = parse_table(&rom, TABLE_PC, 1).unwrap()[0];
+        assert_eq!(e.upload(), UploadTarget::Wram { dest: 0x7F_A000 });
+        assert_eq!(e.dest_wram(), Some(0x7F_A000));
     }
 
     #[test]

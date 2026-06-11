@@ -56,7 +56,13 @@ graphics id to its compressed source: `mode(1) source24(3) params(4)`. The
 loader (which falls through into the decompressor at `$82:84FD`) indexes it with
 `Y = id*8`. The **24-bit source pointer is confirmed** — a live loader trace
 matched 36 distinct ids and all 159 sources decode cleanly through the codec.
-Parser `src/gfx/table.rs`; dumpers `scan_gfx_table` / `decode_gfx_table`. See
+The **mode byte and params are also confirmed** from the loader wrapper
+`$80:FC26` (reached by `LDA #id : JSL $80:FC26`, 302 inline call sites): mode 0
+DMAs the decoded blob to VRAM (`params` = `$2116` word + size), mode 1 to CGRAM
+(`params` = `$2121` addr + size), mode 2 decompresses straight to a WRAM address
+(`params` = dest). Graphics ids are selected **inline by each scene's setup
+code**, not from a data table. Parser `src/gfx/table.rs` (`GfxEntry::upload`);
+dumpers `scan_gfx_table` / `decode_gfx_table`. See
 [reverse-engineering/graphics-table.md](reverse-engineering/graphics-table.md).
 
 ## DMA uploads — likely

@@ -6,6 +6,41 @@ docs/reverse-engineering/ when they stabilize.
 
 ---
 
+## 2026-06-11 — Graphics loader wrapper `$80:FC26` (mode byte + params CONFIRMED)
+
+- The descriptor table's `mode`/`params` were the last "likely" piece of the
+  graphics path. Found the real caller of the decompressor by reading the stack
+  at the **correct depth**: the loader preamble pushes `P`(1)+`X`(2)+`Y`(2) before
+  the decompressor entry, so a `JSL` return address sits at `sp+6..8`, not
+  `sp+1..3` (the earlier trace's `ret` was just the pushed `X`/`Y`). New tool
+  `tools/mesen/trace_gfx_dispatcher.lua` reads `sp+6..8` and recovers three real
+  call sites — all in bank `$80`: `$80:FC54`, `$80:FCA9`, `$80:FCF6`.
+- Those are inside the **loader wrapper at `$80:FC26`** (disassembled). It takes a
+  gfx **id in `A`**, computes `Y = id*8`, sets `DB = $82`, copies `source` into
+  the decompressor DP `$16/$17/$18`, then `JSL $82:84F8` and dispatches on `mode`:
+  - **mode 0** → DMA `$7F:C000` to **VRAM**: `params[0..2]` = `$2116` word addr,
+    `params[2..4]` = byte size;
+  - **mode 1** → DMA to **CGRAM** (palette): `params[0]` = `$2121` addr,
+    `params[2..4]` = size;
+  - **mode 2** → decompress straight to the WRAM address in `params[0..3]`.
+  Mode/params now **confirmed**. Decoder: `GfxEntry::upload` → `UploadTarget`
+  (TDD, +3 tests); `scan_gfx_table` emits the decoded `upload` per record.
+- The wrapper is reached by **302 inline `JSL $80:FC26` sites** (no `JSR`, no id
+  data table) — graphics ids are selected **inline in each scene's setup code**
+  (e.g. the consecutive batch at `$81:8014/801B/8022/...`). So the bridge from a
+  level to "its graphics" is a code path, not a table; the **level data** (tilemap
+  / objects / enemies) must be pursued on its own. The graphics path is now
+  end-to-end complete (id → source → decompress → upload target).
+
+### Next research steps
+
+1. Attack the **level format** directly: find the current-level RAM variable and
+   the level loader; trace ROM reads during a level load to locate the level /
+   mission pointer table and the tilemap/object encoding. See
+   `docs/reverse-engineering/level-format.md`.
+
+---
+
 ## 2026-06-10 — Graphics descriptor table FOUND (id → compressed source)
 
 - The decompressor `$82:84FD` has **no immediate `JSL` caller** anywhere in the
