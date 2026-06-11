@@ -48,6 +48,14 @@ use crate::snes::lorom::pc_to_snes;
 
 /// `STA $1EF8` — `8D F8 1E`. The anchor present in every scene-setup routine.
 const ANCHOR: [u8; 3] = [0x8D, 0xF8, 0x1E];
+
+/// Stride of one entity / object record in the spawn list (`$1EF4`).
+///
+/// **Confirmed** from the object iterator at `$80:E9A8`, which random-accesses
+/// the list by advancing the record pointer `$16` by `#$0016` (22) bytes per
+/// object (`$1EE8` times). The per-field layout inside the 22 bytes is not yet
+/// decoded (needs the field-reader disassembly or a live spawn observation).
+pub const ENTITY_RECORD_BYTES: usize = 0x16;
 /// How far either side of the anchor to look for the other stores.
 const WINDOW: usize = 0xC0;
 
@@ -296,6 +304,12 @@ mod tests {
         assert_eq!(levels[0].primary_bank, 0x88);
         assert_eq!(levels[1].primary_bank, 0x8B);
         assert_eq!(levels[1].height, 0x5A);
+    }
+
+    #[test]
+    fn entity_record_stride_is_22_bytes() {
+        // Documents the confirmed stride from the $80:E9A8 iterator (ADC #$0016).
+        assert_eq!(ENTITY_RECORD_BYTES, 22);
     }
 
     #[test]

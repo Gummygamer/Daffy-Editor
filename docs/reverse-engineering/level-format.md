@@ -134,7 +134,12 @@ tilemap layout and the cell index decode are confirmed; the object/attribute
 
 1. Confirm bit 15's meaning and the 4×4 metatile shape by disassembling the
    column renderer that reads `$D9`/`$D5`, or by editing a cell live in Mesen2.
-2. Decode the **entity / object spawn list** at `$1EF4` (record stride + fields).
+2. Decode the **entity / object spawn list** at `$1EF4`. The record **stride is
+   confirmed 22 bytes** (`$0016`): the iterator at `$80:E9A8` random-accesses the
+   list by `LDA $1EF4 → $16` then advancing `$16` by `#$0016` per object,
+   `$1EE8` times (`ENTITY_RECORD_BYTES` in `src/level/scan.rs`). The per-field
+   layout inside the 22 bytes is still undecoded — needs the field reader's
+   disassembly or a live spawn observation.
 3. Decode the per-metatile **attribute / collision** table at `$DB`.
 4. Wire `level::scan` + `level::cell` + the tileset into the editor to render a
    real level (metatile expand → 4bpp tiles via [`crate::snes::tiles`]).

@@ -30,6 +30,14 @@ docs/reverse-engineering/ when they stabilize.
   be the **SPC700 sound uploader** — `$BBAA` handshake + APU `$2140-3` — not level
   data; corrected.)
 
+### Object spawn list (same day) — 22-byte record stride CONFIRMED
+
+- The entity/object spawn list (`$1EF4`) is an array of **22-byte (`$0016`)
+  records**: the iterator at `$80:E9A8` loads `$1EF4 → $16` and random-accesses
+  the list by adding `#$0016` per object (`$1EE8` times). `ENTITY_RECORD_BYTES`
+  in `src/level/scan.rs`. The per-field layout inside the 22 bytes is not yet
+  decoded (level 0's list at `$81:8DAE` has only a few structured records).
+
 ### Master order table (same day) — level number → setup routine
 
 - Found the level-selection index: `$80:E8A9` reads the current level number
