@@ -146,9 +146,15 @@ attr_byte    = $DB[char_index]                        ; 1 byte per tile char
 This **confirms**: (a) the cell is a tileset byte offset with **bit 15 a flag the
 renderer ignores** for tile selection (collision/priority — likely); (b) a
 metatile is a **4×4 block of 8×8 tiles (32×32 px)**, row stride 8 bytes
-([`metatile_word_offset`](../../src/level/cell.rs)); (c) the **`$DB` table is a
-per-tile-character attribute byte** (indexed by `char & 0x3FF`), *not* per-cell
-or per-metatile. Readers: map cell `$80:F5B9`, attribute `$80:F5F1`.
+([`metatile_word_offset`](../../src/level/cell.rs)); (c) the **`$DB` table is
+indexed per tile character** (`char & 0x3FF`), *not* per-cell or per-metatile.
+Readers: map cell `$80:F5B9`, attribute `$80:F5F1`.
+
+**`$DB` is NOT the display attribute source.** The tile word itself is a full
+SNES tilemap word — palette row bits 10..12, priority 13, h/v-flip 14/15 —
+live-confirmed against the real BG1 tilemap (109/109 on-screen chars, see
+[tile-graphics.md](tile-graphics.md)). What the `$DB[char]` byte feeds is open
+(collision/priority hypothesis).
 
 ## Object / entity records — confirmed stride + partial fields
 
@@ -190,7 +196,7 @@ The end-to-end chain is mapped, the rendering decode is confirmed, and it is
 **wired into the editor**: **`$1EEA` (level number) → master order table
 (`$80:E8D8`/`$80:E900`) → per-level setup routine → data-pointer block → tilemap
 (`$D7:$D9`, `index<<5|flag` cells) → tileset (`$D3:$D5`, `$20`-byte 4×4 metatiles)
-→ SNES tile words → per-tile attributes (`$DB`)**, plus a 22-byte object record
+→ SNES tile words (char + palette row + flips)**, plus a 22-byte object record
 list (`$1EE8` count at `$1EF4`). Confirmed live in Mesen2 (level 0 pointer block)
 and statically game-wide (the `$D7` map-bank fix makes every level's indices fit).
 

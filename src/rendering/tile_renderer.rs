@@ -60,13 +60,15 @@ pub fn render_tileset_rgba(tile_data: &[u8], palette: &[u16], tiles_per_row: usi
 /// Render one metatile to a `METATILE_RENDER_PX`-square RGBA image using real
 /// reconstructed tile pixels.
 ///
-/// The metatile's 16 tile words form a 4×4 grid of 8×8 tiles. For each tile word
-/// the character (`word & 0x3FF`) selects a tile in [`TileGraphics::vram`] (at
-/// VRAM word `char_base + char * 16`); the `$DB` attribute byte for that
-/// character supplies the palette row (bits 2..5) and h/v-flip (bits 6/7), as the
-/// game's renderer does. Pixel index 0 is the SNES backdrop (`palette[0]`); other
-/// indices map through the tile's 16-color palette row. Returns `None` if the
-/// graphics are empty (caller should fall back to [`metatile_color`]).
+/// The metatile's 16 tile words form a 4×4 grid of 8×8 tiles. Each tile word is
+/// a full SNES tilemap word (live-tilemap confirmed): the character
+/// (`word & 0x3FF`) selects a tile in [`TileGraphics::vram`] (at VRAM word
+/// `char_base + char * 16`), bits 10..13 are the palette row, bit 14 h-flip and
+/// bit 15 v-flip. (The per-char `$DB` table is NOT a display-attribute source —
+/// it is kept for collision/priority work.) Pixel index 0 is the SNES backdrop
+/// (`palette[0]`); other indices map through the tile's 16-color palette row.
+/// Returns `None` if the graphics are empty (caller should fall back to
+/// [`metatile_color`]).
 pub fn render_metatile_rgba(
     gfx: &TileGraphics,
     palette: &Palette,
@@ -83,10 +85,9 @@ pub fn render_metatile_rgba(
             let widx = metatile_word_offset(subcol, subrow) / 2;
             let word = metatile.tiles.get(widx).copied().unwrap_or(0);
             let chr = (word & 0x03FF) as usize;
-            let attr = gfx.attr.get(chr).copied().unwrap_or(0);
-            let pal_row = ((attr >> 2) & 0x07) as usize;
-            let hflip = attr & 0x40 != 0;
-            let vflip = attr & 0x80 != 0;
+            let pal_row = ((word >> 10) & 0x07) as usize;
+            let hflip = word & 0x4000 != 0;
+            let vflip = word & 0x8000 != 0;
 
             let byte0 = (gfx.char_base as usize + chr * 16) * 2;
             let Some(tile) = gfx.vram.get(byte0..byte0 + TILE_4BPP_BYTES) else { continue };
@@ -190,18 +191,16 @@ mod tests {
     }
 
     #[test]
-    fn metatile_render_uses_real_tiles_palette_row_and_flip() {
+    fn metatile_render_uses_tile_word_palette_row_and_flip() {
         // VRAM: char 1 is a tile whose top row is index 1, index 2 elsewhere.
         let mut tile_px = [[2u8; 8]; 8];
         tile_px[0] = [1u8; 8]; // distinguishable top row
         let mut vram = vec![0u8; 64];
         vram[32..64].copy_from_slice(&encode_4bpp_tile(&tile_px)); // char 1 @ byte 32
 
-        // Attribute for char 1: palette row 1 (bits 2..5), no flip.
-        let mut attr = vec![0u8; 0x400];
-        attr[1] = 0x04; // (row 1) << 2
-
-        let gfx = TileGraphics { vram, attr, char_base: 0 };
+        // `$DB` attr table deliberately zeroed: display attributes come from the
+        // tile WORD (live-tilemap confirmed), not from `$DB`.
+        let gfx = TileGraphics { vram, attr: vec![0u8; 0x400], char_base: 0 };
 
         // Palette: backdrop black; row 1 (offset 16): color1=red, color2=green.
         let mut colors = vec![0u16; 256];
@@ -210,9 +209,11 @@ mod tests {
         colors[16 + 2] = 0x03E0; // green
         let palette = Palette { colors };
 
-        // Metatile: only the top-left subtile uses char 1; rest are char 0 (zeros).
+        // Metatile: top-left subtile = char 1 with palette row 1 in word bits
+        // 10..13; the subtile to its right adds v-flip (bit 15); rest char 0.
         let mut tiles = vec![0u16; 16];
-        tiles[0] = 1; // (subcol 0, subrow 0)
+        tiles[0] = 0x0401; // pal row 1, no flip
+        tiles[1] = 0x8401; // pal row 1, v-flip
         let mt = Metatile { id: 0, tiles, palette_row: 0, collision: 0 };
 
         let img = render_metatile_rgba(&gfx, &palette, &mt).unwrap();
@@ -224,8 +225,11 @@ mod tests {
         // Top-left tile, row 0 -> index 1 -> red; row 1 -> index 2 -> green.
         assert_eq!(at(0, 0), [255, 0, 0, 255]);
         assert_eq!(at(7, 1), [0, 255, 0, 255]);
-        // A char-0 subtile (top-right) is all index 0 -> backdrop black.
-        assert_eq!(at(8, 0), [0, 0, 0, 255]);
+        // V-flipped tile (x 8..16): the index-1 top row lands on its BOTTOM row.
+        assert_eq!(at(8, 7), [255, 0, 0, 255]);
+        assert_eq!(at(8, 0), [0, 255, 0, 255]);
+        // A char-0 subtile (third column) is all index 0 -> backdrop black.
+        assert_eq!(at(16, 0), [0, 0, 0, 255]);
     }
 
     #[test]

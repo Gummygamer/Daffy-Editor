@@ -89,12 +89,29 @@ palette (colors `0..127`) matches **251/256** bytes — the remainder being
 animation. `level::loader` therefore applies `COMMON_BG_PALETTE_GFX_ID` (= 1) as
 a final overlay in `reconstruct_palette`.
 
-## Per-character attributes — the `$DB` table
+## Tile attributes live in the tile WORD, not `$DB` (CONFIRMED live)
 
-The renderer (`$80:F5F1`) reads `$DB[char]` to get each tile's SNES tilemap
-**high byte**: palette row in bits 2..4 (`(attr >> 2) & 7`), h-flip bit 6, v-flip
-bit 7. `render_metatile_rgba` applies exactly this. Pixel index 0 of any row is
-the SNES backdrop (`CGRAM[0]`), matching single-layer-over-backdrop compositing.
+Each metatile-definition tile word is a **full SNES tilemap word**: character in
+bits 0..9, palette row in bits 10..12, priority bit 13, h-flip bit 14, v-flip
+bit 15. Proven against the live machine: the `dump_ppu.lua` VRAM dump contains
+the real BG1 tilemap (`ppu.layers[0].tilemapAddress = 2048` words = byte
+`$1000`), and for **all 109** distinct non-blank characters on screen in level 0
+the live `(palette, hflip, vflip)` matches a tile word using that character in
+the level's metatile set — zero disagreements.
+
+The earlier hypothesis — that the per-char `$DB` byte is the tilemap high byte
+(`pal = (attr >> 2) & 7`, flips in bits 6/7) — is **REJECTED** for display: the
+same live comparison mismatched 98/110 characters, and 117 of the tileset's 618
+characters are used with *more than one* distinct `(pal, flip)` combination
+across metatiles, which no per-character table can express. (This was the
+editor's "wrong palette" bug: CGRAM was correct, but most tiles selected the
+wrong palette *row*.) The renderer's live-traced `$DB[char]` reads are real but
+must serve something else — per-character collision/priority is the open
+hypothesis; the table is still loaded (`read_attr_table`) for that future work.
+
+`render_metatile_rgba` now takes palette row and flips from the tile word.
+Pixel index 0 of any row is the SNES backdrop (`CGRAM[0]`), matching
+single-layer-over-backdrop compositing.
 
 ## Confidence
 
@@ -108,9 +125,10 @@ the SNES backdrop (`CGRAM[0]`), matching single-layer-over-backdrop compositing.
   is animation). The overlay id (1) is assumed universal across worlds (it is the
   shared HUD/common palette, loaded at boot); a live dump of a second world would
   confirm that generalization.
-- **`$DB` attribute interpretation**: *likely* — consistent with the standard
-  SNES tilemap high-byte layout and the renderer disassembly, and the resulting
-  per-row palette assignment reproduces the live colors.
+- **Tile-word attributes** (palette row bits 10..12, flips 14/15): **confirmed**
+  against the live BG1 tilemap (109/109 on-screen characters agree, level 0).
+- **`$DB` purpose**: open — *rejected* as a display-attribute source (see
+  above); per-character collision/priority is the remaining hypothesis.
 
 The live dumps use the `print`-hex output idiom (reading `emu.memType.snesCgRam`
 / `snesVideoRam`), never `io.*`, which corrupts Mesen's heap under `--testRunner`.
@@ -129,4 +147,10 @@ MESEN_BIN=/path/to/Mesen ./tools/mesen/run-headless.sh <rom> tools/mesen/dump_pp
   | grep '^PDUMP|cgram' | sed 's/^PDUMP|cgram //' > /tmp/cgram_live.hex
 cargo run --bin dump_pal  -- <rom> 0                 # static palette as hex
 cargo run --bin find_pal  -- <rom> /tmp/cgram_live.hex  # which gfx ids reproduce live
+
+# tile-word attribute validation: dump the live VRAM (same dump_ppu.lua run,
+# '^PDUMP|vram' lines), then compare the BG1 tilemap (byte $1000) per-char
+# (pal,hflip,vflip) against the level's tile words / $DB table:
+cargo run --bin dump_tilewords -- <rom> 0   # 16 raw tile words per metatile
+cargo run --bin dump_attr      -- <rom> 0   # the $DB table as hex (rejected for display)
 ```
