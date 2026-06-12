@@ -34,6 +34,20 @@ const GFX_LOAD_JSL: [u8; 4] = [0x22, 0x26, 0xFC, 0x80];
 /// Number of palette colors we reconstruct (a full SNES CGRAM bank).
 const PALETTE_COLORS: usize = 256;
 
+/// Graphics id of the **common background palette** that the game's level-entry
+/// sequence stamps over CGRAM palette **row 0** (colors `1..=15`) for every
+/// level, *after* the scene's own palette upload. It is loaded by shared
+/// menu/transition code — not by the per-scene setup routine — so the routine
+/// scan never sees it; we replay it explicitly as a final overlay.
+///
+/// Established by a live Mesen CGRAM dump (`tools/mesen/dump_ppu.lua` +
+/// `trace_pal_loads.lua`): on level 0 the scene's CGRAM-`$00` upload (id 10)
+/// reproduces BG palette rows **1..7** exactly, but row 0 only matched 3/32
+/// bytes — the live row 0 is this entry. Overlaying it brings the reconstructed
+/// BG palette (colors 0..127) to 251/256 bytes of the live machine; the residual
+/// few bytes are runtime palette *animation* (not statically reproducible).
+const COMMON_BG_PALETTE_GFX_ID: usize = 1;
+
 /// SNES VRAM size in bytes (32 K 16-bit words).
 const VRAM_BYTES: usize = 0x1_0000;
 
@@ -188,7 +202,9 @@ fn scan_gfx_loads(rom: &[u8], entry: &LevelEntry, end: usize) -> Vec<GfxEntry> {
 }
 
 /// Reconstruct the scene's palette from its graphics loads: every mode-1 load
-/// decompresses to a run of BGR555 CGRAM colors at its `$2121` address. Returns
+/// decompresses to a run of BGR555 CGRAM colors at its `$2121` address. The
+/// shared [common background palette](COMMON_BG_PALETTE_GFX_ID) is then overlaid
+/// last (as the game does on level entry), correcting BG palette row 0. Returns
 /// a 256-color palette, or a neutral grayscale ramp if no CGRAM upload is found.
 fn reconstruct_palette(rom: &[u8], loads: &[GfxEntry]) -> Palette {
     let mut colors = vec![0u16; PALETTE_COLORS];
@@ -201,9 +217,22 @@ fn reconstruct_palette(rom: &[u8], loads: &[GfxEntry]) -> Palette {
         }
     }
     if found {
+        apply_common_bg_palette(rom, &mut colors);
         Palette { colors }
     } else {
         fallback_palette()
+    }
+}
+
+/// Overlay the shared [common background palette](COMMON_BG_PALETTE_GFX_ID) at
+/// its declared CGRAM address. No-op if the graphics table or that entry is
+/// unreadable / not a CGRAM upload (keeps the scene palette unchanged rather
+/// than failing).
+fn apply_common_bg_palette(rom: &[u8], colors: &mut [u16]) {
+    let Ok(table) = parse_game_table(rom) else { return };
+    let Some(e) = table.get(COMMON_BG_PALETTE_GFX_ID) else { return };
+    if let UploadTarget::Cgram { addr, size } = e.upload() {
+        apply_cgram(rom, e.source, addr, size, colors);
     }
 }
 
@@ -528,6 +557,50 @@ mod tests {
         let level = load_rom_level(&rom, 0).unwrap();
         assert_eq!(level.palette.colors[0], 0x7FFF);
         assert_eq!(level.palette.colors[1], 0x001F);
+    }
+
+    #[test]
+    fn common_bg_palette_overlays_row0_after_scene_load() {
+        // Scene load (id 7) fills CGRAM colors 0..1; the common BG palette
+        // (id COMMON_BG_PALETTE_GFX_ID) is loaded by shared code the routine
+        // scan misses, so we replay it as a final overlay over row 0 color 1.
+        let scene_id = 7u8;
+        let scene_src = 0x81_E000u32; // PC 0xE000
+        let scene_src_pc = BANK_SIZE + 0x6000;
+        let common_src = 0x81_E800u32; // PC 0xE800
+        let common_src_pc = BANK_SIZE + 0x6800;
+
+        // Only the scene load appears inline in the routine (`LDA #7 : JSL`).
+        let prefix = [0xA9, scene_id, 0x22, 0x26, 0xFC, 0x80];
+        let (mut rom, _, _) = synthetic_rom(&prefix);
+
+        // Scene record: mode 1, CGRAM addr 0, size 4 (colors 0 and 1).
+        let rec = TABLE_PC + scene_id as usize * RECORD_SIZE;
+        rom[rec] = 0x01;
+        rom[rec + 1] = (scene_src & 0xFF) as u8;
+        rom[rec + 2] = ((scene_src >> 8) & 0xFF) as u8;
+        rom[rec + 3] = ((scene_src >> 16) & 0xFF) as u8;
+        rom[rec + 6] = 0x04; // size = 4 bytes -> colors 0,1
+        // Decodes to CGRAM bytes FF 7F 1F 00 -> colors $7FFF, $001F.
+        let scene_blob = [0x01, 0xFF, 0x1F, 0x40, 0x01, 0x7F, 0x00, 0x40];
+        rom[scene_src_pc..scene_src_pc + scene_blob.len()].copy_from_slice(&scene_blob);
+
+        // Common record (id 1): mode 1, CGRAM addr 1, size 2 (overlays color 1).
+        let crec = TABLE_PC + COMMON_BG_PALETTE_GFX_ID * RECORD_SIZE;
+        rom[crec] = 0x01;
+        rom[crec + 1] = (common_src & 0xFF) as u8;
+        rom[crec + 2] = ((common_src >> 8) & 0xFF) as u8;
+        rom[crec + 3] = ((common_src >> 16) & 0xFF) as u8;
+        rom[crec + 4] = 0x01; // CGRAM addr 1 (palette row 0, color 1)
+        rom[crec + 6] = 0x02; // size = 2 bytes -> one color
+        // Two passes of a length-1 literal -> CGRAM bytes E0 03 -> color $03E0.
+        let common_blob = [0x00, 0xE0, 0x40, 0x00, 0x03, 0x40];
+        rom[common_src_pc..common_src_pc + common_blob.len()].copy_from_slice(&common_blob);
+
+        let level = load_rom_level(&rom, 0).unwrap();
+        // Color 0 untouched by the overlay; color 1 replaced by the common palette.
+        assert_eq!(level.palette.colors[0], 0x7FFF);
+        assert_eq!(level.palette.colors[1], 0x03E0, "common BG palette must override row 0");
     }
 
     #[test]
