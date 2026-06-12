@@ -69,6 +69,20 @@ pub struct DaffyApp {
     pub hovered_tile: Option<(u32, u32)>,
     pub validation: Vec<ValidationIssue>,
     pub show_about: bool,
+    /// Cache of rendered metatile textures (real tile pixels), keyed by metatile
+    /// id, for the level currently in `tile_textures_level`. Cleared on switch.
+    pub tile_textures: std::collections::HashMap<u16, egui::TextureHandle>,
+    /// Which level id [`Self::tile_textures`] was built for (invalidation key).
+    pub tile_textures_level: Option<u32>,
+}
+
+impl DaffyApp {
+    /// Drop the cached metatile textures (call when the active level's graphics
+    /// change, so the viewport rebuilds them lazily).
+    pub fn invalidate_tile_textures(&mut self) {
+        self.tile_textures.clear();
+        self.tile_textures_level = None;
+    }
 }
 
 impl DaffyApp {
@@ -95,6 +109,8 @@ impl DaffyApp {
             hovered_tile: None,
             validation: Vec::new(),
             show_about: false,
+            tile_textures: std::collections::HashMap::new(),
+            tile_textures_level: None,
         };
         app.revalidate();
         app
@@ -167,6 +183,7 @@ impl DaffyApp {
             Ok(level) => {
                 self.active_level = n;
                 self.project.levels = vec![level];
+                self.invalidate_tile_textures();
                 self.history = EditorHistory::new();
                 self.selection = Selection::None;
                 self.active_room = 0;
@@ -201,6 +218,7 @@ impl DaffyApp {
                 self.history = EditorHistory::new();
                 self.selection = Selection::None;
                 self.active_room = 0;
+                self.invalidate_tile_textures();
                 self.project_path = Some(path);
                 self.status = "Project loaded.".to_string();
                 self.revalidate();

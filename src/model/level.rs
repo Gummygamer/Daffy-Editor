@@ -51,6 +51,38 @@ pub struct Palette {
     pub colors: Vec<u16>,
 }
 
+/// Reconstructed tile pixel graphics for a scene: the SNES VRAM contents and the
+/// per-character attribute table the renderer reads, recovered statically by
+/// replaying the scene-setup routine's graphics loads (see
+/// [`crate::level::loader`]).
+///
+/// `vram` is raw 4bpp planar tile data placed at each mode-0 DMA's true `$2116`
+/// word address (so byte offset `word_addr * 2`). A tile character `c` is decoded
+/// from `vram[(char_base + c * 16) * 2 ..][..32]`. `attr` is the `$DB` table: one
+/// byte per character giving the SNES tilemap high byte (palette row in bits
+/// 2..5, h/v-flip in bits 6/7). Both empty for synthetic / no-ROM levels, in
+/// which case the editor falls back to flat metatile colors.
+#[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, Deserialize)]
+pub struct TileGraphics {
+    /// Raw VRAM bytes (4bpp planar tiles), char `c` at byte `(char_base+c*16)*2`.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub vram: Vec<u8>,
+    /// `$DB` per-character attribute bytes (palette row + flip flags).
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub attr: Vec<u8>,
+    /// VRAM word address of tile character 0 (the BG character base), in 16-word
+    /// tile units folded into VRAM words. `char c` lives at word `char_base+c*16`.
+    #[serde(default)]
+    pub char_base: u16,
+}
+
+impl TileGraphics {
+    /// Whether any real tile pixels are present (false for synthetic/no-ROM).
+    pub fn is_empty(&self) -> bool {
+        self.vram.is_empty()
+    }
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Object {
     pub id: u32,
@@ -167,6 +199,13 @@ pub struct Level {
     pub provenance: Provenance,
     pub palette: Palette,
     pub metatiles: Vec<Metatile>,
+    /// Reconstructed tile pixel graphics (empty for synthetic / no-ROM levels,
+    /// in which case the editor renders flat metatile colors). Derived from the
+    /// ROM on load and **not serialized** — it is a large, re-derivable cache and
+    /// embedding ROM-decoded pixels in a saved project is both wasteful and
+    /// undesirable.
+    #[serde(skip)]
+    pub gfx: TileGraphics,
     pub rooms: Vec<Room>,
 }
 
@@ -275,6 +314,7 @@ pub fn synthetic_level() -> Level {
         provenance: Provenance::Synthetic,
         palette,
         metatiles,
+        gfx: TileGraphics::default(),
         rooms: vec![room, room_b],
     }
 }

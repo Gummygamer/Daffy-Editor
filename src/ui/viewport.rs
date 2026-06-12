@@ -1,19 +1,61 @@
 //! Central level canvas: tile grid, overlays, zoom/pan, selection, painting.
 //!
-//! Until real tile graphics are decoded, metatiles render as flat colors from
-//! the level palette (see `rendering::tile_renderer::metatile_color`); the
-//! synthetic provenance is labeled prominently in the side panel.
+//! ROM-backed levels render real reconstructed tile pixels — each metatile is
+//! rasterised once (`rendering::tile_renderer::render_metatile_rgba`) and cached
+//! as an egui texture keyed by metatile id. Synthetic / no-graphics levels fall
+//! back to flat metatile colors (`metatile_color`).
 
-use egui::{Color32, Pos2, Rect, Sense, Stroke, Vec2};
+use egui::{Color32, ColorImage, Pos2, Rect, Sense, Stroke, TextureOptions, Vec2};
 
 use crate::app::DaffyApp;
 use crate::editor::commands::EditorCommand;
 use crate::editor::selection::Selection;
 use crate::editor::tools::Tool;
 use crate::model::level::{METATILE_PX, SCREEN_H_METATILES, SCREEN_W_METATILES};
-use crate::rendering::tile_renderer::metatile_color;
+use crate::rendering::tile_renderer::{metatile_color, render_metatile_rgba, METATILE_RENDER_PX};
+
+/// Build/refresh the metatile texture cache for the active level, then return
+/// whether the level has real tile graphics (and the world-space metatile edge
+/// length to draw at). Textures are rebuilt lazily and only for metatiles that
+/// appear in the cache miss set.
+fn ensure_tile_textures(app: &mut DaffyApp, ctx: &egui::Context) -> bool {
+    let Some(level) = app.project.levels.first() else { return false };
+    if level.gfx.is_empty() {
+        return false;
+    }
+    let level_id = level.id;
+    if app.tile_textures_level != Some(level_id) {
+        app.tile_textures.clear();
+        app.tile_textures_level = Some(level_id);
+    }
+    let count = level.metatiles.len();
+    for id in 0..count as u16 {
+        if app.tile_textures.contains_key(&id) {
+            continue;
+        }
+        // Short immutable borrow to rasterise; ends before we touch the cache.
+        let image = {
+            let level = app.project.levels.first().expect("level exists");
+            level.metatiles.get(id as usize).and_then(|m| {
+                render_metatile_rgba(&level.gfx, &level.palette, m).map(|img| {
+                    ColorImage::from_rgba_unmultiplied(
+                        [METATILE_RENDER_PX, METATILE_RENDER_PX],
+                        &img.pixels,
+                    )
+                })
+            })
+        };
+        if let Some(image) = image {
+            let tex = ctx.load_texture(format!("mt{id}"), image, TextureOptions::NEAREST);
+            app.tile_textures.insert(id, tex);
+        }
+    }
+    true
+}
 
 pub fn central_viewport(app: &mut DaffyApp, ctx: &egui::Context) {
+    // Rasterise real tile graphics into the texture cache (no-op for synthetic).
+    let has_gfx = ensure_tile_textures(app, ctx);
     egui::CentralPanel::default().show(ctx, |ui| {
         let (response, painter) =
             ui.allocate_painter(ui.available_size(), Sense::click_and_drag());
@@ -47,7 +89,10 @@ pub fn central_viewport(app: &mut DaffyApp, ctx: &egui::Context) {
         let Some(room) = level.rooms.get(room_idx) else { return };
 
         let vp = app.prefs.viewport;
-        let tile_px = METATILE_PX as f32;
+        // ROM levels draw 32px metatiles (real 4×4-tile pixels); synthetic uses 16.
+        let tile_px = if has_gfx { METATILE_RENDER_PX as f32 } else { METATILE_PX as f32 };
+        let room_px_w = room.width as f32 * tile_px;
+        let room_px_h = room.height as f32 * tile_px;
         let to_screen = |wx: f32, wy: f32| -> Pos2 {
             let [sx, sy] = vp.world_to_screen([wx, wy]);
             Pos2::new(sx + origin.x, sy + origin.y)
@@ -78,16 +123,25 @@ pub fn central_viewport(app: &mut DaffyApp, ctx: &egui::Context) {
                     to_screen(tx as f32 * tile_px, ty as f32 * tile_px),
                     to_screen((tx + 1) as f32 * tile_px, (ty + 1) as f32 * tile_px),
                 );
-                let rgba = level
-                    .metatiles
-                    .get(id as usize)
-                    .map(|m| metatile_color(&level.palette, m))
-                    .unwrap_or([255, 0, 255, 255]);
-                painter.rect_filled(
-                    rect,
-                    0.0,
-                    Color32::from_rgba_unmultiplied(rgba[0], rgba[1], rgba[2], rgba[3]),
-                );
+                if let Some(tex) = app.tile_textures.get(&id) {
+                    painter.image(
+                        tex.id(),
+                        rect,
+                        Rect::from_min_max(Pos2::ZERO, Pos2::new(1.0, 1.0)),
+                        Color32::WHITE,
+                    );
+                } else {
+                    let rgba = level
+                        .metatiles
+                        .get(id as usize)
+                        .map(|m| metatile_color(&level.palette, m))
+                        .unwrap_or([255, 0, 255, 255]);
+                    painter.rect_filled(
+                        rect,
+                        0.0,
+                        Color32::from_rgba_unmultiplied(rgba[0], rgba[1], rgba[2], rgba[3]),
+                    );
+                }
                 if app.prefs.show_collision {
                     if let Some(m) = level.metatiles.get(id as usize) {
                         if m.collision != 0 {
@@ -106,26 +160,23 @@ pub fn central_viewport(app: &mut DaffyApp, ctx: &egui::Context) {
         }
 
         // --- draw: room border & screen boundaries ---
-        let room_rect = Rect::from_min_max(
-            to_screen(0.0, 0.0),
-            to_screen(room.pixel_width() as f32, room.pixel_height() as f32),
-        );
+        let room_rect = Rect::from_min_max(to_screen(0.0, 0.0), to_screen(room_px_w, room_px_h));
         painter.rect_stroke(room_rect, 0.0, Stroke::new(1.5, Color32::from_gray(140)));
         if app.prefs.show_screen_bounds {
-            let sw = (SCREEN_W_METATILES * METATILE_PX) as f32;
-            let sh = (SCREEN_H_METATILES * METATILE_PX) as f32;
+            let sw = SCREEN_W_METATILES as f32 * tile_px;
+            let sh = SCREEN_H_METATILES as f32 * tile_px;
             let mut x = sw;
-            while x < room.pixel_width() as f32 {
+            while x < room_px_w {
                 painter.line_segment(
-                    [to_screen(x, 0.0), to_screen(x, room.pixel_height() as f32)],
+                    [to_screen(x, 0.0), to_screen(x, room_px_h)],
                     Stroke::new(1.0, Color32::from_rgba_unmultiplied(120, 160, 255, 120)),
                 );
                 x += sw;
             }
             let mut y = sh;
-            while y < room.pixel_height() as f32 {
+            while y < room_px_h {
                 painter.line_segment(
-                    [to_screen(0.0, y), to_screen(room.pixel_width() as f32, y)],
+                    [to_screen(0.0, y), to_screen(room_px_w, y)],
                     Stroke::new(1.0, Color32::from_rgba_unmultiplied(120, 160, 255, 120)),
                 );
                 y += sh;

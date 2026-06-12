@@ -25,10 +25,14 @@ What works today:
   and palette (reconstructed from the scene's CGRAM graphics loads). A level
   picker switches between all 20 levels; verify with
   `cargo run --bin load_level -- <rom> all`.
+- **Real tile-pixel graphics** for the recognized ROM: each scene's VRAM and
+  palette are reconstructed statically by replaying its graphics loads, and
+  metatiles are drawn as actual 4bpp tiles (not flat colors). See
+  [docs/reverse-engineering/tile-graphics.md](docs/reverse-engineering/tile-graphics.md);
+  inspect with `cargo run --bin render_level -- <rom> all`.
 - Editor canvas with zoom/pan, tile painting, object overlay/moving, selection,
   undo/redo, dirty tracking, and validation (a synthetic level is still used as
-  a fallback when no recognized ROM is open). Metatiles currently render as flat
-  palette colors; real tile-pixel graphics are the next step.
+  a fallback when no recognized ROM is open).
 - JSON project save/load (stores ROM *hashes*, never ROM bytes).
 - IPS and BPS patch export (changed bytes only; BPS carries checksums).
 - CLI scanners for hunting pointer tables, palettes, tile graphics, repeated

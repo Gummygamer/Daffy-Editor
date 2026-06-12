@@ -21,11 +21,11 @@
 
 use crate::codecs::gfx_rle;
 use crate::error::LevelError;
-use crate::gfx::table::{parse_game_table, UploadTarget};
+use crate::gfx::table::{parse_game_table, GfxEntry, UploadTarget};
 use crate::level::cell::{metatile_index, METATILE_BYTES, METATILE_WORDS};
 use crate::level::index::{parse_game_index, LevelEntry};
 use crate::level::scan::{scan_levels, LevelData, ENTITY_RECORD_BYTES};
-use crate::model::level::{Level, Metatile, Object, Palette, Provenance, Room, Tile};
+use crate::model::level::{Level, Metatile, Object, Palette, Provenance, Room, Tile, TileGraphics};
 use crate::snes::lorom::snes_to_pc;
 
 /// `JSL $80:FC26` — the graphics-load wrapper. Bytes `22 26 FC 80`.
@@ -33,6 +33,14 @@ const GFX_LOAD_JSL: [u8; 4] = [0x22, 0x26, 0xFC, 0x80];
 
 /// Number of palette colors we reconstruct (a full SNES CGRAM bank).
 const PALETTE_COLORS: usize = 256;
+
+/// SNES VRAM size in bytes (32 K 16-bit words).
+const VRAM_BYTES: usize = 0x1_0000;
+
+/// How many `$DB` per-character attribute bytes we read. A tile word's character
+/// field is `& 0x3FF` (10 bits), so the table is indexed by 0..=`0x3FF`.
+const ATTR_TABLE_LEN: usize = 0x400;
+
 
 /// Read a 16-bit little-endian word at PC `at`.
 fn word(rom: &[u8], at: usize) -> Option<u16> {
@@ -123,46 +131,137 @@ fn read_objects(rom: &[u8], block: &LevelData) -> Vec<Object> {
     out
 }
 
-/// Reconstruct the scene's palette by replaying the graphics-load (`JSL
-/// $80:FC26`) sites in the setup routine: every mode-1 load decompresses to a
-/// run of BGR555 CGRAM colors at its `$2121` address. Returns a 256-color
-/// palette, or a neutral grayscale ramp if no CGRAM upload is recoverable.
-fn reconstruct_palette(rom: &[u8], entry: &LevelEntry, block: &LevelData) -> Palette {
+/// PC offset just past the end of `entry`'s setup routine: the start of the next
+/// scene routine in ROM order, the end of the routine's own LoROM bank, or the
+/// ROM end — whichever is smallest. The setup routines are disjoint and each
+/// fits in one bank, so this bounds a routine's body without disassembling it.
+/// (The bank cap matters for the last routine in a bank, whose next-in-PC-order
+/// sibling lives in a far bank and would otherwise drag the scan across
+/// unrelated code.)
+fn routine_end_pc(index: &[LevelEntry], entry: &LevelEntry, rom_len: usize) -> usize {
+    let Ok(start) = snes_to_pc(entry.routine_ptr()) else { return rom_len };
+    let bank_end = (start / crate::snes::lorom::BANK_SIZE + 1) * crate::snes::lorom::BANK_SIZE;
+    let next_routine = index
+        .iter()
+        .filter_map(|e| snes_to_pc(e.routine_ptr()).ok())
+        .filter(|&pc| pc > start)
+        .min()
+        .unwrap_or(rom_len);
+    next_routine.min(bank_end).min(rom_len)
+}
+
+/// Collect the graphics entries a setup routine loads inline, in ROM order.
+///
+/// Each load is an `LDA #id : JSL $80:FC26` (`A9 id 22 26 FC 80`); `id` indexes
+/// the [graphics descriptor table](crate::gfx::table). The loads are scattered
+/// through the *whole* routine body — some worlds write the level-data pointer
+/// block first and only then load graphics — so we scan from the routine entry
+/// to `end` (the next routine, see [`routine_end_pc`]), not just up to the
+/// pointer block. Entries whose source pointer is not a plausible ROM graphics
+/// address are dropped (guards against stray `22 26 FC 80` bytes in data).
+fn scan_gfx_loads(rom: &[u8], entry: &LevelEntry, end: usize) -> Vec<GfxEntry> {
+    let Ok(table) = parse_game_table(rom) else { return Vec::new() };
+    let Ok(start) = snes_to_pc(entry.routine_ptr()) else { return Vec::new() };
+    let end = end.min(rom.len());
+    let mut loads = Vec::new();
+    let mut k = start;
+    while k + GFX_LOAD_JSL.len() <= end {
+        if rom[k..k + GFX_LOAD_JSL.len()] != GFX_LOAD_JSL {
+            k += 1;
+            continue;
+        }
+        // The id immediately precedes the `JSL`, loaded either 16-bit
+        // (`A9 id 00`, A in 16-bit mode) or 8-bit (`A9 id`).
+        let id = if k >= 3 && rom[k - 3] == 0xA9 && rom[k - 1] == 0x00 {
+            Some(rom[k - 2] as usize)
+        } else if k >= 2 && rom[k - 2] == 0xA9 {
+            Some(rom[k - 1] as usize)
+        } else {
+            None
+        };
+        if let Some(e) = id.and_then(|id| table.get(id)).filter(|e| e.source_is_plausible()) {
+            loads.push(*e);
+        }
+        k += GFX_LOAD_JSL.len();
+    }
+    loads
+}
+
+/// Reconstruct the scene's palette from its graphics loads: every mode-1 load
+/// decompresses to a run of BGR555 CGRAM colors at its `$2121` address. Returns
+/// a 256-color palette, or a neutral grayscale ramp if no CGRAM upload is found.
+fn reconstruct_palette(rom: &[u8], loads: &[GfxEntry]) -> Palette {
     let mut colors = vec![0u16; PALETTE_COLORS];
     let mut found = false;
-
-    if let Ok(table) = parse_game_table(rom) {
-        let Ok(start) = snes_to_pc(entry.routine_ptr()) else {
-            return fallback_palette();
-        };
-        // The graphics loads run from the routine entry up to its pointer block.
-        let end = block.anchor_pc.min(rom.len());
-        let mut k = start;
-        while k + GFX_LOAD_JSL.len() <= end {
-            if rom[k..k + GFX_LOAD_JSL.len()] != GFX_LOAD_JSL {
-                k += 1;
-                continue;
+    for e in loads {
+        if let UploadTarget::Cgram { addr, size } = e.upload() {
+            if apply_cgram(rom, e.source, addr, size, &mut colors) {
+                found = true;
             }
-            // `LDA #imm8 : JSL` (`A9 id 22 26 FC 80`) selects the graphics id.
-            if k >= 2 && rom[k - 2] == 0xA9 {
-                let id = rom[k - 1] as usize;
-                if let Some(e) = table.get(id) {
-                    if let UploadTarget::Cgram { addr, size } = e.upload() {
-                        if apply_cgram(rom, e.source, addr, size, &mut colors) {
-                            found = true;
-                        }
-                    }
-                }
-            }
-            k += GFX_LOAD_JSL.len();
         }
     }
-
     if found {
         Palette { colors }
     } else {
         fallback_palette()
     }
+}
+
+/// Reconstruct the scene's VRAM from its graphics loads: every mode-0 load
+/// decompresses and is placed at its true `$2116` word address (byte offset
+/// `word_addr * 2`), exactly as the loader's DMA would. The result is the tile
+/// pixel sheet the metatile renderer indexes by character. Returns the 64 KiB
+/// VRAM buffer and whether any tile data was written.
+fn reconstruct_vram(rom: &[u8], loads: &[GfxEntry]) -> (Vec<u8>, bool) {
+    let mut vram = vec![0u8; VRAM_BYTES];
+    let mut wrote = false;
+    for e in loads {
+        let UploadTarget::Vram { word_addr, size } = e.upload() else { continue };
+        let Ok(src_pc) = snes_to_pc(e.source) else { continue };
+        let Some(src) = rom.get(src_pc..) else { continue };
+        let Ok(d) = gfx_rle::decompress(src) else { continue };
+        let dst = word_addr as usize * 2;
+        let n = (size as usize).min(d.data.len());
+        if dst >= vram.len() {
+            continue;
+        }
+        let n = n.min(vram.len() - dst);
+        vram[dst..dst + n].copy_from_slice(&d.data[..n]);
+        wrote |= n > 0;
+    }
+    (vram, wrote)
+}
+
+/// The background **character base** in VRAM words: where tile character 0 lives,
+/// so a metatile's character `c` (`tile_word & 0x3FF`) is the tile at word
+/// `char_base + c * 16`. The scene uploads its main background tile sheet in one
+/// large mode-0 DMA; that DMA's `$2116` word address *is* the character base
+/// (validated statically: with this base 416/417 of level 0's referenced
+/// characters resolve to populated VRAM, the lone miss being the all-zero blank
+/// char 0). Taken from the largest mode-0 load; `0` if the scene has none.
+fn bg_char_base(loads: &[GfxEntry]) -> u16 {
+    loads
+        .iter()
+        .filter_map(|e| match e.upload() {
+            UploadTarget::Vram { word_addr, size } => Some((size, word_addr)),
+            _ => None,
+        })
+        .max_by_key(|&(size, _)| size)
+        .map(|(_, word_addr)| word_addr)
+        .unwrap_or(0)
+}
+
+/// Read the `$DB` per-character attribute table (one byte per tile character).
+/// Each byte is the SNES tilemap high byte the renderer ORs in: palette row in
+/// bits 2..5, h/v-flip in bits 6/7. Returns up to [`ATTR_TABLE_LEN`] bytes,
+/// short or empty if the pointer is unset / out of range.
+fn read_attr_table(rom: &[u8], block: &LevelData) -> Vec<u8> {
+    if block.attr_off == 0 {
+        return Vec::new();
+    }
+    let Ok(base) = pc(block.attr_ptr()) else { return Vec::new() };
+    let end = (base + ATTR_TABLE_LEN).min(rom.len());
+    rom.get(base..end).map(|s| s.to_vec()).unwrap_or_default()
 }
 
 /// Decompress the blob at SNES `source` and write its BGR555 colors into
@@ -213,7 +312,16 @@ pub fn load_rom_level(rom: &[u8], level_number: usize) -> Result<Level, LevelErr
     let metatiles = read_metatiles(rom, block)?;
     let tiles = read_tiles(rom, block)?;
     let objects = read_objects(rom, block);
-    let palette = reconstruct_palette(rom, entry, block);
+
+    let routine_end = routine_end_pc(&index, entry, rom.len());
+    let loads = scan_gfx_loads(rom, entry, routine_end);
+    let palette = reconstruct_palette(rom, &loads);
+    let (vram, has_gfx) = reconstruct_vram(rom, &loads);
+    let gfx = if has_gfx {
+        TileGraphics { vram, attr: read_attr_table(rom, block), char_base: bg_char_base(&loads) }
+    } else {
+        TileGraphics::default()
+    };
 
     let room = Room {
         id: 0,
@@ -245,6 +353,7 @@ pub fn load_rom_level(rom: &[u8], level_number: usize) -> Result<Level, LevelErr
         },
         palette,
         metatiles,
+        gfx,
         rooms: vec![room],
     })
 }
@@ -252,6 +361,16 @@ pub fn load_rom_level(rom: &[u8], level_number: usize) -> Result<Level, LevelErr
 /// How many levels the master table reports (for UI bounds / iteration).
 pub fn level_count(rom: &[u8]) -> usize {
     parse_game_index(rom).map(|i| i.len()).unwrap_or(0)
+}
+
+/// Diagnostic: the graphics-load descriptor entries a level's setup routine
+/// issues inline (in routine order). Used by tooling to inspect which uploads
+/// (VRAM / CGRAM / WRAM) a scene performs.
+pub fn scene_gfx_loads(rom: &[u8], level_number: usize) -> Vec<GfxEntry> {
+    let Some(index) = parse_game_index(rom) else { return Vec::new() };
+    let Some(entry) = index.get(level_number) else { return Vec::new() };
+    let end = routine_end_pc(&index, entry, rom.len());
+    scan_gfx_loads(rom, entry, end)
 }
 
 #[cfg(test)]
@@ -409,6 +528,50 @@ mod tests {
         let level = load_rom_level(&rom, 0).unwrap();
         assert_eq!(level.palette.colors[0], 0x7FFF);
         assert_eq!(level.palette.colors[1], 0x001F);
+    }
+
+    #[test]
+    fn reconstructs_vram_from_mode0_gfx_load() {
+        // Graphics id 9 is a mode-0 (VRAM) upload to VRAM word $0010 (byte $20).
+        let gfx_id = 9u8;
+        let source_snes = 0x81_E000u32; // $81:E000 == PC 0xE000
+        let source_pc = BANK_SIZE + 0x6000;
+
+        // Routine prefix: `LDA #9 : JSL $80:FC26`.
+        let prefix = [0xA9, gfx_id, 0x22, 0x26, 0xFC, 0x80];
+        let (mut rom, _, _) = synthetic_rom(&prefix);
+
+        // Table record: mode 0, source, VRAM word $0010, size 4 bytes.
+        let rec = TABLE_PC + gfx_id as usize * RECORD_SIZE;
+        rom[rec] = 0x00; // mode 0 (VRAM)
+        rom[rec + 1] = (source_snes & 0xFF) as u8;
+        rom[rec + 2] = ((source_snes >> 8) & 0xFF) as u8;
+        rom[rec + 3] = ((source_snes >> 16) & 0xFF) as u8;
+        rom[rec + 4] = 0x10; // $2116 word addr low
+        rom[rec + 5] = 0x00; // word addr high
+        rom[rec + 6] = 0x04; // size = 4 bytes
+        rom[rec + 7] = 0x00;
+
+        // Same blob as the palette test: two passes decode to bytes FF 7F 1F 00.
+        let blob = [0x01, 0xFF, 0x1F, 0x40, 0x01, 0x7F, 0x00, 0x40];
+        rom[source_pc..source_pc + blob.len()].copy_from_slice(&blob);
+
+        let level = load_rom_level(&rom, 0).unwrap();
+        assert!(!level.gfx.is_empty(), "mode-0 load should populate VRAM");
+        // Placed at the true word address: byte offset word_addr * 2 == 0x20.
+        assert_eq!(&level.gfx.vram[0x20..0x24], &[0xFF, 0x7F, 0x1F, 0x00]);
+        // Bytes outside the written window stay zero.
+        assert_eq!(level.gfx.vram[0x00], 0x00);
+        // The $DB attribute table is read alongside.
+        assert!(!level.gfx.attr.is_empty());
+    }
+
+    #[test]
+    fn no_gfx_without_mode0_loads_leaves_graphics_empty() {
+        // Plain scene with no graphics loads -> flat-color fallback path.
+        let (rom, _, _) = synthetic_rom(&[]);
+        let level = load_rom_level(&rom, 0).unwrap();
+        assert!(level.gfx.is_empty());
     }
 
     #[test]

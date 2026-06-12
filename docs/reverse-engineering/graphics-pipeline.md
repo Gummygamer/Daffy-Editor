@@ -49,3 +49,8 @@ within a few bytes (trigger PC), which cross-validates both tools.
 3. Re-run `trace_decompressor.lua` after reaching **level 1** (drive the GUI, or
    script input via `emu.setInput`) to capture the in-level graphics sources and
    confirm they also live in `$92-$96` (or find additional banks).
+4. ~~Reconstruct each scene's VRAM so metatile tile-words become pixels.~~
+   **Done** — replay the scene's mode-0 graphics loads into a VRAM buffer at
+   their true `$2116` word addresses; the background character base is `$2000`.
+   The editor now renders real tiles. See [tile-graphics.md](tile-graphics.md)
+   and `reports/render_level.json`.

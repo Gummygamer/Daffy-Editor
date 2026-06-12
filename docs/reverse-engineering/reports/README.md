@@ -29,3 +29,9 @@ Scanner JSON reports (offsets and hashes only - never ROM bytes).
   + disassembly of the caught reader PCs: the metatile **rendering pipeline**
   (cell → `$D5` tileset → 4×4 tile words → `$DB` per-tile-char attribute) and the
   22-byte **object record** fields, all **confirmed**. See `../level-format.md`.
+- `render_level.json` — per-level **tile-graphics coherence** report from
+  `cargo run --bin render_level -- <rom> all`: each scene's statically
+  reconstructed VRAM/palette and the share of referenced tile characters that
+  resolve to populated VRAM at character base `$2000` (98–100% for all 20
+  levels). Decode/placement **confirmed**, char base **likely**. See
+  `../tile-graphics.md`.

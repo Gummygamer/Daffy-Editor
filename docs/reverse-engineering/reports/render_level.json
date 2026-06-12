@@ -1,0 +1,308 @@
+{
+  "level_count": 20,
+  "levels": [
+    {
+      "gfx_loads": 12,
+      "graphics": {
+        "attr_nonzero": 428,
+        "attr_table_len": 1024,
+        "char_base_word": "$2000",
+        "chars_coverage_pct": 100.0,
+        "chars_in_populated_vram": 416,
+        "distinct_chars_referenced": 417,
+        "palette_nonzero_colors": 253,
+        "vram_bytes": 65536,
+        "vram_nonzero_bytes": 24448
+      },
+      "level": 0
+    },
+    {
+      "gfx_loads": 12,
+      "graphics": {
+        "attr_nonzero": 428,
+        "attr_table_len": 1024,
+        "char_base_word": "$2000",
+        "chars_coverage_pct": 100.0,
+        "chars_in_populated_vram": 499,
+        "distinct_chars_referenced": 500,
+        "palette_nonzero_colors": 253,
+        "vram_bytes": 65536,
+        "vram_nonzero_bytes": 26954
+      },
+      "level": 1
+    },
+    {
+      "gfx_loads": 13,
+      "graphics": {
+        "attr_nonzero": 428,
+        "attr_table_len": 1024,
+        "char_base_word": "$2000",
+        "chars_coverage_pct": 100.0,
+        "chars_in_populated_vram": 437,
+        "distinct_chars_referenced": 438,
+        "palette_nonzero_colors": 253,
+        "vram_bytes": 65536,
+        "vram_nonzero_bytes": 26954
+      },
+      "level": 2
+    },
+    {
+      "gfx_loads": 8,
+      "graphics": {
+        "attr_nonzero": 428,
+        "attr_table_len": 1024,
+        "char_base_word": "$2000",
+        "chars_coverage_pct": 100.0,
+        "chars_in_populated_vram": 202,
+        "distinct_chars_referenced": 203,
+        "palette_nonzero_colors": 253,
+        "vram_bytes": 65536,
+        "vram_nonzero_bytes": 25472
+      },
+      "level": 3
+    },
+    {
+      "gfx_loads": 9,
+      "graphics": {
+        "attr_nonzero": 558,
+        "attr_table_len": 1024,
+        "char_base_word": "$2000",
+        "chars_coverage_pct": 99.0,
+        "chars_in_populated_vram": 203,
+        "distinct_chars_referenced": 205,
+        "palette_nonzero_colors": 251,
+        "vram_bytes": 65536,
+        "vram_nonzero_bytes": 24947
+      },
+      "level": 4
+    },
+    {
+      "gfx_loads": 11,
+      "graphics": {
+        "attr_nonzero": 558,
+        "attr_table_len": 1024,
+        "char_base_word": "$2000",
+        "chars_coverage_pct": 100.0,
+        "chars_in_populated_vram": 317,
+        "distinct_chars_referenced": 318,
+        "palette_nonzero_colors": 251,
+        "vram_bytes": 65536,
+        "vram_nonzero_bytes": 21658
+      },
+      "level": 5
+    },
+    {
+      "gfx_loads": 11,
+      "graphics": {
+        "attr_nonzero": 558,
+        "attr_table_len": 1024,
+        "char_base_word": "$2000",
+        "chars_coverage_pct": 100.0,
+        "chars_in_populated_vram": 404,
+        "distinct_chars_referenced": 406,
+        "palette_nonzero_colors": 251,
+        "vram_bytes": 65536,
+        "vram_nonzero_bytes": 23002
+      },
+      "level": 6
+    },
+    {
+      "gfx_loads": 7,
+      "graphics": {
+        "attr_nonzero": 558,
+        "attr_table_len": 1024,
+        "char_base_word": "$2000",
+        "chars_coverage_pct": 100.0,
+        "chars_in_populated_vram": 97,
+        "distinct_chars_referenced": 97,
+        "palette_nonzero_colors": 251,
+        "vram_bytes": 65536,
+        "vram_nonzero_bytes": 22811
+      },
+      "level": 7
+    },
+    {
+      "gfx_loads": 8,
+      "graphics": {
+        "attr_nonzero": 581,
+        "attr_table_len": 1024,
+        "char_base_word": "$2000",
+        "chars_coverage_pct": 100.0,
+        "chars_in_populated_vram": 202,
+        "distinct_chars_referenced": 203,
+        "palette_nonzero_colors": 249,
+        "vram_bytes": 65536,
+        "vram_nonzero_bytes": 20671
+      },
+      "level": 8
+    },
+    {
+      "gfx_loads": 10,
+      "graphics": {
+        "attr_nonzero": 581,
+        "attr_table_len": 1024,
+        "char_base_word": "$2000",
+        "chars_coverage_pct": 100.0,
+        "chars_in_populated_vram": 229,
+        "distinct_chars_referenced": 230,
+        "palette_nonzero_colors": 249,
+        "vram_bytes": 65536,
+        "vram_nonzero_bytes": 20671
+      },
+      "level": 9
+    },
+    {
+      "gfx_loads": 10,
+      "graphics": {
+        "attr_nonzero": 581,
+        "attr_table_len": 1024,
+        "char_base_word": "$2000",
+        "chars_coverage_pct": 99.0,
+        "chars_in_populated_vram": 194,
+        "distinct_chars_referenced": 195,
+        "palette_nonzero_colors": 249,
+        "vram_bytes": 65536,
+        "vram_nonzero_bytes": 20671
+      },
+      "level": 10
+    },
+    {
+      "gfx_loads": 7,
+      "graphics": {
+        "attr_nonzero": 581,
+        "attr_table_len": 1024,
+        "char_base_word": "$2000",
+        "chars_coverage_pct": 98.0,
+        "chars_in_populated_vram": 189,
+        "distinct_chars_referenced": 192,
+        "palette_nonzero_colors": 251,
+        "vram_bytes": 65536,
+        "vram_nonzero_bytes": 20927
+      },
+      "level": 11
+    },
+    {
+      "gfx_loads": 10,
+      "graphics": {
+        "attr_nonzero": 546,
+        "attr_table_len": 1024,
+        "char_base_word": "$2000",
+        "chars_coverage_pct": 99.0,
+        "chars_in_populated_vram": 354,
+        "distinct_chars_referenced": 356,
+        "palette_nonzero_colors": 252,
+        "vram_bytes": 65536,
+        "vram_nonzero_bytes": 29467
+      },
+      "level": 12
+    },
+    {
+      "gfx_loads": 9,
+      "graphics": {
+        "attr_nonzero": 546,
+        "attr_table_len": 1024,
+        "char_base_word": "$2000",
+        "chars_coverage_pct": 100.0,
+        "chars_in_populated_vram": 507,
+        "distinct_chars_referenced": 509,
+        "palette_nonzero_colors": 252,
+        "vram_bytes": 65536,
+        "vram_nonzero_bytes": 29467
+      },
+      "level": 13
+    },
+    {
+      "gfx_loads": 9,
+      "graphics": {
+        "attr_nonzero": 546,
+        "attr_table_len": 1024,
+        "char_base_word": "$2000",
+        "chars_coverage_pct": 99.0,
+        "chars_in_populated_vram": 333,
+        "distinct_chars_referenced": 335,
+        "palette_nonzero_colors": 252,
+        "vram_bytes": 65536,
+        "vram_nonzero_bytes": 29467
+      },
+      "level": 14
+    },
+    {
+      "gfx_loads": 6,
+      "graphics": {
+        "attr_nonzero": 546,
+        "attr_table_len": 1024,
+        "char_base_word": "$2000",
+        "chars_coverage_pct": 99.0,
+        "chars_in_populated_vram": 136,
+        "distinct_chars_referenced": 138,
+        "palette_nonzero_colors": 252,
+        "vram_bytes": 65536,
+        "vram_nonzero_bytes": 26658
+      },
+      "level": 15
+    },
+    {
+      "gfx_loads": 13,
+      "graphics": {
+        "attr_nonzero": 321,
+        "attr_table_len": 1024,
+        "char_base_word": "$2000",
+        "chars_coverage_pct": 100.0,
+        "chars_in_populated_vram": 362,
+        "distinct_chars_referenced": 363,
+        "palette_nonzero_colors": 252,
+        "vram_bytes": 65536,
+        "vram_nonzero_bytes": 27048
+      },
+      "level": 16
+    },
+    {
+      "gfx_loads": 12,
+      "graphics": {
+        "attr_nonzero": 321,
+        "attr_table_len": 1024,
+        "char_base_word": "$2000",
+        "chars_coverage_pct": 100.0,
+        "chars_in_populated_vram": 308,
+        "distinct_chars_referenced": 309,
+        "palette_nonzero_colors": 252,
+        "vram_bytes": 65536,
+        "vram_nonzero_bytes": 26142
+      },
+      "level": 17
+    },
+    {
+      "gfx_loads": 12,
+      "graphics": {
+        "attr_nonzero": 321,
+        "attr_table_len": 1024,
+        "char_base_word": "$2000",
+        "chars_coverage_pct": 100.0,
+        "chars_in_populated_vram": 285,
+        "distinct_chars_referenced": 286,
+        "palette_nonzero_colors": 252,
+        "vram_bytes": 65536,
+        "vram_nonzero_bytes": 26142
+      },
+      "level": 18
+    },
+    {
+      "gfx_loads": 9,
+      "graphics": {
+        "attr_nonzero": 321,
+        "attr_table_len": 1024,
+        "char_base_word": "$2000",
+        "chars_coverage_pct": 100.0,
+        "chars_in_populated_vram": 248,
+        "distinct_chars_referenced": 249,
+        "palette_nonzero_colors": 250,
+        "vram_bytes": 65536,
+        "vram_nonzero_bytes": 26102
+      },
+      "level": 19
+    }
+  ],
+  "note": "Static reconstruction of each scene's VRAM/palette from its mode-0/1 graphics loads; coverage = referenced tile chars landing in populated VRAM at char_base.",
+  "rom": "CRC32 5F02A044",
+  "tool": "render_level"
+}

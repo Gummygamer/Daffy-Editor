@@ -15,5 +15,5 @@ pub mod loader;
 pub mod scan;
 
 pub use index::{parse_game_index, LevelEntry};
-pub use loader::{level_count, load_rom_level};
+pub use loader::{level_count, load_rom_level, scene_gfx_loads};
 pub use scan::{scan_levels, LevelData};
