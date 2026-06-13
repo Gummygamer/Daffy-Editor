@@ -168,6 +168,7 @@ fn read_objects(rom: &[u8], block: &LevelData) -> Vec<Object> {
             y,
             params: rec.to_vec(),
             label: format!("obj #{i} (handler ${kind:06X}) @ {x},{y}"),
+            rom_offset: Some(off),
         });
     }
     out

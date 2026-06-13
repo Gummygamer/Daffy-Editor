@@ -95,6 +95,14 @@ pub struct Object {
     pub y: u32,
     pub params: Vec<u8>,
     pub label: String,
+    /// PC byte offset of this object's 24-byte spawn record in the original ROM.
+    /// X is a little-endian word at `rom_offset + 0x06`, Y at `rom_offset + 0x08`.
+    /// Set by the ROM loader; `None` for synthetic / no-ROM objects. Object moves
+    /// are written back to the exported ROM through this offset, so it must survive
+    /// a project save/load round-trip — `#[serde(default)]` keeps older projects
+    /// loading.
+    #[serde(default)]
+    pub rom_offset: Option<usize>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -277,8 +285,8 @@ pub fn synthetic_level() -> Level {
         tiles,
         map_rom_offset: None,
         objects: vec![
-            Object { id: 0, kind: 1, x: 40, y: 160, params: vec![0], label: "player-start".into() },
-            Object { id: 1, kind: 2, x: 200, y: 160, params: vec![3, 1], label: "powerup".into() },
+            Object { id: 0, kind: 1, x: 40, y: 160, params: vec![0], label: "player-start".into(), rom_offset: None },
+            Object { id: 1, kind: 2, x: 200, y: 160, params: vec![3, 1], label: "powerup".into(), rom_offset: None },
         ],
         enemy_spawns: vec![
             EnemySpawn { id: 0, kind: 10, x: 320, y: 176 },
@@ -318,6 +326,7 @@ pub fn synthetic_level() -> Level {
         y: 96,
         params: vec![],
         label: "marker".into(),
+        rom_offset: None,
     });
 
     Level {

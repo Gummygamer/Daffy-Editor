@@ -85,6 +85,7 @@ fn object_outside_room_bounds_is_warning() {
         y: 0,
         params: vec![],
         label: "stray".to_string(),
+        rom_offset: None,
     });
     let issues = validate_level(&level);
     assert!(issues

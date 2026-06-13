@@ -247,6 +247,10 @@ impl DaffyApp {
             self.status = format!("Tile edit could not be written to ROM: {e}");
             return None;
         }
+        if let Err(e) = Self::apply_object_edits(&self.project, &mut image) {
+            self.status = format!("Object edit could not be written to ROM: {e}");
+            return None;
+        }
         Some((image.original().to_vec(), image.current().to_vec()))
     }
 
@@ -272,6 +276,25 @@ impl DaffyApp {
                     if new_cell != orig_cell {
                         image.write_bytes(off, &new_cell.to_le_bytes())?;
                     }
+                }
+            }
+        }
+        Ok(())
+    }
+
+    /// Write object position edits back into the ROM image. Each object carries
+    /// the PC offset of its 24-byte spawn record (X word at `+0x06`, Y word at
+    /// `+0x08`); we re-encode X/Y from the current model so unmoved objects
+    /// produce no diff. This is the object-move counterpart to
+    /// [`Self::apply_tile_edits`] (undo/redo are reflected because we read the
+    /// live model). Synthetic objects have no `rom_offset` and are skipped.
+    fn apply_object_edits(project: &Project, image: &mut RomImage) -> Result<(), crate::error::RomError> {
+        for level in &project.levels {
+            for room in &level.rooms {
+                for obj in &room.objects {
+                    let Some(base) = obj.rom_offset else { continue };
+                    image.write_bytes(base + 0x06, &(obj.x as u16).to_le_bytes())?;
+                    image.write_bytes(base + 0x08, &(obj.y as u16).to_le_bytes())?;
                 }
             }
         }
@@ -360,7 +383,7 @@ impl eframe::App for DaffyApp {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::model::level::{Level, Palette, Provenance, Room, Tile};
+    use crate::model::level::{Level, Object, Palette, Provenance, Room, Tile};
 
     fn room_with_map(offset: usize, tiles: Vec<u16>) -> Room {
         Room {
@@ -410,6 +433,57 @@ mod tests {
         // Painted cell now selects metatile 5 ($00A0 == 5 << 5).
         assert_eq!(u16::from_le_bytes([cur[6], cur[7]]), 0x00A0);
         assert!(image.is_modified());
+    }
+
+    #[test]
+    fn moved_object_is_written_into_exported_rom_bytes() {
+        // A 24-byte spawn record at offset 4: handler ptr at [0..3], X at +6, Y at +8.
+        let mut rom = vec![0u8; 64];
+        rom[4..7].copy_from_slice(&[0x50, 0xD9, 0x80]); // non-zero handler ptr
+        rom[10..12].copy_from_slice(&100u16.to_le_bytes()); // X
+        rom[12..14].copy_from_slice(&200u16.to_le_bytes()); // Y
+        let mut image = RomImage::new(rom);
+
+        let mut room = room_with_map(40, vec![1]);
+        room.objects.push(Object {
+            id: 0,
+            kind: 0x80_D950,
+            x: 300,
+            y: 150,
+            params: vec![],
+            label: "moved".into(),
+            rom_offset: Some(4),
+        });
+        let project = project_with_room(room);
+        DaffyApp::apply_object_edits(&project, &mut image).unwrap();
+
+        let cur = image.current();
+        assert_eq!(u16::from_le_bytes([cur[10], cur[11]]), 300);
+        assert_eq!(u16::from_le_bytes([cur[12], cur[13]]), 150);
+        // Handler pointer untouched.
+        assert_eq!(&cur[4..7], &[0x50, 0xD9, 0x80]);
+    }
+
+    #[test]
+    fn unmoved_object_produces_no_byte_diff() {
+        let mut rom = vec![0u8; 64];
+        rom[10..12].copy_from_slice(&100u16.to_le_bytes());
+        rom[12..14].copy_from_slice(&200u16.to_le_bytes());
+        let mut image = RomImage::new(rom);
+
+        let mut room = room_with_map(40, vec![1]);
+        room.objects.push(Object {
+            id: 0,
+            kind: 0,
+            x: 100,
+            y: 200,
+            params: vec![],
+            label: "still".into(),
+            rom_offset: Some(4),
+        });
+        let project = project_with_room(room);
+        DaffyApp::apply_object_edits(&project, &mut image).unwrap();
+        assert!(!image.is_modified());
     }
 
     #[test]
