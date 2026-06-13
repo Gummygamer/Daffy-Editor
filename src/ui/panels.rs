@@ -146,25 +146,47 @@ fn level_section(app: &mut DaffyApp, ui: &mut egui::Ui) {
 
 fn metatile_picker(app: &mut DaffyApp, ui: &mut egui::Ui) {
     ui.heading("Metatile picker");
-    let Some(level) = app.project.levels.first() else { return };
+    if app.project.levels.first().is_none() {
+        return;
+    }
+    // Build/reuse the same rasterised-tile cache the canvas draws from, so the
+    // picker swatches show exactly what gets painted into the level.
+    let ctx = ui.ctx().clone();
+    crate::ui::viewport::ensure_tile_textures(app, &ctx);
+
+    let level = app.project.levels.first().expect("level exists");
     let palette = level.palette.clone();
-    let metatiles = level.metatiles.clone();
+    // (id, flat-color fallback) pairs; texture (if any) comes from the cache.
+    let metatiles: Vec<(u16, [u8; 4], u8)> =
+        level.metatiles.iter().map(|m| (m.id, metatile_color(&palette, m), m.collision)).collect();
+
+    // Swatch large enough to read the 32px metatile graphics (a 4×4 tile block).
+    const SWATCH: f32 = 32.0;
     ui.horizontal_wrapped(|ui| {
-        for m in &metatiles {
-            let [r, g, b, a] = metatile_color(&palette, m);
-            let color = egui::Color32::from_rgba_unmultiplied(r, g, b, a);
-            let selected = app.active_metatile == m.id;
+        for (id, fallback, collision) in &metatiles {
+            let selected = app.active_metatile == *id;
             let (rect, resp) =
-                ui.allocate_exact_size(egui::vec2(24.0, 24.0), egui::Sense::click());
-            ui.painter().rect_filled(rect, 2.0, color);
+                ui.allocate_exact_size(egui::vec2(SWATCH, SWATCH), egui::Sense::click());
+            if let Some(tex) = app.tile_textures.get(id) {
+                ui.painter().image(
+                    tex.id(),
+                    rect,
+                    egui::Rect::from_min_max(egui::pos2(0.0, 0.0), egui::pos2(1.0, 1.0)),
+                    egui::Color32::WHITE,
+                );
+            } else {
+                let [r, g, b, a] = *fallback;
+                ui.painter()
+                    .rect_filled(rect, 2.0, egui::Color32::from_rgba_unmultiplied(r, g, b, a));
+            }
             if selected {
                 ui.painter().rect_stroke(rect, 2.0, egui::Stroke::new(2.0, egui::Color32::WHITE));
             }
             if resp.clicked() {
-                app.active_metatile = m.id;
+                app.active_metatile = *id;
                 app.tool = Tool::Paint;
             }
-            resp.on_hover_text(format!("metatile {} (collision {})", m.id, m.collision));
+            resp.on_hover_text(format!("metatile {id} (collision {collision})"));
         }
     });
     ui.label(format!("Active: {} — click canvas with Paint tool", app.active_metatile));

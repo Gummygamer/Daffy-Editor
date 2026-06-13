@@ -150,6 +150,13 @@ pub struct Room {
     pub height: u32,
     /// Row-major, `width * height` entries.
     pub tiles: Vec<Tile>,
+    /// PC byte offset of this room's tilemap in the original ROM (each cell is a
+    /// little-endian 16-bit word at `map_rom_offset + i*2`). Set by the ROM
+    /// loader; `None` for synthetic / no-ROM rooms. Tile edits are written back
+    /// to the exported ROM through this offset, so it must survive a project
+    /// save/load round-trip — `#[serde(default)]` keeps older projects loading.
+    #[serde(default)]
+    pub map_rom_offset: Option<usize>,
     pub objects: Vec<Object>,
     pub enemy_spawns: Vec<EnemySpawn>,
     pub exits: Vec<Exit>,
@@ -265,6 +272,7 @@ pub fn synthetic_level() -> Level {
         width,
         height,
         tiles,
+        map_rom_offset: None,
         objects: vec![
             Object { id: 0, kind: 1, x: 40, y: 160, params: vec![0], label: "player-start".into() },
             Object { id: 1, kind: 2, x: 200, y: 160, params: vec![3, 1], label: "powerup".into() },
@@ -292,6 +300,7 @@ pub fn synthetic_level() -> Level {
         tiles: (0..SCREEN_W_METATILES * SCREEN_H_METATILES)
             .map(|i| Tile { metatile: (i % 8) as u16 })
             .collect(),
+        map_rom_offset: None,
         objects: vec![],
         enemy_spawns: vec![],
         exits: vec![],

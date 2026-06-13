@@ -339,6 +339,7 @@ pub fn load_rom_level(rom: &[u8], level_number: usize) -> Result<Level, LevelErr
         .ok_or(LevelError::SceneNotFound { level: level_number, routine: entry.routine_ptr() })?;
 
     let metatiles = read_metatiles(rom, block)?;
+    let map_offset = pc(block.map_ptr())?;
     let tiles = read_tiles(rom, block)?;
     let objects = read_objects(rom, block);
 
@@ -358,6 +359,7 @@ pub fn load_rom_level(rom: &[u8], level_number: usize) -> Result<Level, LevelErr
         width: block.width as u32,
         height: block.height as u32,
         tiles,
+        map_rom_offset: Some(map_offset),
         objects,
         enemy_spawns: Vec::new(),
         exits: Vec::new(),

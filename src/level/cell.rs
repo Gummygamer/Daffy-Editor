@@ -66,6 +66,19 @@ pub fn tileset_offset(cell: u16) -> usize {
     metatile_index(cell) as usize * METATILE_BYTES
 }
 
+/// The cell bits occupied by the metatile index (bits 5..=14, since
+/// `metatile_index = (cell & 0x7FFF) >> 5`).
+const INDEX_MASK: u16 = 0x7FE0;
+
+/// Re-encode a tilemap cell to select `metatile`, preserving every bit the
+/// index does not own (bit 15 and the low five bits). Inverse of
+/// [`metatile_index`]: `metatile_index(encode_cell(c, metatile)) == metatile`
+/// for any `metatile < 1024`, and `encode_cell(c, metatile_index(c)) == c`, so
+/// unedited cells re-encode to themselves (no spurious diff on export).
+pub fn encode_cell(original: u16, metatile: u16) -> u16 {
+    (original & !INDEX_MASK) | ((metatile << 5) & INDEX_MASK)
+}
+
 /// The per-cell flag (bit 15).
 pub fn cell_flag(cell: u16) -> bool {
     cell & 0x8000 != 0
@@ -132,5 +145,18 @@ mod tests {
             assert_eq!(metatile_index(cell), idx);
             assert_eq!(tileset_offset(cell), idx as usize * METATILE_BYTES);
         }
+    }
+
+    #[test]
+    fn encode_cell_round_trips_and_preserves_other_bits() {
+        // Re-encoding a cell to its own index reproduces it exactly (no diff
+        // for unedited cells on export), even with flag/low bits set.
+        for cell in [0x0000u16, 0x8000, 0x0040, 0x8D20, 0x8D21, 0xFFFF] {
+            assert_eq!(encode_cell(cell, metatile_index(cell)), cell);
+        }
+        // Setting a new index changes only bits 5..=14; flag + low bits stay.
+        let edited = encode_cell(0x8D21, 0x12A);
+        assert_eq!(metatile_index(edited), 0x12A);
+        assert_eq!(edited & 0x801F, 0x8D21 & 0x801F);
     }
 }

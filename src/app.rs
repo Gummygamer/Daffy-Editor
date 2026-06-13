@@ -243,7 +243,39 @@ impl DaffyApp {
                 return None;
             }
         }
+        if let Err(e) = Self::apply_tile_edits(&self.project, &mut image) {
+            self.status = format!("Tile edit could not be written to ROM: {e}");
+            return None;
+        }
         Some((image.original().to_vec(), image.current().to_vec()))
+    }
+
+    /// Encode the level model's tilemap cells back into the ROM image. Each cell
+    /// is re-encoded from its original word so unedited cells produce no diff;
+    /// only painted metatiles change bytes. This is what carries Paint-tool
+    /// edits into exported ROMs/patches (the level model is the source of truth;
+    /// undo/redo are reflected automatically because we read the current model).
+    fn apply_tile_edits(project: &Project, image: &mut RomImage) -> Result<(), crate::error::RomError> {
+        use crate::level::cell::encode_cell;
+        for level in &project.levels {
+            for room in &level.rooms {
+                let Some(base) = room.map_rom_offset else { continue };
+                for (i, tile) in room.tiles.iter().enumerate() {
+                    let off = base + i * 2;
+                    // Read the original cell in its own scope so the immutable
+                    // borrow ends before the mutable write below.
+                    let orig_cell = match image.original().get(off..off + 2) {
+                        Some(bytes) => u16::from_le_bytes([bytes[0], bytes[1]]),
+                        None => continue,
+                    };
+                    let new_cell = encode_cell(orig_cell, tile.metatile);
+                    if new_cell != orig_cell {
+                        image.write_bytes(off, &new_cell.to_le_bytes())?;
+                    }
+                }
+            }
+        }
+        Ok(())
     }
 
     pub fn export_ips(&mut self, path: PathBuf) {
@@ -322,5 +354,75 @@ impl eframe::App for DaffyApp {
         crate::ui::panels::status_bar(self, ctx);
         crate::ui::viewport::central_viewport(self, ctx);
         crate::ui::dialogs::about_window(self, ctx);
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::model::level::{Level, Palette, Provenance, Room, Tile};
+
+    fn room_with_map(offset: usize, tiles: Vec<u16>) -> Room {
+        Room {
+            id: 0,
+            name: "t".into(),
+            width: tiles.len() as u32,
+            height: 1,
+            tiles: tiles.into_iter().map(|metatile| Tile { metatile }).collect(),
+            map_rom_offset: Some(offset),
+            objects: vec![],
+            enemy_spawns: vec![],
+            exits: vec![],
+            transitions: vec![],
+            checkpoints: vec![],
+            collision: None,
+        }
+    }
+
+    fn project_with_room(room: Room) -> Project {
+        let level = Level {
+            id: 0,
+            name: "t".into(),
+            provenance: Provenance::Synthetic,
+            palette: Palette { colors: vec![] },
+            metatiles: vec![],
+            gfx: Default::default(),
+            rooms: vec![room],
+        };
+        Project { levels: vec![level], ..Project::default() }
+    }
+
+    #[test]
+    fn paint_edit_is_written_into_exported_rom_bytes() {
+        // ROM tilemap: two cells at offset 4, both metatile index 1 ($0020).
+        let mut rom = vec![0u8; 16];
+        rom[4..6].copy_from_slice(&0x0020u16.to_le_bytes());
+        rom[6..8].copy_from_slice(&0x0020u16.to_le_bytes());
+        let mut image = RomImage::new(rom);
+
+        // "Paint" the second cell with metatile 5; first cell untouched.
+        let project = project_with_room(room_with_map(4, vec![1, 5]));
+        DaffyApp::apply_tile_edits(&project, &mut image).unwrap();
+
+        let cur = image.current();
+        // Untouched cell produces no diff.
+        assert_eq!(u16::from_le_bytes([cur[4], cur[5]]), 0x0020);
+        // Painted cell now selects metatile 5 ($00A0 == 5 << 5).
+        assert_eq!(u16::from_le_bytes([cur[6], cur[7]]), 0x00A0);
+        assert!(image.is_modified());
+    }
+
+    #[test]
+    fn unedited_tilemap_produces_no_byte_diff() {
+        let mut rom = vec![0u8; 16];
+        // A cell with flag + low bits set; loader stored index 1.
+        rom[4..6].copy_from_slice(&0x8033u16.to_le_bytes());
+        let mut image = RomImage::new(rom);
+
+        // metatile_index(0x8033) == 1; re-encoding to 1 must reproduce the byte.
+        let project = project_with_room(room_with_map(4, vec![1]));
+        DaffyApp::apply_tile_edits(&project, &mut image).unwrap();
+
+        assert!(!image.is_modified());
     }
 }

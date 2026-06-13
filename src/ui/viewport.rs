@@ -18,7 +18,10 @@ use crate::rendering::tile_renderer::{metatile_color, render_metatile_rgba, META
 /// whether the level has real tile graphics (and the world-space metatile edge
 /// length to draw at). Textures are rebuilt lazily and only for metatiles that
 /// appear in the cache miss set.
-fn ensure_tile_textures(app: &mut DaffyApp, ctx: &egui::Context) -> bool {
+///
+/// Shared with the metatile picker (`ui::panels`) so both the canvas and the
+/// picker draw the same rasterised tiles from one cache.
+pub fn ensure_tile_textures(app: &mut DaffyApp, ctx: &egui::Context) -> bool {
     let Some(level) = app.project.levels.first() else { return false };
     if level.gfx.is_empty() {
         return false;
