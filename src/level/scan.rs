@@ -18,8 +18,8 @@
 //! | `$DD` | map **width** in cells | confirmed |
 //! | `$DF` | map **height** in cells | confirmed |
 //! | `$1EF8` | secondary data **bank** (= the routine's own bank) | confirmed |
-//! | `$1EF4` | **entity / object spawn list** offset in the secondary bank | likely |
-//! | `$1EFA` | handler / pointer-table offset in the secondary bank | likely |
+//! | `$1EF4` | secondary list offset (BG set-piece / activator list; see below) | likely |
+//! | `$1EFA` | **object/enemy/item spawn table** offset in the secondary bank | confirmed (disasm `$80:EA3F` + ROM bytes) |
 //!
 //! The pointer *values* and the map dimensions are **confirmed**: three of these
 //! routines were caught live in Mesen2 (`tools/mesen/trace_scene.lua`) with
@@ -57,6 +57,16 @@ const ANCHOR: [u8; 3] = [0x8D, 0xF8, 0x1E];
 /// object (`$1EE8` times). The per-field layout inside the 22 bytes is not yet
 /// decoded (needs the field-reader disassembly or a live spawn observation).
 pub const ENTITY_RECORD_BYTES: usize = 0x16;
+
+/// Stride of one object/enemy/item **spawn record** in the `$1EFA` table.
+///
+/// **Confirmed** by disassembling the table-walker at `$80:EA3F` (run once at
+/// level init from `$80:9ABF`, right after the per-scene setup) and by the ROM
+/// bytes: each record begins with a 24-bit handler pointer and the same pointer
+/// recurs every `$18` (24) bytes; the list is terminated by a zero pointer word.
+/// See [`crate::level::loader::read_objects`] and `level-format.md`.
+pub const OBJECT_RECORD_BYTES: usize = 0x18;
+
 /// How far either side of the anchor to look for the other stores.
 const WINDOW: usize = 0xC0;
 
@@ -90,7 +100,9 @@ pub struct LevelData {
     pub secondary_bank: u8,
     /// Entity / object spawn-list offset in the secondary bank (`$1EF4`).
     pub entity_off: u16,
-    /// Handler / pointer-table offset in the secondary bank (`$1EFA`).
+    /// Object/enemy/item **spawn table** offset in the secondary bank (`$1EFA`):
+    /// an array of [`OBJECT_RECORD_BYTES`]-byte records, each headed by a 24-bit
+    /// handler pointer, zero-pointer terminated. This is the real spawn list.
     pub handler_off: u16,
     /// Number of object/entity records in the spawn list (`$1EE8`), as the
     /// iterator at `$80:E9A8` uses for its loop count. `0` if the routine does
@@ -114,6 +126,12 @@ impl LevelData {
     /// 24-bit SNES pointer to the entity/object spawn list.
     pub fn entity_ptr(&self) -> u32 {
         ((self.secondary_bank as u32) << 16) | self.entity_off as u32
+    }
+    /// 24-bit SNES pointer to the `$1EFA` object/enemy/item **spawn table** in the
+    /// secondary bank — the real, statically-recoverable spawn list (see
+    /// [`crate::level::loader::read_objects`]).
+    pub fn handler_ptr(&self) -> u32 {
+        ((self.secondary_bank as u32) << 16) | self.handler_off as u32
     }
     /// Tilemap size in bytes: `width * height` two-byte cells (confirmed by the
     /// contiguous packing of the bank-`$88` world's maps).

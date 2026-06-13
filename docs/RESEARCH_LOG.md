@@ -6,6 +6,158 @@ docs/reverse-engineering/ when they stabilize.
 
 ---
 
+## 2026-06-13 — `$1EFA` is the object/enemy/item spawn table (CONFIRMED, wired into loader)
+
+Disassembled the `$1EFA` table-walker at **`$80:EA3F`** (the one and only caller
+is `$80:9ABF`, which runs it at level init *immediately after* the per-scene
+setup `$80:E88E` that writes `$1EFA`). It steps a pointer through the table
+(`LDA [$85] : BEQ` = stop at a zero pointer word) and reads parallel slots into
+`$1FE6`/`$1FF2`. Dumping the ROM bytes at the scanned `handler_table` pointer
+(`$1EF8:$1EFA`, e.g. level 0 = `$81:83B0`) reveals a clean **array of 24-byte
+(`$18`) records**, zero-pointer terminated:
+
+| bytes | field |
+|-------|-------|
+| `[0..3]` | **24-bit handler pointer** (bank `$80`/`$81`/world bank) — the object's spawn/behaviour routine; this is the **type key** |
+| `[6..8]` | **X** world coordinate (pixels) |
+| `[8..10]` | **Y** world coordinate (pixels) |
+| `[10..24]` | per-instance params (patrol bounds / sub-type / flags), zero for simple objects |
+
+`$80:E134` disassembles as real spawn code (`STA $19` … `JSL $808B6B`, the same
+object-init call seen at `$80:EA39`), confirming the head word is a code pointer.
+
+**This is the real, statically-recoverable spawn list** — the thing the `$1EF4`
+runtime-count problem blocked. Ground truth across levels:
+
+- Level 0 → 21 records, 10 distinct handlers; identical objects share a pointer
+  and cluster (e.g. `$80:E134` ×4, three at X=1696/1708/1720 Y=128 — a 12px row).
+- Stride + zero terminator generalize to **all 20 levels** (1–44 records each;
+  bonus/boss rooms 1–4). The non-level `$82` screen (ROM-order scene 5) yields
+  junk pointers, as expected for that one non-scene routine.
+- **Handlers recur across levels** (`$80:D950` in L0+L8, `$80:E067` in L0+L15,
+  `$81:9010` in L0+L8) → a global, reusable handler catalog. The handler pointer
+  is therefore a stable game-wide type key — far cleaner than hunting an enum byte.
+
+Wired into the editor: `read_objects` now walks `$1EFA` (24-byte records, zero
+terminator) instead of the dead `$1EF4`/`$1EE8` path; `Object.kind` widened to
+`u32` to hold the handler pointer; `LevelData::handler_ptr()` added;
+`OBJECT_RECORD_BYTES = 0x18` documented. All 20 levels load objects end-to-end
+(`cargo run --bin load_level -- <rom> all`). Reframes the earlier "`$1EF4` `$14`
+= type" lead: `$1EF4` is a *separate* list (BG set-piece / activator, tilemap-
+bound) and is now left unread.
+
+### Next research steps
+
+1. **Catalog the handlers**: for each distinct pointer, park a savestate at its
+   record X/Y and read OAM (`gen_savestate_capture.py`) to name it
+   (enemy/item/trigger). The positions + types are already static.
+2. Decode the `[10..24]` params for handlers that carry them (e.g. `$81:9FA9`'s
+   `C8 00 C0 02 …` — likely patrol bounds / waypoints).
+
+---
+
+## 2026-06-13 — Live capture working; level 0 ground truth (Mesen2 savestate)
+
+Got deterministic in-game capture working after blind-input auto-play proved
+unreliable (it glitches through menus; the --testRunner Lua sandbox is unstable
+once `emu.setInput` is driven). The robust recipe, now in
+`tools/mesen/gen_savestate_capture.py`:
+
+- Embed a savestate parked in a level as **base64 in the generated Lua** (`io.*`
+  is sandboxed, so the script can't read the .mss itself) and decode in-script.
+- `emu.loadSavestate` only works **inside a CPU exec callback**, so hook the
+  native NMI vector (`$00:977B`) and load on first hit.
+- Capture a **single** frame (screenshot via `emu.takeScreenshot`, base64-printed;
+  OAM via `emu.read(..., snesSpriteRam)`). `setInput`-driven scrolling re-breaks
+  the sandbox, so multi-position views need multiple savestates.
+
+Loaded the user's slot-11 savestate → **scene 00 = level 0**, live `DD=80 DF=24`,
+`1EF4=$8DAE 1EF8=$81` — matches the static scan exactly. The frame shows a
+standard Daffy platformer: Daffy (a multi-cell OAM sprite, slots #4–9, tiles
+`00..0A` attr `28`) on a rock/lava platform, a climbable rope/ladder at the far
+left (map column 0), HUD with gun-ammo + Marvin lives.
+
+**Reframes the `$1EF4` records.** Level 0's three records sit at col0/row16,
+col48/row17, col64/row0. Object 0 (col 0) lines up with the **left-edge ladder**,
+and the activator `$80:E9A8 → $94D2 → $80:9447` is **tilemap/VRAM-bound** (reads
+tile words from the map in bank `$D7`, uploads their graphics to VRAM `$16`) — not
+a sprite spawner. So these are most likely **interactive BG set-pieces** (ladders/
+platforms/doors stamped into the tilemap), and the moving **enemy/item sprites are
+a separate, OAM-based system** (candidate source: the `$1EFA` handler list walked
+at `$80:EA3F`). The earlier "`$14` = enemy/item type" idea is therefore
+**downgraded** — `$14` may select a set-piece shape, not an enemy. Confirming the
+identities needs savestates parked next to specific objects/enemies (downrange
+objects weren't reachable because input-scroll is unstable).
+
+### Next research steps
+
+1. Capture savestates beside specific objects (col 48 / 64 ladders) and beside
+   enemies, then read OAM + the active record to label `$1EF4` set-pieces and
+   locate the real enemy/item (OAM) spawner — likely via `$1EFA`.
+2. Decode the `$1EFA` handler list (`$80:EA3F`) as the probable enemy/item source.
+
+---
+
+## 2026-06-13 — ENTITY/OBJECT SYSTEM re-examined (static disasm, CORRECTIONS)
+
+Goal: trace the entity dispatch on the record's type byte to build an
+item-vs-enemy catalog. Disassembling the object path overturned the prior model:
+
+- **`$0E` is a coordinate, not the type.** `$80:E9A8` copies the 22-byte record to
+  `$3B..$50`, then `$80:E9D0` computes the tilemap cell as `row*width + col` with
+  `col=$0C`, `row=$0E`. The earlier "`$0E` = object type dispatched via
+  `JSR $80:F1FD`" was wrong — `$80:F1FD` is a **hardware-multiply helper**
+  (`$211B`/`$211C` → `$2134/5`); that `JSR` multiplies the row by `width`.
+- **No static count.** The iterator's loop count `$1EE8` (← `$1EEE`) is a **runtime
+  active-object counter** written during gameplay at `$80:E337`; no scene routine
+  sets it with a literal store. `scan_levels` therefore reports `entity_count = 0`
+  for all 20 levels (confirmed via `src/bin/dump_entities.rs`), so the editor's
+  `read_objects` currently yields **no objects** on the real ROM.
+- **Spawning is per-scene imperative code.** `$80:E88E` indexes the master tables
+  `$80:E8D8` (offset) / `$80:E900` (bank) by scene id `$1EEA` — exactly **20**
+  valid entries (banks `$81/$8A/$8C/$8D/$8E/$8F/$91`), entry 20+ is garbage — and
+  `JSL`s the per-level routine (e.g. level 1 → `$81:A6FF`, which sets
+  `$1EF4=$AEB0`, matching the scanned `entity_ptr=81AEB0`). The list is consumed
+  on demand as the level scrolls; record fields blend into code, so even the
+  record *count* is not reliably recoverable statically.
+
+Conclusion: a static type catalog is **not extractable**. Wrote
+`tools/mesen/trace_entities.lua` (hooks `$80:E9A8` entry + `$80:E9CA` post-copy)
+to dump every spawned record live — the path to the catalog. Corrected the false
+claims in `level-format.md`, `loader.rs` (doc + field decode: `kind` now 0, x/y
+from col/row), and the `reads_objects_when_count_is_set` test.
+
+### Live capture (Mesen2, source-built binary) — partial results
+
+Ran `trace_entities.lua` headlessly. Dumb auto-play (hold RIGHT + jump) does
+**not** traverse Daffy levels — it only activated object `#$1EE8` (= 0) before
+getting stuck, confirming the count is a runtime cursor. Pivoted the script to
+**dump the spawn list straight from the live `$1EF8:$1EF4` base** on scene entry
+(no traversal needed). Reached scenes `00`, `08`, `0C`; pointers matched the
+static scan exactly (`$81:8DAE`, `$8C:86B2`, `$8C:E289`) and live `DD`/`DF`
+matched (level 0 = 80×24). Findings (conclusions only — raw record bytes are not
+committed):
+
+- **`$0C` col / `$0E` row confirmed live** — every valid record's col/row sits
+  inside the map; the list cleanly ends where col/row first exceed `width`/
+  `height` (scene 0 → 3 records, scene `0C` → 4). A `col<width && row<height`
+  cutoff recovers the list statically without the runtime count.
+- **Type-field lead: byte `$14`.** It is a small, non-sequential per-object value
+  (`0B,13,11,09` across one level's objects; `01,02,00` in another) — the
+  signature of a type/behaviour selector, not a coordinate or index. Byte `$12`
+  clusters at `$14–$16` (candidate sub-type / sprite id). **Hypothesis, not yet
+  visually correlated.**
+
+### Next research steps
+
+1. Visually correlate `$14` (and `$12`) against the on-screen sprite per object to
+   confirm the type field and tabulate type → item/enemy/trigger.
+2. Wire a `col<width && row<height` terminator into `read_objects` so the editor
+   recovers the spawn list statically (no runtime count needed), then label
+   objects by the `$14` catalog.
+
+---
+
 ## 2026-06-11 — LEVEL RENDERING PIPELINE + object fields (live, CONFIRMED)
 
 - Built input automation: `tools/mesen/trace_play.lua` pulses START (then A/RIGHT)

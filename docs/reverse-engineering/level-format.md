@@ -53,7 +53,7 @@ Each scene-setup routine (21 of them, scattered across banks `$81`, `$82`, `$8A`
 | `$DF` | map **height** in cells | confirmed |
 | `$1EF8` | secondary data **bank** (= the routine's own bank) | confirmed |
 | `$1EF4` | **entity / object spawn list** offset | likely |
-| `$1EE8` | **object count** for the spawn-list iterator (`$80:E9A8`) | likely |
+| `$1EE8` | ~~object count~~ — **runtime active-object counter**, not a static field (set at `$80:E337` during play, never by a scene routine) | corrected 2026-06-13 |
 | `$1EFA` | handler / pointer-table offset | likely |
 
 > **The tilemap bank is `$D7`, not `$D3`.** Every setup routine writes
@@ -156,19 +156,52 @@ live-confirmed against the real BG1 tilemap (109/109 on-screen chars, see
 [tile-graphics.md](tile-graphics.md)). What the `$DB[char]` byte feeds is open
 (collision/priority hypothesis).
 
-## Object / entity records — confirmed stride + partial fields
+## Object / enemy / item spawns — the `$1EFA` table (confirmed)
 
-The spawn list (`$1EF4`) is read by the object processor `$80:E99D`: it copies a
-**22-byte record** (`($16),Y` loop, `$80:E9BF`) into direct page `$3B..$50`, then
-interprets the fields (`$80:E9CB`+):
+**The object/enemy/item spawn list is the `$1EFA` table, not `$1EF4`.** It is
+walked once at level init by `$80:EA3F` (sole caller `$80:9ABF`, run right after
+the per-scene setup `$80:E88E` that writes `$1EFA`). The walker steps a pointer
+through the table (`LDA [$85] : BEQ` = **stop at a zero pointer word**). The ROM
+bytes at the scanned `handler_table` pointer (`$1EF8:$1EFA`, e.g. level 0 =
+`$81:83B0`) are a clean array of **24-byte (`$18`) records**:
 
 | record offset | use | confidence |
 |---|---|---|
-| `$04` | packed **Y position** (`AND #$01E0 >> 3`) | likely |
-| `$06` | packed **X position** (`AND #$00E0 << 2`, low byte `>> 5`) | likely |
-| `$0C` | **map column** (added to map base `$D9`) | likely |
-| `$0E` | **object type** — dispatched via `JSR $80:F1FD` | likely |
-| others | per-type parameters (7 more words) | unknown |
+| `$00..$03` | **24-bit handler pointer** (bank `$80`/`$81`/world bank) — the object's spawn/behaviour routine = its **type key** | confirmed |
+| `$06..$08` | **X** world coordinate (pixels) | confirmed |
+| `$08..$0A` | **Y** world coordinate (pixels) | confirmed |
+| `$0A..$18` | per-instance params (patrol bounds / sub-type / flags); zero for simple objects | likely |
+
+`$80:E134` (a level-0 handler) disassembles as real spawn code (`STA $19` …
+`JSL $808B6B`, the same object-init call at `$80:EA39`). Identical objects share a
+pointer and **recur across levels** (`$80:D950` in L0+L8, `$80:E067` in L0+L15),
+so the handler pointer is a stable game-wide catalog key. The list is terminated
+by a zero pointer word — **statically recoverable, no runtime count needed**.
+Reader: [`read_objects`](../../src/level/loader.rs); stride
+[`OBJECT_RECORD_BYTES`](../../src/level/scan.rs). All 20 levels load 1–44 objects
+each (`cargo run --bin load_level -- <rom> all`).
+
+**Still open:** the handler→name mapping (which sprite each pointer draws). Park a
+savestate at a record's X/Y and read OAM
+([`tools/mesen/gen_savestate_capture.py`](../../tools/mesen/gen_savestate_capture.py))
+to label each pointer enemy/item/trigger; the positions + types are already static.
+
+### The separate `$1EF4` list (NOT the sprite spawner)
+
+`$1EF4` is read by the activator `$80:E9A8` (copies a **22-byte** record into
+`$3B..$50`), whose position math at `$80:E9D0` is `row*width + col` (col `$0C`,
+row `$0E`) and whose body is **tilemap/VRAM-bound** — so it is most likely a BG
+**set-piece** list (ladders/platforms/doors), not the moving-sprite source. Its
+length is also not static: the `$80:E9A8` loop count `$1EE8`/`$1EEE` is a
+**runtime active-object counter** (written at `$80:E337`), never set by a scene
+routine — so `scan_levels` reports `entity_count = 0` game-wide and `read_objects`
+no longer uses it.
+
+> **Correction (2026-06-13 disassembly).** An earlier revision listed `$1EF4`
+> byte `$0E` as the *object type* "dispatched via `JSR $80:F1FD`". Wrong twice
+> over: `$80:F1FD` is a **hardware-multiply helper** (writes `$211B`/`$211C`,
+> reads `$2134/5`), and `$0E` is the **row** fed to that width-multiply, not a
+> type. The real spawn types are the `$1EFA` handler pointers above.
 
 ## Editor integration — the level loader
 
@@ -183,8 +216,9 @@ bytes — **the editor now reads real levels instead of the synthetic placeholde
 4. **Palette** ← replay the routine's inline `LDA #id : JSL $80:FC26` loads;
    every **mode-1** entry ([`gfx::table`](../../src/gfx/table.rs)) decompresses
    ([`codecs::gfx_rle`](../../src/codecs/gfx_rle.rs)) to BGR555 CGRAM colors.
-5. **Objects** ← `$1EE8` records of 22 bytes at `$1EF8:$1EF4` (positions
-   best-effort, see above).
+5. **Objects** ← 24-byte spawn records at `$1EF8:$1EFA` (handler pointer + X/Y),
+   zero-pointer terminated; `Object.kind` = the handler pointer. All 20 levels
+   load objects (see the spawn section above). `$1EF4` is left unread.
 
 Validation over the shipping ROM: `cargo run --bin load_level -- <rom> all`
 decodes all 20 levels with **0 out-of-range metatile indices** (see
@@ -196,14 +230,16 @@ The end-to-end chain is mapped, the rendering decode is confirmed, and it is
 **wired into the editor**: **`$1EEA` (level number) → master order table
 (`$80:E8D8`/`$80:E900`) → per-level setup routine → data-pointer block → tilemap
 (`$D7:$D9`, `index<<5|flag` cells) → tileset (`$D3:$D5`, `$20`-byte 4×4 metatiles)
-→ SNES tile words (char + palette row + flips)**, plus a 22-byte object record
-list (`$1EE8` count at `$1EF4`). Confirmed live in Mesen2 (level 0 pointer block)
-and statically game-wide (the `$D7` map-bank fix makes every level's indices fit).
+→ SNES tile words (char + palette row + flips)**, plus the **`$1EFA` object spawn
+table** (24-byte records: handler pointer + X/Y, zero-terminated). Confirmed live
+in Mesen2 (level 0 pointer block) and statically game-wide (the `$D7` map-bank fix
+makes every level's indices fit; all 20 levels load objects).
 
-Remaining (smaller) gaps: bit 15's exact meaning; the object record's position
-packing + per-type parameter words; and rendering **real tile pixels** (the
-metatile tile-words → 4bpp graphics need the scene's VRAM gfx reconstruction —
-the editor currently shows metatiles as flat palette colors).
+Remaining gaps: bit 15's exact meaning; and the **handler→name catalog** — the
+spawn *positions and types* are now static (`$1EFA` handler pointers), but mapping
+each pointer to a human sprite name (enemy/item/trigger) needs a live OAM
+correlation (`tools/mesen/gen_savestate_capture.py` parked at a record's X/Y).
+The `$1EF4` list (likely BG set-pieces, tilemap-bound) is still undecoded.
 
 ## Next steps
 

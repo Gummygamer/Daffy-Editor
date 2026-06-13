@@ -48,6 +48,30 @@ capture in-level data.
   indexes the **graphics descriptor table** at `$82:8000` with `Y = id*8`. Emits
   addresses/registers only (safe to commit) → `reports/gfx_table_trace.json`. See
   `../../docs/reverse-engineering/graphics-table.md`.
+- **`trace_entities.lua`** — enumerates the objects/items/enemies a level actually
+  spawns. Hooks the activator `$80:E9A8` (entry) + `$80:E9CA` (after the 22-byte
+  record copy to `$3B`) and dumps each unique record, **auto-driving input**
+  (pulse START to gameplay, then hold RIGHT + pulse A to scroll the level) so
+  spawns trigger headlessly. The static scanners cannot reach this — the spawn
+  count is a runtime counter and the type field is unidentified (see
+  `../../docs/reverse-engineering/level-format.md`). Its dump contains ROM record
+  bytes, so (like `roundtrip_decompressor`) the output is **local-only, never
+  committed**. Run with a longer timeout, e.g.
+  `... run-headless.sh <rom> trace_entities.lua 1200`.
+- **`gen_savestate_capture.py`** — generator (not a Lua script): emits a Lua that
+  **loads a savestate and captures one frame** (screenshot + on-screen OAM +
+  scene/list pointers). Use this instead of blind input to reach gameplay — it is
+  deterministic, whereas driving `emu.setInput` to navigate menus is unreliable
+  and destabilises the --testRunner sandbox. It embeds the .mss as base64 (Lua
+  `io.*` is sandboxed) and loads it inside the NMI exec callback (`emu.loadSavestate`
+  requires a CPU exec context). Single-frame only; make multiple savestates for
+  multiple views. Confirmed level 0 live (Daffy = OAM #4–9). Output has ROM pixels
+  → **local-only, never committed**:
+  ```sh
+  ./gen_savestate_capture.py <state.mss> [delay] > /tmp/cap.lua
+  MESEN_BIN=... DISPLAY=:0 "$MESEN_BIN" --testRunner <rom> /tmp/cap.lua > out.txt
+  grep '^SB|' out.txt | cut -c4- | base64 -d > shot.png    # the screenshot
+  ```
 - **`roundtrip_decompressor.lua`** — captures the decompressor's source pointer
   (`$16/$17/$18`) at entry (`$82:84FD`) and the staging bytes it produced at the
   RTL (`$82:8577`), for the first call sourcing from the gfx banks `$92/93/95/96`.

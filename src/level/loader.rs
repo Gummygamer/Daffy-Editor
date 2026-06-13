@@ -14,8 +14,11 @@
 //! - the palette is reconstructed from the routine's mode-1 (CGRAM) graphics
 //!   uploads — the decode path is confirmed, the *selection* of which upload is
 //!   the background palette is best-effort;
-//! - object record positions are **speculative** (the 22-byte record's field
-//!   packing is only partly decoded).
+//! - the object/enemy/item **spawn list** is read from the scene's `$1EFA` table
+//!   (24-byte records, zero-pointer terminated): record geometry (handler pointer
+//!   + X/Y) is **confirmed** by the `$80:EA3F` walker and the ROM bytes; the
+//!   handler→name mapping (which sprite each pointer is) still needs a live
+//!   correlation — see [`read_objects`] and `tools/mesen/gen_savestate_capture.py`.
 //!
 //! See `docs/reverse-engineering/level-format.md`.
 
@@ -24,7 +27,7 @@ use crate::error::LevelError;
 use crate::gfx::table::{parse_game_table, GfxEntry, UploadTarget};
 use crate::level::cell::{metatile_index, METATILE_BYTES, METATILE_WORDS};
 use crate::level::index::{parse_game_index, LevelEntry};
-use crate::level::scan::{scan_levels, LevelData, ENTITY_RECORD_BYTES};
+use crate::level::scan::{scan_levels, LevelData, OBJECT_RECORD_BYTES};
 use crate::model::level::{Level, Metatile, Object, Palette, Provenance, Room, Tile, TileGraphics};
 use crate::snes::lorom::snes_to_pc;
 
@@ -115,31 +118,56 @@ fn read_tiles(rom: &[u8], block: &LevelData) -> Result<Vec<Tile>, LevelError> {
     Ok(out)
 }
 
-/// Read the object spawn list (`entity_count` records of [`ENTITY_RECORD_BYTES`]).
+/// Hard cap on spawn records read from one table — a guard against a missing
+/// terminator (or the non-level `$82` screen, whose `$1EFA` is junk). No real
+/// scene approaches this; the largest observed is ~40.
+const MAX_OBJECTS: usize = 256;
+
+/// Read the object/enemy/item **spawn list** from the scene's `$1EFA` table.
 ///
-/// Field decoding is partial (hence the level's speculative provenance): byte
-/// `$0E` is the object type, word `$0C` the map column, words `$04`/`$06` the
-/// packed Y/X. The full 22-byte record is preserved in `params` for inspection.
+/// This is the real, statically-recoverable spawn source — *confirmed* by
+/// disassembling the table-walker at `$80:EA3F` (run once at level init from
+/// `$80:9ABF`, immediately after the per-scene setup that sets `$1EFA`) and by
+/// the ROM bytes themselves. The table is an array of [`OBJECT_RECORD_BYTES`]-byte
+/// (`$18` = 24) records, **terminated by a zero pointer word**:
+///
+/// | bytes | field |
+/// |-------|-------|
+/// | `[0..3]` | 24-bit **handler pointer** (bank `$80`/`$81`/world bank) — the object's spawn/behaviour routine, used here as the type [`Object::kind`] |
+/// | `[6..8]` | **X** world coordinate, pixels |
+/// | `[8..10]` | **Y** world coordinate, pixels |
+/// | `[10..24]` | per-instance params (patrol bounds, sub-type, flags) — zero for simple objects |
+///
+/// Identical objects share a handler and recur across levels (e.g. `$80:D950`,
+/// `$80:E067`), so the handler pointer is a stable game-wide catalog key; mapping
+/// each pointer to a human name needs a live correlation (`gen_savestate_capture.py`
+/// → OAM beside a record's X/Y). The full 24-byte record is kept in `params`.
+///
+/// (`$1EF4` — the old `entity_count`/`$1EE8` list — is **not** this list: its
+/// count is a runtime active-object counter, never set statically, and its
+/// activator at `$80:E9A8` is tilemap/VRAM-bound, so it is most likely a BG
+/// set-piece list, not the sprite spawner. It is left unread here.)
 fn read_objects(rom: &[u8], block: &LevelData) -> Vec<Object> {
-    let count = block.entity_count as usize;
-    if count == 0 {
-        return Vec::new();
-    }
-    let Ok(base) = pc(block.entity_ptr()) else { return Vec::new() };
-    let mut out = Vec::with_capacity(count);
-    for i in 0..count {
-        let off = base + i * ENTITY_RECORD_BYTES;
-        let Some(rec) = rom.get(off..off + ENTITY_RECORD_BYTES) else { break };
-        let kind = rec[0x0E] as u16;
+    let Ok(base) = pc(block.handler_ptr()) else { return Vec::new() };
+    let mut out = Vec::new();
+    for i in 0..MAX_OBJECTS {
+        let off = base + i * OBJECT_RECORD_BYTES;
+        let Some(rec) = rom.get(off..off + OBJECT_RECORD_BYTES) else { break };
+        // The walker (`LDA [$85] : BEQ`) stops at the first zero pointer word.
+        let ptr_lo = word(rom, off).unwrap_or(0);
+        if ptr_lo == 0 {
+            break;
+        }
+        let kind = ptr_lo as u32 | ((rec[2] as u32) << 16);
         let x = word(rom, off + 0x06).unwrap_or(0) as u32;
-        let y = word(rom, off + 0x04).unwrap_or(0) as u32;
+        let y = word(rom, off + 0x08).unwrap_or(0) as u32;
         out.push(Object {
             id: i as u32,
             kind,
             x,
             y,
             params: rec.to_vec(),
-            label: format!("obj #{i} (type {kind:#04X})"),
+            label: format!("obj #{i} (handler ${kind:06X}) @ {x},{y}"),
         });
     }
     out
@@ -374,7 +402,8 @@ pub fn load_rom_level(rom: &[u8], level_number: usize) -> Result<Level, LevelErr
         provenance: Provenance::Confirmed {
             note: format!(
                 "ROM level {level_number}: {w}×{h} tilemap @ {map:#08X}, {mt} metatiles @ \
-                 {ts:#08X} (confirmed). Palette/object positions are best-effort.",
+                 {ts:#08X} (confirmed). Object spawns from $1EFA (handler+X/Y \
+                 confirmed; handler→name pending). Palette is best-effort.",
                 w = block.width,
                 h = block.height,
                 map = block.map_ptr(),
@@ -650,24 +679,41 @@ mod tests {
     }
 
     #[test]
-    fn reads_objects_when_count_is_set() {
-        // Add `LDA #2 : STA $1EE8` (object count) and an entity list at $81:9000.
-        let prefix = {
-            let mut b = Vec::new();
-            lda_sta(&mut b, 0x0002, &[0x8D, 0xE8, 0x1E]);
-            b
-        };
-        let (mut rom, _, _) = synthetic_rom(&prefix);
-        // entity_off was $9000 in bank $81 -> PC 0x9000. Two 22-byte records.
-        let ent_pc = BANK_SIZE + 0x1000;
-        // record 0: type byte at $0E = 0x12; X word at $06 = 0x0040; Y at $04 = 0x0020.
-        put_word(&mut rom, ent_pc + 0x04, 0x0020);
-        put_word(&mut rom, ent_pc + 0x06, 0x0040);
-        rom[ent_pc + 0x0E] = 0x12;
+    fn reads_objects_from_the_handler_table() {
+        // The $1EFA spawn table is at handler_off $8400 in bank $81 -> PC 0x8400.
+        // Two 24-byte records (handler ptr + X@6 + Y@8) then a zero terminator.
+        let (mut rom, _, _) = synthetic_rom(&[]);
+        let tab = BANK_SIZE + 0x400;
+        // record 0: handler $80:E134, X=$0040 (64), Y=$0088 (136).
+        rom[tab] = 0x34;
+        rom[tab + 1] = 0xE1;
+        rom[tab + 2] = 0x80;
+        put_word(&mut rom, tab + 0x06, 0x0040);
+        put_word(&mut rom, tab + 0x08, 0x0088);
+        // record 1: handler $81:9010, X=$0200, Y=$0100.
+        let r1 = tab + OBJECT_RECORD_BYTES;
+        rom[r1] = 0x10;
+        rom[r1 + 1] = 0x90;
+        rom[r1 + 2] = 0x81;
+        put_word(&mut rom, r1 + 0x06, 0x0200);
+        put_word(&mut rom, r1 + 0x08, 0x0100);
+        // record 2 stays zero -> terminator.
+
         let level = load_rom_level(&rom, 0).unwrap();
         let objs = &level.rooms[0].objects;
         assert_eq!(objs.len(), 2);
-        assert_eq!(objs[0].kind, 0x12);
-        assert_eq!((objs[0].x, objs[0].y), (0x40, 0x20));
+        assert_eq!(objs[0].kind, 0x80_E134); // handler pointer = type key
+        assert_eq!((objs[0].x, objs[0].y), (0x40, 0x88));
+        assert_eq!(objs[1].kind, 0x81_9010);
+        assert_eq!((objs[1].x, objs[1].y), (0x200, 0x100));
+    }
+
+    #[test]
+    fn empty_handler_table_yields_no_objects() {
+        // A fresh synthetic ROM has zeros at the $1EFA table -> immediate
+        // terminator -> no objects (the zero-pointer stop condition).
+        let (rom, _, _) = synthetic_rom(&[]);
+        let level = load_rom_level(&rom, 0).unwrap();
+        assert!(level.rooms[0].objects.is_empty());
     }
 }

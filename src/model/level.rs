@@ -86,7 +86,10 @@ impl TileGraphics {
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Object {
     pub id: u32,
-    pub kind: u16,
+    /// Object **type key** = the 24-bit SNES address of its spawn/behaviour
+    /// handler, read from the head of the `$1EFA` spawn record. Identical objects
+    /// share a handler (and recur across levels), so this is a stable catalog key.
+    pub kind: u32,
     /// Position in pixels within the room.
     pub x: u32,
     pub y: u32,
