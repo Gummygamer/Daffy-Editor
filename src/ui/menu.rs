@@ -19,12 +19,18 @@ pub fn shortcuts(app: &mut DaffyApp, ctx: &egui::Context) {
     let mut redo = false;
     let mut open = false;
     let mut save = false;
+    let mut copy = false;
+    let mut paste = false;
+    let mut delete = false;
     ctx.input_mut(|i| {
         undo = i.consume_key(Modifiers::COMMAND, Key::Z);
         redo = i.consume_key(Modifiers::COMMAND, Key::Y)
             || i.consume_key(Modifiers::COMMAND | Modifiers::SHIFT, Key::Z);
         open = i.consume_key(Modifiers::COMMAND, Key::O);
         save = i.consume_key(Modifiers::COMMAND, Key::S);
+        copy = i.consume_key(Modifiers::COMMAND, Key::C);
+        paste = i.consume_key(Modifiers::COMMAND, Key::V);
+        delete = i.consume_key(Modifiers::NONE, Key::Delete);
     });
     if undo {
         app.undo();
@@ -39,6 +45,15 @@ pub fn shortcuts(app: &mut DaffyApp, ctx: &egui::Context) {
     }
     if save {
         save_project_action(app);
+    }
+    if copy {
+        app.copy_selection();
+    }
+    if paste {
+        app.paste_clipboard();
+    }
+    if delete {
+        app.delete_selection();
     }
 }
 
@@ -90,7 +105,10 @@ pub fn menu_bar(app: &mut DaffyApp, ctx: &egui::Context) {
                 }
                 ui.separator();
                 let can_export = app.rom.is_some();
-                if ui.add_enabled(can_export, egui::Button::new("Export IPS Patch…")).clicked() {
+                if ui
+                    .add_enabled(can_export, egui::Button::new("Export IPS Patch…"))
+                    .clicked()
+                {
                     ui.close_menu();
                     if let Some(path) = rfd::FileDialog::new()
                         .set_file_name("daffy-hack.ips")
@@ -100,7 +118,10 @@ pub fn menu_bar(app: &mut DaffyApp, ctx: &egui::Context) {
                         app.export_ips(path);
                     }
                 }
-                if ui.add_enabled(can_export, egui::Button::new("Export BPS Patch…")).clicked() {
+                if ui
+                    .add_enabled(can_export, egui::Button::new("Export BPS Patch…"))
+                    .clicked()
+                {
                     ui.close_menu();
                     if let Some(path) = rfd::FileDialog::new()
                         .set_file_name("daffy-hack.bps")
@@ -111,7 +132,10 @@ pub fn menu_bar(app: &mut DaffyApp, ctx: &egui::Context) {
                     }
                 }
                 if ui
-                    .add_enabled(can_export, egui::Button::new("Export Modified ROM (local only)…"))
+                    .add_enabled(
+                        can_export,
+                        egui::Button::new("Export Modified ROM (local only)…"),
+                    )
                     .clicked()
                 {
                     ui.close_menu();
@@ -131,18 +155,52 @@ pub fn menu_bar(app: &mut DaffyApp, ctx: &egui::Context) {
 
             ui.menu_button("Edit", |ui| {
                 if ui
-                    .add_enabled(app.history.can_undo(), egui::Button::new("Undo    (Ctrl+Z)"))
+                    .add_enabled(
+                        app.history.can_undo(),
+                        egui::Button::new("Undo    (Ctrl+Z)"),
+                    )
                     .clicked()
                 {
                     ui.close_menu();
                     app.undo();
                 }
                 if ui
-                    .add_enabled(app.history.can_redo(), egui::Button::new("Redo    (Ctrl+Y)"))
+                    .add_enabled(
+                        app.history.can_redo(),
+                        egui::Button::new("Redo    (Ctrl+Y)"),
+                    )
                     .clicked()
                 {
                     ui.close_menu();
                     app.redo();
+                }
+                ui.separator();
+                if ui
+                    .add_enabled(
+                        app.can_delete_selection(),
+                        egui::Button::new("Copy    (Ctrl+C)"),
+                    )
+                    .clicked()
+                {
+                    ui.close_menu();
+                    app.copy_selection();
+                }
+                if ui
+                    .add_enabled(app.can_paste(), egui::Button::new("Paste    (Ctrl+V)"))
+                    .clicked()
+                {
+                    ui.close_menu();
+                    app.paste_clipboard();
+                }
+                if ui
+                    .add_enabled(
+                        app.can_delete_selection(),
+                        egui::Button::new("Delete    (Del)"),
+                    )
+                    .clicked()
+                {
+                    ui.close_menu();
+                    app.delete_selection();
                 }
             });
 

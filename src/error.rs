@@ -14,8 +14,14 @@ pub enum RomError {
     )]
     BadSize { size: usize },
 
-    #[error("read/write out of range: offset {offset:#x} + {len} bytes exceeds ROM size {size:#x}")]
-    OutOfRange { offset: usize, len: usize, size: usize },
+    #[error(
+        "read/write out of range: offset {offset:#x} + {len} bytes exceeds ROM size {size:#x}"
+    )]
+    OutOfRange {
+        offset: usize,
+        len: usize,
+        size: usize,
+    },
 
     #[error("invalid SNES address ${addr:06X} for LoROM: {reason}")]
     InvalidSnesAddress { addr: u32, reason: &'static str },
@@ -38,7 +44,9 @@ pub enum PatchError {
     #[error("original and modified buffers differ in length ({original} vs {modified}); IPS export needs equal sizes")]
     LengthMismatch { original: usize, modified: usize },
 
-    #[error("change at offset {offset:#x} cannot be represented in an IPS patch (24-bit offset limit)")]
+    #[error(
+        "change at offset {offset:#x} cannot be represented in an IPS patch (24-bit offset limit)"
+    )]
     OffsetTooLarge { offset: usize },
 
     #[error("source checksum mismatch: patch expects {expected:08X}, file is {actual:08X}")]
@@ -84,8 +92,16 @@ pub enum EditError {
     RoomOutOfRange(usize),
 
     #[error("tile ({x}, {y}) out of range for room of {width}x{height} metatiles")]
-    TileOutOfRange { x: u32, y: u32, width: u32, height: u32 },
+    TileOutOfRange {
+        x: u32,
+        y: u32,
+        width: u32,
+        height: u32,
+    },
 
     #[error("object index {0} out of range")]
     ObjectOutOfRange(usize),
+
+    #[error("enemy/item spawn index {0} out of range")]
+    EnemySpawnOutOfRange(usize),
 }

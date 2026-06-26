@@ -4,6 +4,7 @@ version = "0.1.0"
 edition = "2021"
 description = "Native desktop level editor / reverse-engineering workbench for the SNES game Daffy Duck: The Marvin Missions. Requires a user-supplied, legally obtained ROM."
 license = "MIT"
+default-run = "daffy-editor"
 
 [lib]
 name = "daffy_editor"

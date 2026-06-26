@@ -63,8 +63,7 @@ pub fn central_viewport(app: &mut DaffyApp, ctx: &egui::Context) {
     // Rasterise real tile graphics into the texture cache (no-op for synthetic).
     let has_gfx = ensure_tile_textures(app, ctx);
     egui::CentralPanel::default().show(ctx, |ui| {
-        let (response, painter) =
-            ui.allocate_painter(ui.available_size(), Sense::click_and_drag());
+        let (response, painter) = ui.allocate_painter(ui.available_size(), Sense::click_and_drag());
         let origin = response.rect.min;
         let to_local = |p: Pos2| [p.x - origin.x, p.y - origin.y];
 
@@ -78,26 +77,39 @@ pub fn central_viewport(app: &mut DaffyApp, ctx: &egui::Context) {
         }
 
         // --- input: pan (middle/right drag, or left drag with Select tool
-        //     when not dragging an object) ---
+        //     when not dragging an editable overlay) ---
         let drag = response.drag_delta();
         let panning = response.dragged_by(egui::PointerButton::Middle)
             || response.dragged_by(egui::PointerButton::Secondary)
             || (app.tool == Tool::Select
                 && response.dragged_by(egui::PointerButton::Primary)
-                && !matches!(app.selection, Selection::Object { .. }));
+                && !matches!(
+                    app.selection,
+                    Selection::Object { .. } | Selection::EnemySpawn { .. }
+                ));
         if panning && drag != Vec2::ZERO {
             app.prefs.viewport.pan_screen([drag.x, drag.y]);
         }
 
         // --- gather room data (immutable pass) ---
         let room_idx = app.active_room;
-        let Some(level_idx) = app.active_project_level_index() else { return };
-        let Some(level) = app.project.levels.get(level_idx) else { return };
-        let Some(room) = level.rooms.get(room_idx) else { return };
+        let Some(level_idx) = app.active_project_level_index() else {
+            return;
+        };
+        let Some(level) = app.project.levels.get(level_idx) else {
+            return;
+        };
+        let Some(room) = level.rooms.get(room_idx) else {
+            return;
+        };
 
         let vp = app.prefs.viewport;
         // ROM levels draw 32px metatiles (real 4×4-tile pixels); synthetic uses 16.
-        let tile_px = if has_gfx { METATILE_RENDER_PX as f32 } else { METATILE_PX as f32 };
+        let tile_px = if has_gfx {
+            METATILE_RENDER_PX as f32
+        } else {
+            METATILE_PX as f32
+        };
         let room_px_w = room.width as f32 * tile_px;
         let room_px_h = room.height as f32 * tile_px;
         let to_screen = |wx: f32, wy: f32| -> Pos2 {
@@ -116,8 +128,7 @@ pub fn central_viewport(app: &mut DaffyApp, ctx: &egui::Context) {
 
         // --- draw: tiles (only the visible range) ---
         let [w0, h0] = vp.screen_to_world([0.0, 0.0]);
-        let [w1, h1] =
-            vp.screen_to_world([response.rect.width(), response.rect.height()]);
+        let [w1, h1] = vp.screen_to_world([response.rect.width(), response.rect.height()]);
         let x_min = (w0 / tile_px).floor().max(0.0) as u32;
         let y_min = (h0 / tile_px).floor().max(0.0) as u32;
         let x_max = ((w1 / tile_px).ceil() as i64).clamp(0, room.width as i64) as u32;
@@ -125,7 +136,9 @@ pub fn central_viewport(app: &mut DaffyApp, ctx: &egui::Context) {
 
         for ty in y_min..y_max {
             for tx in x_min..x_max {
-                let Some(id) = room.tile(tx, ty) else { continue };
+                let Some(id) = room.tile(tx, ty) else {
+                    continue;
+                };
                 let rect = Rect::from_min_max(
                     to_screen(tx as f32 * tile_px, ty as f32 * tile_px),
                     to_screen((tx + 1) as f32 * tile_px, (ty + 1) as f32 * tile_px),
@@ -194,10 +207,22 @@ pub fn central_viewport(app: &mut DaffyApp, ctx: &egui::Context) {
         if app.prefs.show_objects {
             for (i, o) in room.objects.iter().enumerate() {
                 let p = to_screen(o.x as f32, o.y as f32);
-                let selected = app.selection == Selection::Object { room: room_idx, index: i };
-                painter.circle_filled(p, 5.0 * vp.zoom.clamp(0.5, 2.0), Color32::from_rgb(80, 170, 255));
+                let selected = app.selection
+                    == Selection::Object {
+                        room: room_idx,
+                        index: i,
+                    };
+                painter.circle_filled(
+                    p,
+                    5.0 * vp.zoom.clamp(0.5, 2.0),
+                    Color32::from_rgb(80, 170, 255),
+                );
                 if selected {
-                    painter.circle_stroke(p, 7.0 * vp.zoom.clamp(0.5, 2.0), Stroke::new(2.0, Color32::WHITE));
+                    painter.circle_stroke(
+                        p,
+                        7.0 * vp.zoom.clamp(0.5, 2.0),
+                        Stroke::new(2.0, Color32::WHITE),
+                    );
                 }
                 painter.text(
                     p + Vec2::new(8.0, -8.0),
@@ -207,9 +232,25 @@ pub fn central_viewport(app: &mut DaffyApp, ctx: &egui::Context) {
                     Color32::from_rgb(160, 210, 255),
                 );
             }
-            for s in &room.enemy_spawns {
+            for (i, s) in room.enemy_spawns.iter().enumerate() {
                 let p = to_screen(s.x as f32, s.y as f32);
-                painter.circle_filled(p, 4.0 * vp.zoom.clamp(0.5, 2.0), Color32::from_rgb(240, 90, 90));
+                let selected = app.selection
+                    == Selection::EnemySpawn {
+                        room: room_idx,
+                        index: i,
+                    };
+                painter.circle_filled(
+                    p,
+                    4.0 * vp.zoom.clamp(0.5, 2.0),
+                    Color32::from_rgb(240, 90, 90),
+                );
+                if selected {
+                    painter.circle_stroke(
+                        p,
+                        6.0 * vp.zoom.clamp(0.5, 2.0),
+                        Stroke::new(2.0, Color32::WHITE),
+                    );
+                }
             }
             for e in &room.exits {
                 let p = to_screen(e.x as f32, e.y as f32);
@@ -221,7 +262,10 @@ pub fn central_viewport(app: &mut DaffyApp, ctx: &egui::Context) {
             }
             for c in &room.checkpoints {
                 let p = to_screen(c.x as f32, c.y as f32);
-                painter.line_segment([p, p - Vec2::new(0.0, 14.0)], Stroke::new(2.0, Color32::GOLD));
+                painter.line_segment(
+                    [p, p - Vec2::new(0.0, 14.0)],
+                    Stroke::new(2.0, Color32::GOLD),
+                );
                 painter.circle_filled(p - Vec2::new(0.0, 14.0), 3.0, Color32::GOLD);
             }
         }
@@ -237,7 +281,7 @@ pub fn central_viewport(app: &mut DaffyApp, ctx: &egui::Context) {
             }
         }
 
-        // --- input: click / paint / object drag (mutating pass) ---
+        // --- input: click / paint / overlay drag (mutating pass) ---
         let click_pos = response.interact_pointer_pos();
         let room_w = room.width;
         let room_h = room.height;
@@ -247,21 +291,39 @@ pub fn central_viewport(app: &mut DaffyApp, ctx: &egui::Context) {
                 (op.distance(p) <= 10.0).then_some(i)
             })
         };
+        let enemy_hit = |p: Pos2| -> Option<usize> {
+            room.enemy_spawns.iter().enumerate().find_map(|(i, s)| {
+                let sp = to_screen(s.x as f32, s.y as f32);
+                (sp.distance(p) <= 10.0).then_some(i)
+            })
+        };
 
         if let Some(pos) = click_pos {
             let tile = vp
                 .tile_at_screen(to_local(pos), tile_px)
                 .filter(|&(x, y)| x < room_w && y < room_h);
             match app.tool {
-                Tool::Paint if response.clicked() || response.dragged_by(egui::PointerButton::Primary) => {
+                Tool::Paint
+                    if response.clicked() || response.dragged_by(egui::PointerButton::Primary) =>
+                {
                     if let Some((x, y)) = tile {
                         let metatile = app.active_metatile;
                         let already = room.tile(x, y) == Some(metatile);
                         if !already {
-                            let cmd = EditorCommand::SetTile { room: room_idx, x, y, metatile };
-                            let level = app.project.levels.get_mut(level_idx).expect("level exists");
+                            let cmd = EditorCommand::SetTile {
+                                room: room_idx,
+                                x,
+                                y,
+                                metatile,
+                            };
+                            let level =
+                                app.project.levels.get_mut(level_idx).expect("level exists");
                             if app.history.apply(level, cmd).is_ok() {
-                                app.selection = Selection::Tile { room: room_idx, x, y };
+                                app.selection = Selection::Tile {
+                                    room: room_idx,
+                                    x,
+                                    y,
+                                };
                                 app.revalidate();
                             }
                         }
@@ -269,32 +331,57 @@ pub fn central_viewport(app: &mut DaffyApp, ctx: &egui::Context) {
                 }
                 Tool::Select if response.clicked() => {
                     if let Some(i) = object_hit(pos) {
-                        app.selection = Selection::Object { room: room_idx, index: i };
+                        app.selection = Selection::Object {
+                            room: room_idx,
+                            index: i,
+                        };
+                    } else if let Some(i) = enemy_hit(pos) {
+                        app.selection = Selection::EnemySpawn {
+                            room: room_idx,
+                            index: i,
+                        };
                     } else if let Some((x, y)) = tile {
-                        app.selection = Selection::Tile { room: room_idx, x, y };
+                        app.selection = Selection::Tile {
+                            room: room_idx,
+                            x,
+                            y,
+                        };
                     } else {
                         app.selection = Selection::None;
                     }
                 }
-                Tool::Select
-                    if response.drag_stopped_by(egui::PointerButton::Primary) =>
-                {
-                    // Drop a dragged object at the release position.
-                    if let Selection::Object { room: r, index } = app.selection {
-                        if r == room_idx {
-                            let [wx, wy] = vp.screen_to_world(to_local(pos));
-                            if wx >= 0.0 && wy >= 0.0 {
+                Tool::Select if response.drag_stopped_by(egui::PointerButton::Primary) => {
+                    // Drop a dragged overlay at the release position.
+                    let [wx, wy] = vp.screen_to_world(to_local(pos));
+                    if wx >= 0.0 && wy >= 0.0 {
+                        match app.selection {
+                            Selection::Object { room: r, index } if r == room_idx => {
                                 let cmd = EditorCommand::MoveObject {
                                     room: room_idx,
                                     object: index,
                                     x: wx as u32,
                                     y: wy as u32,
                                 };
-                                let level = app.project.levels.get_mut(level_idx).expect("level exists");
+                                let level =
+                                    app.project.levels.get_mut(level_idx).expect("level exists");
                                 if app.history.apply(level, cmd).is_ok() {
                                     app.revalidate();
                                 }
                             }
+                            Selection::EnemySpawn { room: r, index } if r == room_idx => {
+                                let cmd = EditorCommand::MoveEnemySpawn {
+                                    room: room_idx,
+                                    spawn: index,
+                                    x: wx as u32,
+                                    y: wy as u32,
+                                };
+                                let level =
+                                    app.project.levels.get_mut(level_idx).expect("level exists");
+                                if app.history.apply(level, cmd).is_ok() {
+                                    app.revalidate();
+                                }
+                            }
+                            _ => {}
                         }
                     }
                 }

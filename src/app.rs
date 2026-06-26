@@ -6,11 +6,12 @@ use std::path::PathBuf;
 
 use serde::{Deserialize, Serialize};
 
+use crate::editor::commands::EditorCommand;
 use crate::editor::history::EditorHistory;
 use crate::editor::selection::Selection;
 use crate::editor::tools::Tool;
 use crate::level::{level_count, load_rom_level};
-use crate::model::level::{synthetic_level, Level};
+use crate::model::level::{synthetic_level, EnemySpawn, Level, Object};
 use crate::model::project::{Project, RomIdentity};
 use crate::model::validation::{validate_project, ValidationIssue};
 use crate::patch::bps::create_bps;
@@ -25,6 +26,12 @@ pub struct RomState {
     pub image: RomImage,
     pub info: RomInfo,
     pub path: Option<PathBuf>,
+}
+
+#[derive(Debug, Clone)]
+enum ClipboardItem {
+    Object(Object),
+    EnemySpawn(EnemySpawn),
 }
 
 /// Locally persisted user preferences (via eframe storage).
@@ -57,6 +64,7 @@ pub struct DaffyApp {
     pub project_path: Option<PathBuf>,
     pub history: EditorHistory,
     pub selection: Selection,
+    clipboard: Option<ClipboardItem>,
     pub tool: Tool,
     pub active_metatile: u16,
     pub active_room: usize,
@@ -99,6 +107,7 @@ impl DaffyApp {
             project_path: None,
             history: EditorHistory::new(),
             selection: Selection::None,
+            clipboard: None,
             tool: Tool::Select,
             active_metatile: 0,
             active_room: 0,
@@ -210,7 +219,12 @@ impl DaffyApp {
     }
 
     fn store_decoded_level(&mut self, decoded: Level) {
-        if let Some(idx) = self.project.levels.iter().position(|level| level.id == decoded.id) {
+        if let Some(idx) = self
+            .project
+            .levels
+            .iter()
+            .position(|level| level.id == decoded.id)
+        {
             if matches!(
                 self.project.levels[idx].provenance,
                 crate::model::level::Provenance::Synthetic
@@ -294,11 +308,16 @@ impl DaffyApp {
     /// only painted metatiles change bytes. This is what carries Paint-tool
     /// edits into exported ROMs/patches (the level model is the source of truth;
     /// undo/redo are reflected automatically because we read the current model).
-    fn apply_tile_edits(project: &Project, image: &mut RomImage) -> Result<(), crate::error::RomError> {
+    fn apply_tile_edits(
+        project: &Project,
+        image: &mut RomImage,
+    ) -> Result<(), crate::error::RomError> {
         use crate::level::cell::encode_cell;
         for level in &project.levels {
             for room in &level.rooms {
-                let Some(base) = room.map_rom_offset else { continue };
+                let Some(base) = room.map_rom_offset else {
+                    continue;
+                };
                 for (i, tile) in room.tiles.iter().enumerate() {
                     let off = base + i * 2;
                     // Read the original cell in its own scope so the immutable
@@ -323,7 +342,10 @@ impl DaffyApp {
     /// produce no diff. This is the object-move counterpart to
     /// [`Self::apply_tile_edits`] (undo/redo are reflected because we read the
     /// live model). Synthetic objects have no `rom_offset` and are skipped.
-    fn apply_object_edits(project: &Project, image: &mut RomImage) -> Result<(), crate::error::RomError> {
+    fn apply_object_edits(
+        project: &Project,
+        image: &mut RomImage,
+    ) -> Result<(), crate::error::RomError> {
         for level in &project.levels {
             for room in &level.rooms {
                 for obj in &room.objects {
@@ -337,7 +359,9 @@ impl DaffyApp {
     }
 
     pub fn export_ips(&mut self, path: PathBuf) {
-        let Some((original, modified)) = self.modified_rom_bytes() else { return };
+        let Some((original, modified)) = self.modified_rom_bytes() else {
+            return;
+        };
         if original == modified {
             self.status = "No byte-level changes to export yet.".to_string();
             return;
@@ -352,7 +376,9 @@ impl DaffyApp {
     }
 
     pub fn export_bps(&mut self, path: PathBuf) {
-        let Some((original, modified)) = self.modified_rom_bytes() else { return };
+        let Some((original, modified)) = self.modified_rom_bytes() else {
+            return;
+        };
         if original == modified {
             self.status = "No byte-level changes to export yet.".to_string();
             return;
@@ -369,7 +395,9 @@ impl DaffyApp {
     /// Local-only convenience export; patches are the preferred distribution
     /// format (see docs/LEGAL.md).
     pub fn export_modified_rom(&mut self, path: PathBuf) {
-        let Some((_, modified)) = self.modified_rom_bytes() else { return };
+        let Some((_, modified)) = self.modified_rom_bytes() else {
+            return;
+        };
         match std::fs::write(&path, modified) {
             Ok(()) => {
                 self.status = format!(
@@ -384,8 +412,12 @@ impl DaffyApp {
     // ---------- editing ----------
 
     pub fn undo(&mut self) {
-        let Some(idx) = self.active_project_level_index() else { return };
-        let Some(level) = self.project.levels.get_mut(idx) else { return };
+        let Some(idx) = self.active_project_level_index() else {
+            return;
+        };
+        let Some(level) = self.project.levels.get_mut(idx) else {
+            return;
+        };
         if self.history.undo(level) {
             self.status = "Undid last edit.".to_string();
             self.revalidate();
@@ -393,13 +425,205 @@ impl DaffyApp {
     }
 
     pub fn redo(&mut self) {
-        let Some(idx) = self.active_project_level_index() else { return };
-        let Some(level) = self.project.levels.get_mut(idx) else { return };
+        let Some(idx) = self.active_project_level_index() else {
+            return;
+        };
+        let Some(level) = self.project.levels.get_mut(idx) else {
+            return;
+        };
         if self.history.redo(level) {
             self.status = "Redid edit.".to_string();
             self.revalidate();
         }
     }
+
+    pub fn can_paste(&self) -> bool {
+        self.clipboard.is_some()
+    }
+
+    pub fn can_delete_selection(&self) -> bool {
+        matches!(
+            self.selection,
+            Selection::Object { .. } | Selection::EnemySpawn { .. }
+        )
+    }
+
+    pub fn copy_selection(&mut self) {
+        let Some(idx) = self.active_project_level_index() else {
+            return;
+        };
+        let Some(level) = self.project.levels.get(idx) else {
+            return;
+        };
+        match self.selection {
+            Selection::Object { room, index } => {
+                let Some(object) = level.rooms.get(room).and_then(|r| r.objects.get(index)) else {
+                    self.status = "Selected object no longer exists.".to_string();
+                    self.selection = Selection::None;
+                    return;
+                };
+                self.clipboard = Some(ClipboardItem::Object(object.clone()));
+                self.status = "Copied object.".to_string();
+            }
+            Selection::EnemySpawn { room, index } => {
+                let Some(spawn) = level
+                    .rooms
+                    .get(room)
+                    .and_then(|r| r.enemy_spawns.get(index))
+                else {
+                    self.status = "Selected enemy/item no longer exists.".to_string();
+                    self.selection = Selection::None;
+                    return;
+                };
+                self.clipboard = Some(ClipboardItem::EnemySpawn(spawn.clone()));
+                self.status = "Copied enemy/item.".to_string();
+            }
+            _ => {
+                self.status = "Select an object or enemy/item to copy.".to_string();
+            }
+        }
+    }
+
+    pub fn paste_clipboard(&mut self) {
+        let Some(item) = self.clipboard.clone() else {
+            self.status = "Nothing to paste.".to_string();
+            return;
+        };
+        let Some(level_idx) = self.active_project_level_index() else {
+            return;
+        };
+        let room_idx = match self.selection {
+            Selection::Object { room, .. } | Selection::EnemySpawn { room, .. } => room,
+            _ => self.active_room,
+        };
+
+        let Some(room) = self
+            .project
+            .levels
+            .get(level_idx)
+            .and_then(|level| level.rooms.get(room_idx))
+        else {
+            self.status = "Active room no longer exists.".to_string();
+            self.selection = Selection::None;
+            return;
+        };
+
+        let cmd = match item {
+            ClipboardItem::Object(mut object) => {
+                object.id = next_object_id(room.objects.iter().map(|o| o.id));
+                object.x = object.x.saturating_add(16);
+                object.y = object.y.saturating_add(16);
+                if object.params.len() >= 10 {
+                    object.params[6..8].copy_from_slice(&(object.x as u16).to_le_bytes());
+                    object.params[8..10].copy_from_slice(&(object.y as u16).to_le_bytes());
+                }
+                object.label = format!(
+                    "obj #{} (handler ${:06X}) @ {},{}",
+                    object.id, object.kind, object.x, object.y
+                );
+                object.rom_offset = None;
+                EditorCommand::InsertObject {
+                    room: room_idx,
+                    index: room.objects.len(),
+                    object,
+                }
+            }
+            ClipboardItem::EnemySpawn(mut spawn) => {
+                spawn.id = next_object_id(room.enemy_spawns.iter().map(|s| s.id));
+                spawn.x = spawn.x.saturating_add(16);
+                spawn.y = spawn.y.saturating_add(16);
+                EditorCommand::InsertEnemySpawn {
+                    room: room_idx,
+                    index: room.enemy_spawns.len(),
+                    spawn,
+                }
+            }
+        };
+
+        let Some(level) = self.project.levels.get_mut(level_idx) else {
+            return;
+        };
+        match cmd {
+            EditorCommand::InsertObject {
+                room,
+                index,
+                object,
+            } => {
+                if self
+                    .history
+                    .apply(
+                        level,
+                        EditorCommand::InsertObject {
+                            room,
+                            index,
+                            object,
+                        },
+                    )
+                    .is_ok()
+                {
+                    self.selection = Selection::Object { room, index };
+                    self.status = "Pasted object.".to_string();
+                    self.revalidate();
+                }
+            }
+            EditorCommand::InsertEnemySpawn { room, index, spawn } => {
+                if self
+                    .history
+                    .apply(
+                        level,
+                        EditorCommand::InsertEnemySpawn { room, index, spawn },
+                    )
+                    .is_ok()
+                {
+                    self.selection = Selection::EnemySpawn { room, index };
+                    self.status = "Pasted enemy/item.".to_string();
+                    self.revalidate();
+                }
+            }
+            _ => unreachable!("paste only builds insert commands"),
+        }
+    }
+
+    pub fn delete_selection(&mut self) {
+        let Some(level_idx) = self.active_project_level_index() else {
+            return;
+        };
+        let (cmd, label) = match self.selection {
+            Selection::Object { room, index } => (
+                EditorCommand::DeleteObject {
+                    room,
+                    object: index,
+                },
+                "Deleted object.",
+            ),
+            Selection::EnemySpawn { room, index } => (
+                EditorCommand::DeleteEnemySpawn { room, spawn: index },
+                "Deleted enemy/item.",
+            ),
+            _ => {
+                self.status = "Select an object or enemy/item to delete.".to_string();
+                return;
+            }
+        };
+        let Some(level) = self.project.levels.get_mut(level_idx) else {
+            return;
+        };
+        match self.history.apply(level, cmd) {
+            Ok(()) => {
+                self.selection = Selection::None;
+                self.status = label.to_string();
+                self.revalidate();
+            }
+            Err(e) => {
+                self.selection = Selection::None;
+                self.status = format!("Could not delete selection: {e}");
+            }
+        }
+    }
+}
+
+fn next_object_id(ids: impl Iterator<Item = u32>) -> u32 {
+    ids.max().and_then(|id| id.checked_add(1)).unwrap_or(0)
 }
 
 impl eframe::App for DaffyApp {
@@ -428,7 +652,10 @@ mod tests {
             name: "t".into(),
             width: tiles.len() as u32,
             height: 1,
-            tiles: tiles.into_iter().map(|metatile| Tile { metatile }).collect(),
+            tiles: tiles
+                .into_iter()
+                .map(|metatile| Tile { metatile })
+                .collect(),
             map_rom_offset: Some(offset),
             objects: vec![],
             enemy_spawns: vec![],
@@ -449,7 +676,10 @@ mod tests {
             gfx: Default::default(),
             rooms: vec![room],
         };
-        Project { levels: vec![level], ..Project::default() }
+        Project {
+            levels: vec![level],
+            ..Project::default()
+        }
     }
 
     #[test]
@@ -577,7 +807,12 @@ mod tests {
         let mut app = test_app_with_levels(vec![level0, edited_level1]);
         app.store_decoded_level(decoded_level1);
 
-        let cached = app.project.levels.iter().find(|level| level.id == 1).unwrap();
+        let cached = app
+            .project
+            .levels
+            .iter()
+            .find(|level| level.id == 1)
+            .unwrap();
         assert_eq!(cached.name, "edited cached level");
         assert_eq!(cached.gfx.vram, vec![1, 2, 3, 4]);
     }
@@ -585,10 +820,14 @@ mod tests {
     fn test_app_with_levels(levels: Vec<Level>) -> DaffyApp {
         DaffyApp {
             rom: None,
-            project: Project { levels, ..Project::default() },
+            project: Project {
+                levels,
+                ..Project::default()
+            },
             project_path: None,
             history: EditorHistory::new(),
             selection: Selection::None,
+            clipboard: None,
             tool: Tool::Select,
             active_metatile: 0,
             active_room: 0,

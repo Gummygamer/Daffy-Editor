@@ -12,21 +12,25 @@ use crate::rom::version::RomVersion;
 use crate::snes::palette::bgr555_to_rgba8;
 
 pub fn side_panel(app: &mut DaffyApp, ctx: &egui::Context) {
-    egui::SidePanel::left("side_panel").default_width(300.0).show(ctx, |ui| {
-        egui::ScrollArea::vertical().show(ui, |ui| {
-            rom_info_section(app, ui);
-            ui.separator();
-            level_section(app, ui);
-            ui.separator();
-            metatile_picker(app, ui);
-            ui.separator();
-            palette_viewer(app, ui);
-            ui.separator();
-            object_list(app, ui);
-            ui.separator();
-            validation_section(app, ui);
+    egui::SidePanel::left("side_panel")
+        .default_width(300.0)
+        .show(ctx, |ui| {
+            egui::ScrollArea::vertical().show(ui, |ui| {
+                rom_info_section(app, ui);
+                ui.separator();
+                level_section(app, ui);
+                ui.separator();
+                metatile_picker(app, ui);
+                ui.separator();
+                palette_viewer(app, ui);
+                ui.separator();
+                object_list(app, ui);
+                ui.separator();
+                enemy_item_list(app, ui);
+                ui.separator();
+                validation_section(app, ui);
+            });
         });
-    });
 }
 
 fn rom_info_section(app: &DaffyApp, ui: &mut egui::Ui) {
@@ -48,42 +52,60 @@ fn rom_info_section(app: &DaffyApp, ui: &mut egui::Ui) {
             ui.colored_label(egui::Color32::from_rgb(110, 220, 110), v.display_name());
         }
     }
-    egui::Grid::new("rom_info_grid").num_columns(2).striped(true).show(ui, |ui| {
-        ui.label("Size");
-        ui.monospace(format!("{} bytes ({} KiB)", info.size, info.size / 1024));
-        ui.end_row();
-        ui.label("CRC32");
-        ui.monospace(format!("{:08X}", info.crc32));
-        ui.end_row();
-        ui.label("SHA-1");
-        ui.monospace(&info.sha1_hex);
-        ui.end_row();
-        ui.label("Copier header");
-        ui.monospace(if info.had_copier_header { "yes (512 B, stripped)" } else { "no" });
-        ui.end_row();
-        if let Some(h) = &info.internal {
-            ui.label("Internal title");
-            ui.monospace(&h.title);
+    egui::Grid::new("rom_info_grid")
+        .num_columns(2)
+        .striped(true)
+        .show(ui, |ui| {
+            ui.label("Size");
+            ui.monospace(format!("{} bytes ({} KiB)", info.size, info.size / 1024));
             ui.end_row();
-            ui.label("Map mode");
-            ui.monospace(format!(
-                "{:#04X}{}",
-                h.map_mode,
-                if h.map_mode & 0x0F == 0 { " (LoROM)" } else { "" }
-            ));
+            ui.label("CRC32");
+            ui.monospace(format!("{:08X}", info.crc32));
             ui.end_row();
-            ui.label("ROM / SRAM size");
-            ui.monospace(format!(
-                "{} KiB / {} KiB",
-                1u32 << h.rom_size,
-                if h.sram_size == 0 { 0 } else { 1u32 << h.sram_size }
-            ));
+            ui.label("SHA-1");
+            ui.monospace(&info.sha1_hex);
             ui.end_row();
-            ui.label("Checksum");
-            ui.monospace(format!("{:04X} (~{:04X})", h.checksum, h.checksum_complement));
+            ui.label("Copier header");
+            ui.monospace(if info.had_copier_header {
+                "yes (512 B, stripped)"
+            } else {
+                "no"
+            });
             ui.end_row();
-        }
-    });
+            if let Some(h) = &info.internal {
+                ui.label("Internal title");
+                ui.monospace(&h.title);
+                ui.end_row();
+                ui.label("Map mode");
+                ui.monospace(format!(
+                    "{:#04X}{}",
+                    h.map_mode,
+                    if h.map_mode & 0x0F == 0 {
+                        " (LoROM)"
+                    } else {
+                        ""
+                    }
+                ));
+                ui.end_row();
+                ui.label("ROM / SRAM size");
+                ui.monospace(format!(
+                    "{} KiB / {} KiB",
+                    1u32 << h.rom_size,
+                    if h.sram_size == 0 {
+                        0
+                    } else {
+                        1u32 << h.sram_size
+                    }
+                ));
+                ui.end_row();
+                ui.label("Checksum");
+                ui.monospace(format!(
+                    "{:04X} (~{:04X})",
+                    h.checksum, h.checksum_complement
+                ));
+                ui.end_row();
+            }
+        });
 }
 
 fn level_section(app: &mut DaffyApp, ui: &mut egui::Ui) {
@@ -93,8 +115,11 @@ fn level_section(app: &mut DaffyApp, ui: &mut egui::Ui) {
         return;
     };
     let provenance = level.provenance.clone();
-    let room_names: Vec<String> =
-        level.rooms.iter().map(|r| format!("{} — {}", r.id, r.name)).collect();
+    let room_names: Vec<String> = level
+        .rooms
+        .iter()
+        .map(|r| format!("{} — {}", r.id, r.name))
+        .collect();
     match &provenance {
         Provenance::Synthetic => {
             ui.colored_label(
@@ -111,14 +136,13 @@ fn level_section(app: &mut DaffyApp, ui: &mut egui::Ui) {
         }
     }
     let mut active = app.active_room.min(room_names.len().saturating_sub(1));
-    egui::ComboBox::from_label("Room").selected_text(room_names.get(active).cloned().unwrap_or_default()).show_ui(
-        ui,
-        |ui| {
+    egui::ComboBox::from_label("Room")
+        .selected_text(room_names.get(active).cloned().unwrap_or_default())
+        .show_ui(ui, |ui| {
             for (i, name) in room_names.iter().enumerate() {
                 ui.selectable_value(&mut active, i, name);
             }
-        },
-    );
+        });
     if active != app.active_room {
         app.active_room = active;
         app.selection = Selection::None;
@@ -158,8 +182,11 @@ fn metatile_picker(app: &mut DaffyApp, ui: &mut egui::Ui) {
     let level = app.level().expect("level exists");
     let palette = level.palette.clone();
     // (id, flat-color fallback) pairs; texture (if any) comes from the cache.
-    let metatiles: Vec<(u16, [u8; 4], u8)> =
-        level.metatiles.iter().map(|m| (m.id, metatile_color(&palette, m), m.collision)).collect();
+    let metatiles: Vec<(u16, [u8; 4], u8)> = level
+        .metatiles
+        .iter()
+        .map(|m| (m.id, metatile_color(&palette, m), m.collision))
+        .collect();
 
     // Swatch large enough to read the 32px metatile graphics (a 4×4 tile block).
     const SWATCH: f32 = 32.0;
@@ -177,11 +204,15 @@ fn metatile_picker(app: &mut DaffyApp, ui: &mut egui::Ui) {
                 );
             } else {
                 let [r, g, b, a] = *fallback;
-                ui.painter()
-                    .rect_filled(rect, 2.0, egui::Color32::from_rgba_unmultiplied(r, g, b, a));
+                ui.painter().rect_filled(
+                    rect,
+                    2.0,
+                    egui::Color32::from_rgba_unmultiplied(r, g, b, a),
+                );
             }
             if selected {
-                ui.painter().rect_stroke(rect, 2.0, egui::Stroke::new(2.0, egui::Color32::WHITE));
+                ui.painter()
+                    .rect_stroke(rect, 2.0, egui::Stroke::new(2.0, egui::Color32::WHITE));
             }
             if resp.clicked() {
                 app.active_metatile = *id;
@@ -190,7 +221,10 @@ fn metatile_picker(app: &mut DaffyApp, ui: &mut egui::Ui) {
             resp.on_hover_text(format!("metatile {id} (collision {collision})"));
         }
     });
-    ui.label(format!("Active: {} — click canvas with Paint tool", app.active_metatile));
+    ui.label(format!(
+        "Active: {} — click canvas with Paint tool",
+        app.active_metatile
+    ));
 }
 
 fn palette_viewer(app: &DaffyApp, ui: &mut egui::Ui) {
@@ -211,9 +245,14 @@ fn object_list(app: &mut DaffyApp, ui: &mut egui::Ui) {
     ui.heading("Objects");
     let room_idx = app.active_room;
     let Some(level) = app.level() else { return };
-    let Some(room) = level.rooms.get(room_idx) else { return };
-    let rows: Vec<(u32, String, u32, u32)> =
-        room.objects.iter().map(|o| (o.id, o.label.clone(), o.x, o.y)).collect();
+    let Some(room) = level.rooms.get(room_idx) else {
+        return;
+    };
+    let rows: Vec<(u32, String, u32, u32)> = room
+        .objects
+        .iter()
+        .map(|o| (o.id, o.label.clone(), o.x, o.y))
+        .collect();
     if rows.is_empty() {
         ui.label("(none in this room)");
         return;
@@ -237,14 +276,82 @@ fn object_list(app: &mut DaffyApp, ui: &mut egui::Ui) {
         .body(|mut body| {
             for (i, (id, label, x, y)) in rows.iter().enumerate() {
                 body.row(18.0, |mut row| {
-                    let selected =
-                        app.selection == Selection::Object { room: room_idx, index: i };
+                    let selected = app.selection
+                        == Selection::Object {
+                            room: room_idx,
+                            index: i,
+                        };
                     row.col(|ui| {
                         ui.monospace(format!("{id}"));
                     });
                     row.col(|ui| {
                         if ui.selectable_label(selected, label).clicked() {
-                            app.selection = Selection::Object { room: room_idx, index: i };
+                            app.selection = Selection::Object {
+                                room: room_idx,
+                                index: i,
+                            };
+                        }
+                    });
+                    row.col(|ui| {
+                        ui.monospace(format!("({x}, {y})"));
+                    });
+                });
+            }
+        });
+}
+
+fn enemy_item_list(app: &mut DaffyApp, ui: &mut egui::Ui) {
+    ui.heading("Enemies / Items");
+    let room_idx = app.active_room;
+    let Some(level) = app.level() else { return };
+    let Some(room) = level.rooms.get(room_idx) else {
+        return;
+    };
+    let rows: Vec<(u32, u16, u32, u32)> = room
+        .enemy_spawns
+        .iter()
+        .map(|s| (s.id, s.kind, s.x, s.y))
+        .collect();
+    if rows.is_empty() {
+        ui.label("(none in this room)");
+        return;
+    }
+    TableBuilder::new(ui)
+        .striped(true)
+        .column(Column::auto())
+        .column(Column::remainder())
+        .column(Column::auto())
+        .header(18.0, |mut header| {
+            header.col(|ui| {
+                ui.strong("id");
+            });
+            header.col(|ui| {
+                ui.strong("kind");
+            });
+            header.col(|ui| {
+                ui.strong("pos");
+            });
+        })
+        .body(|mut body| {
+            for (i, (id, kind, x, y)) in rows.iter().enumerate() {
+                body.row(18.0, |mut row| {
+                    let selected = app.selection
+                        == Selection::EnemySpawn {
+                            room: room_idx,
+                            index: i,
+                        };
+                    row.col(|ui| {
+                        ui.monospace(format!("{id}"));
+                    });
+                    row.col(|ui| {
+                        if ui
+                            .selectable_label(selected, format!("${kind:04X}"))
+                            .clicked()
+                        {
+                            app.selection = Selection::EnemySpawn {
+                                room: room_idx,
+                                index: i,
+                            };
                         }
                     });
                     row.col(|ui| {
@@ -267,7 +374,13 @@ fn validation_section(app: &DaffyApp, ui: &mut egui::Ui) {
             crate::model::validation::Severity::Warning => egui::Color32::from_rgb(255, 180, 70),
             crate::model::validation::Severity::Info => egui::Color32::GRAY,
         };
-        ui.colored_label(color, format!("[{:?}] {} — {}", issue.severity, issue.context, issue.message));
+        ui.colored_label(
+            color,
+            format!(
+                "[{:?}] {} — {}",
+                issue.severity, issue.context, issue.message
+            ),
+        );
     }
 }
 
