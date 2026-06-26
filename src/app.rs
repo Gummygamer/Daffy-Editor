@@ -60,7 +60,7 @@ pub struct DaffyApp {
     pub tool: Tool,
     pub active_metatile: u16,
     pub active_room: usize,
-    /// Index of the ROM level currently loaded into `project.levels[0]`.
+    /// ROM level number currently active in the editor.
     pub active_level: usize,
     /// Number of levels the loaded ROM exposes (0 when no ROM / unrecognized).
     pub rom_level_count: usize,
@@ -117,11 +117,25 @@ impl DaffyApp {
     }
 
     pub fn level(&self) -> Option<&Level> {
-        self.project.levels.first()
+        self.active_project_level_index()
+            .and_then(|idx| self.project.levels.get(idx))
     }
 
     pub fn level_mut(&mut self) -> Option<&mut Level> {
-        self.project.levels.first_mut()
+        let idx = self.active_project_level_index()?;
+        self.project.levels.get_mut(idx)
+    }
+
+    pub fn active_project_level_index(&self) -> Option<usize> {
+        if self.rom_level_count > 0 {
+            self.project
+                .levels
+                .iter()
+                .position(|level| level.id == self.active_level as u32)
+                .or_else(|| (!self.project.levels.is_empty()).then_some(0))
+        } else {
+            (!self.project.levels.is_empty()).then_some(0)
+        }
     }
 
     pub fn revalidate(&mut self) {
@@ -170,8 +184,8 @@ impl DaffyApp {
         self.load_rom_level_into_project(0, &bytes);
     }
 
-    /// Switch the editor to ROM level `n` (decoding it fresh). Discards unsaved
-    /// per-level edits — switching is a navigation action, not an edit.
+    /// Switch the editor to ROM level `n`, decoding it on first visit and
+    /// reusing the project copy after that so edits survive level navigation.
     pub fn set_active_level(&mut self, n: usize) {
         let Some(rom) = &self.rom else { return };
         let bytes = rom.image.original().to_vec();
@@ -181,8 +195,8 @@ impl DaffyApp {
     fn load_rom_level_into_project(&mut self, n: usize, bytes: &[u8]) {
         match load_rom_level(bytes, n) {
             Ok(level) => {
+                self.store_decoded_level(level);
                 self.active_level = n;
-                self.project.levels = vec![level];
                 self.invalidate_tile_textures();
                 self.history = EditorHistory::new();
                 self.selection = Selection::None;
@@ -192,6 +206,21 @@ impl DaffyApp {
                 self.revalidate();
             }
             Err(e) => self.status = format!("Could not decode ROM level {n}: {e}"),
+        }
+    }
+
+    fn store_decoded_level(&mut self, decoded: Level) {
+        if let Some(idx) = self.project.levels.iter().position(|level| level.id == decoded.id) {
+            if matches!(
+                self.project.levels[idx].provenance,
+                crate::model::level::Provenance::Synthetic
+            ) {
+                self.project.levels[idx] = decoded;
+            } else if self.project.levels[idx].gfx.is_empty() {
+                self.project.levels[idx].gfx = decoded.gfx;
+            }
+        } else {
+            self.project.levels.push(decoded);
         }
     }
 
@@ -217,6 +246,12 @@ impl DaffyApp {
                 }
                 self.history = EditorHistory::new();
                 self.selection = Selection::None;
+                self.active_level = self
+                    .project
+                    .levels
+                    .first()
+                    .map(|level| level.id as usize)
+                    .unwrap_or(0);
                 self.active_room = 0;
                 self.invalidate_tile_textures();
                 self.project_path = Some(path);
@@ -349,7 +384,8 @@ impl DaffyApp {
     // ---------- editing ----------
 
     pub fn undo(&mut self) {
-        let Some(level) = self.project.levels.first_mut() else { return };
+        let Some(idx) = self.active_project_level_index() else { return };
+        let Some(level) = self.project.levels.get_mut(idx) else { return };
         if self.history.undo(level) {
             self.status = "Undid last edit.".to_string();
             self.revalidate();
@@ -357,7 +393,8 @@ impl DaffyApp {
     }
 
     pub fn redo(&mut self) {
-        let Some(level) = self.project.levels.first_mut() else { return };
+        let Some(idx) = self.active_project_level_index() else { return };
+        let Some(level) = self.project.levels.get_mut(idx) else { return };
         if self.history.redo(level) {
             self.status = "Redid edit.".to_string();
             self.revalidate();
@@ -498,5 +535,72 @@ mod tests {
         DaffyApp::apply_tile_edits(&project, &mut image).unwrap();
 
         assert!(!image.is_modified());
+    }
+
+    #[test]
+    fn active_level_accessor_uses_selected_rom_level() {
+        let mut level0 = synthetic_level();
+        level0.id = 0;
+        level0.name = "level zero".to_string();
+        let mut level1 = synthetic_level();
+        level1.id = 1;
+        level1.name = "level one".to_string();
+
+        let mut app = test_app_with_levels(vec![level0, level1]);
+        app.rom_level_count = 2;
+        app.active_level = 1;
+
+        assert_eq!(app.level().unwrap().name, "level one");
+        app.level_mut().unwrap().name = "edited one".to_string();
+        app.active_level = 0;
+        assert_eq!(app.level().unwrap().name, "level zero");
+        app.active_level = 1;
+        assert_eq!(app.level().unwrap().name, "edited one");
+    }
+
+    #[test]
+    fn decoded_level_switch_preserves_existing_project_level() {
+        let mut level0 = synthetic_level();
+        level0.id = 0;
+        let mut edited_level1 = synthetic_level();
+        edited_level1.id = 1;
+        edited_level1.name = "edited cached level".to_string();
+        edited_level1.provenance = crate::model::level::Provenance::Confirmed {
+            note: "cached".to_string(),
+        };
+
+        let mut decoded_level1 = synthetic_level();
+        decoded_level1.id = 1;
+        decoded_level1.name = "fresh decoded level".to_string();
+        decoded_level1.gfx.vram = vec![1, 2, 3, 4];
+
+        let mut app = test_app_with_levels(vec![level0, edited_level1]);
+        app.store_decoded_level(decoded_level1);
+
+        let cached = app.project.levels.iter().find(|level| level.id == 1).unwrap();
+        assert_eq!(cached.name, "edited cached level");
+        assert_eq!(cached.gfx.vram, vec![1, 2, 3, 4]);
+    }
+
+    fn test_app_with_levels(levels: Vec<Level>) -> DaffyApp {
+        DaffyApp {
+            rom: None,
+            project: Project { levels, ..Project::default() },
+            project_path: None,
+            history: EditorHistory::new(),
+            selection: Selection::None,
+            tool: Tool::Select,
+            active_metatile: 0,
+            active_room: 0,
+            active_level: 0,
+            rom_level_count: 0,
+            prefs: Prefs::default(),
+            status: String::new(),
+            hovered_tile: None,
+            validation: Vec::new(),
+            show_about: false,
+            tile_textures: std::collections::HashMap::new(),
+            tile_textures_level: None,
+        }
     }
 }

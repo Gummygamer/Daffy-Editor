@@ -22,23 +22,26 @@ use crate::rendering::tile_renderer::{metatile_color, render_metatile_rgba, META
 /// Shared with the metatile picker (`ui::panels`) so both the canvas and the
 /// picker draw the same rasterised tiles from one cache.
 pub fn ensure_tile_textures(app: &mut DaffyApp, ctx: &egui::Context) -> bool {
-    let Some(level) = app.project.levels.first() else { return false };
-    if level.gfx.is_empty() {
+    let Some((level_id, count, has_gfx)) = app
+        .level()
+        .map(|level| (level.id, level.metatiles.len(), !level.gfx.is_empty()))
+    else {
+        return false;
+    };
+    if !has_gfx {
         return false;
     }
-    let level_id = level.id;
     if app.tile_textures_level != Some(level_id) {
         app.tile_textures.clear();
         app.tile_textures_level = Some(level_id);
     }
-    let count = level.metatiles.len();
     for id in 0..count as u16 {
         if app.tile_textures.contains_key(&id) {
             continue;
         }
         // Short immutable borrow to rasterise; ends before we touch the cache.
         let image = {
-            let level = app.project.levels.first().expect("level exists");
+            let level = app.level().expect("level exists");
             level.metatiles.get(id as usize).and_then(|m| {
                 render_metatile_rgba(&level.gfx, &level.palette, m).map(|img| {
                     ColorImage::from_rgba_unmultiplied(
@@ -88,7 +91,8 @@ pub fn central_viewport(app: &mut DaffyApp, ctx: &egui::Context) {
 
         // --- gather room data (immutable pass) ---
         let room_idx = app.active_room;
-        let Some(level) = app.project.levels.first() else { return };
+        let Some(level_idx) = app.active_project_level_index() else { return };
+        let Some(level) = app.project.levels.get(level_idx) else { return };
         let Some(room) = level.rooms.get(room_idx) else { return };
 
         let vp = app.prefs.viewport;
@@ -255,7 +259,7 @@ pub fn central_viewport(app: &mut DaffyApp, ctx: &egui::Context) {
                         let already = room.tile(x, y) == Some(metatile);
                         if !already {
                             let cmd = EditorCommand::SetTile { room: room_idx, x, y, metatile };
-                            let level = app.project.levels.first_mut().expect("level exists");
+                            let level = app.project.levels.get_mut(level_idx).expect("level exists");
                             if app.history.apply(level, cmd).is_ok() {
                                 app.selection = Selection::Tile { room: room_idx, x, y };
                                 app.revalidate();
@@ -286,7 +290,7 @@ pub fn central_viewport(app: &mut DaffyApp, ctx: &egui::Context) {
                                     x: wx as u32,
                                     y: wy as u32,
                                 };
-                                let level = app.project.levels.first_mut().expect("level exists");
+                                let level = app.project.levels.get_mut(level_idx).expect("level exists");
                                 if app.history.apply(level, cmd).is_ok() {
                                     app.revalidate();
                                 }

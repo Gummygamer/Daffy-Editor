@@ -88,11 +88,14 @@ fn rom_info_section(app: &DaffyApp, ui: &mut egui::Ui) {
 
 fn level_section(app: &mut DaffyApp, ui: &mut egui::Ui) {
     ui.heading("Level");
-    let Some(level) = app.project.levels.first() else {
+    let Some(level) = app.level() else {
         ui.label("No level data.");
         return;
     };
-    match &level.provenance {
+    let provenance = level.provenance.clone();
+    let room_names: Vec<String> =
+        level.rooms.iter().map(|r| format!("{} — {}", r.id, r.name)).collect();
+    match &provenance {
         Provenance::Synthetic => {
             ui.colored_label(
                 egui::Color32::YELLOW,
@@ -107,8 +110,6 @@ fn level_section(app: &mut DaffyApp, ui: &mut egui::Ui) {
             ui.colored_label(egui::Color32::LIGHT_GREEN, format!("Confirmed: {note}"));
         }
     }
-    let room_names: Vec<String> =
-        level.rooms.iter().map(|r| format!("{} — {}", r.id, r.name)).collect();
     let mut active = app.active_room.min(room_names.len().saturating_sub(1));
     egui::ComboBox::from_label("Room").selected_text(room_names.get(active).cloned().unwrap_or_default()).show_ui(
         ui,
@@ -146,7 +147,7 @@ fn level_section(app: &mut DaffyApp, ui: &mut egui::Ui) {
 
 fn metatile_picker(app: &mut DaffyApp, ui: &mut egui::Ui) {
     ui.heading("Metatile picker");
-    if app.project.levels.first().is_none() {
+    if app.level().is_none() {
         return;
     }
     // Build/reuse the same rasterised-tile cache the canvas draws from, so the
@@ -154,7 +155,7 @@ fn metatile_picker(app: &mut DaffyApp, ui: &mut egui::Ui) {
     let ctx = ui.ctx().clone();
     crate::ui::viewport::ensure_tile_textures(app, &ctx);
 
-    let level = app.project.levels.first().expect("level exists");
+    let level = app.level().expect("level exists");
     let palette = level.palette.clone();
     // (id, flat-color fallback) pairs; texture (if any) comes from the cache.
     let metatiles: Vec<(u16, [u8; 4], u8)> =
@@ -194,7 +195,7 @@ fn metatile_picker(app: &mut DaffyApp, ui: &mut egui::Ui) {
 
 fn palette_viewer(app: &DaffyApp, ui: &mut egui::Ui) {
     ui.heading("Palette (BGR555)");
-    let Some(level) = app.project.levels.first() else { return };
+    let Some(level) = app.level() else { return };
     ui.horizontal_wrapped(|ui| {
         for (i, &c) in level.palette.colors.iter().enumerate() {
             let [r, g, b, a] = bgr555_to_rgba8(c);
@@ -209,7 +210,7 @@ fn palette_viewer(app: &DaffyApp, ui: &mut egui::Ui) {
 fn object_list(app: &mut DaffyApp, ui: &mut egui::Ui) {
     ui.heading("Objects");
     let room_idx = app.active_room;
-    let Some(level) = app.project.levels.first() else { return };
+    let Some(level) = app.level() else { return };
     let Some(room) = level.rooms.get(room_idx) else { return };
     let rows: Vec<(u32, String, u32, u32)> =
         room.objects.iter().map(|o| (o.id, o.label.clone(), o.x, o.y)).collect();
